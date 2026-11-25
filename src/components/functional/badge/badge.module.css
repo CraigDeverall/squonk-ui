@@ -1,0 +1,121 @@
+@layer dt.components {
+  .root {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--squonk-components-badge-gap);
+    padding: var(--squonk-components-badge-padding-block-default) var(--squonk-components-badge-padding-inline-default);
+    font-size: var(--squonk-components-badge-font-size-default);
+    font-family: var(--squonk-roles-type-font);
+    font-weight: var(--squonk-roles-type-strong);
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    border-radius: var(--squonk-roles-radius-pill);
+    width: fit-content;
+    white-space: nowrap;
+  }
+
+  /* Tone: point the local palette at the tone's --squonk-colors-tone-* set.
+     A colour the theme added (data-tone="custom") sets the same --tone-*
+     properties inline (src/theme/tone.ts), so the variants below cover it. */
+  .root[data-tone="neutral"] {
+    --tone-solid: var(--squonk-colors-tone-neutral-solid);
+    --tone-contrast: var(--squonk-colors-tone-neutral-contrast);
+    --tone-subtle: var(--squonk-colors-tone-neutral-subtle);
+    --tone-on-subtle: var(--squonk-colors-tone-neutral-on-subtle);
+    --tone-outline-text: var(--squonk-colors-tone-neutral-outline-text);
+  }
+  .root[data-tone="primary"] {
+    --tone-solid: var(--squonk-colors-tone-primary-solid);
+    --tone-contrast: var(--squonk-colors-tone-primary-contrast);
+    --tone-subtle: var(--squonk-colors-tone-primary-subtle);
+    --tone-on-subtle: var(--squonk-colors-tone-primary-on-subtle);
+    --tone-outline-text: var(--squonk-colors-tone-primary-outline-text);
+  }
+  .root[data-tone="success"] {
+    --tone-solid: var(--squonk-colors-tone-success-solid);
+    --tone-contrast: var(--squonk-colors-tone-success-contrast);
+    --tone-subtle: var(--squonk-colors-tone-success-subtle);
+    --tone-on-subtle: var(--squonk-colors-tone-success-on-subtle);
+    --tone-outline-text: var(--squonk-colors-tone-success-outline-text);
+  }
+  .root[data-tone="warning"] {
+    --tone-solid: var(--squonk-colors-tone-warning-solid);
+    --tone-contrast: var(--squonk-colors-tone-warning-contrast);
+    --tone-subtle: var(--squonk-colors-tone-warning-subtle);
+    --tone-on-subtle: var(--squonk-colors-tone-warning-on-subtle);
+    --tone-outline-text: var(--squonk-colors-tone-warning-outline-text);
+  }
+  .root[data-tone="error"] {
+    --tone-solid: var(--squonk-colors-tone-error-solid);
+    --tone-contrast: var(--squonk-colors-tone-error-contrast);
+    --tone-subtle: var(--squonk-colors-tone-error-subtle);
+    --tone-on-subtle: var(--squonk-colors-tone-error-on-subtle);
+    --tone-outline-text: var(--squonk-colors-tone-error-outline-text);
+  }
+  .root[data-tone="info"] {
+    --tone-solid: var(--squonk-colors-tone-info-solid);
+    --tone-contrast: var(--squonk-colors-tone-info-contrast);
+    --tone-subtle: var(--squonk-colors-tone-info-subtle);
+    --tone-on-subtle: var(--squonk-colors-tone-info-on-subtle);
+    --tone-outline-text: var(--squonk-colors-tone-info-outline-text);
+  }
+
+  /* Variant: read only the local palette. */
+  .root[data-variant="solid"] {
+    background-color: var(--tone-solid);
+    color: var(--tone-contrast);
+    border: var(--squonk-roles-border-width) solid transparent;
+  }
+  .root[data-variant="subtle"] {
+    background-color: var(--tone-subtle);
+    color: var(--tone-on-subtle);
+    border: var(--squonk-roles-border-width) solid transparent;
+  }
+  .root[data-variant="outline"] {
+    background-color: transparent;
+    color: var(--tone-outline-text);
+    border: var(--squonk-roles-border-width) solid var(--tone-solid);
+  }
+
+  /* Register (from <Presentation>) */
+  .root[data-register="compact"] {
+    padding: var(--squonk-components-badge-padding-block-compact) var(--squonk-components-badge-padding-inline-compact);
+    font-size: var(--squonk-components-badge-font-size-compact);
+  }
+  .root[data-register="large"] {
+    padding: var(--squonk-components-badge-padding-block-large) var(--squonk-components-badge-padding-inline-large);
+    font-size: var(--squonk-components-badge-font-size-large);
+  }
+  .root[data-register="hero"] {
+    padding: var(--squonk-components-badge-padding-block-hero) var(--squonk-components-badge-padding-inline-hero);
+    font-size: var(--squonk-components-badge-font-size-hero);
+  }
+
+  /* Dot: a filled dot in the tone's colour and bold text that reads on the
+     page, with no pill, so it sits inline like text. After the registers so
+     none of them adds the padding back. */
+  .root[data-variant="dot"] {
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background-color: transparent;
+    color: var(--tone-outline-text);
+  }
+  .root[data-variant="dot"] .pulse { background: var(--tone-solid); }
+
+  /* Eyebrow treatment; wins over the register font size. */
+  .root.caps {
+    font-size: var(--squonk-components-badge-caps-font-size);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .pulse {
+    width: 0.5em;
+    height: 0.5em;
+    border-radius: 50%;
+    background: currentColor;
+    display: inline-block;
+  }
+}

@@ -1,0 +1,140 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "./documentation-imports/hide-sb-bar";
+import { FirstScreen } from "./documentation-imports/getting-started/first-screen.tsx";
+
+<Meta title="Get started/Getting started" />
+<HideSbBar />
+
+# Getting started
+
+Set up an app in one command, then build your first screen. About five minutes.
+
+`@squonkstack/ui` and `@squonkstack/ui-mcp` are published to the public npm registry under
+the MIT licence, so there's nothing to sign in to.
+
+## 1. Run the setup command
+
+In your app's folder:
+
+```sh
+npx @squonkstack/ui
+```
+
+First it asks whether to also set up the MCP server for coding agents
+(`@squonkstack/ui-mcp`), which looks up components and shows the library's stories
+with live controls. The
+answer defaults to yes. Then it asks before each step, and running it again
+changes nothing:
+
+1. Warns if the app's or your home `.npmrc` still sends `@squonkstack` to another
+   registry, which would stop installs from reaching npm.
+2. Installs `@squonkstack/ui`, and with the MCP server `@squonkstack/ui-mcp` as a dev
+   dependency, both at the version you ran, so every developer and agent uses
+   the same version.
+3. With the MCP server, connects your coding agents (Claude Code, Codex, VS Code
+   with Copilot, Cursor, and Claude Desktop for stories in the chat) to it.
+4. Adds a short `@squonkstack/ui` section to `AGENTS.md` (and `CLAUDE.md` for Claude
+   Code) so your agent reads the library's guidance before writing UI.
+
+`--yes` accepts every default, `--no-mcp` skips the MCP server,
+`--agents claude,codex` picks agents, and `--no-install` skips installing. It
+never edits your code: the next two steps are yours, and it shows the code for
+them. The setup itself is `npx @squonkstack/ui-mcp init`, which `npx @squonkstack/ui`
+runs at the same version; it still works on its own.
+
+New to using an agent with the library? Read
+[Working with your agent](?path=/docs/get-started-working-with-your-agent--docs).
+
+## 2. Add the styles and the provider
+
+At your app's root, load the font and the component styles once and wrap the
+app in `SquonkThemeProvider`:
+
+```tsx
+import "@squonkstack/ui/fonts.css";
+import "@squonkstack/ui/styles.css";
+import { SquonkThemeProvider } from "@squonkstack/ui/theme-provider";
+
+export function Root({ children }: { children: React.ReactNode }) {
+  return (
+    <SquonkThemeProvider mode="light" withGlobalStyles>
+      {children}
+    </SquonkThemeProvider>
+  );
+}
+```
+
+- `fonts.css` self-hosts Inter; no font CDN needed.
+- `styles.css` holds every component's styles and the theme's `--squonk-*`
+  variables. Without it, components render unstyled.
+- `withGlobalStyles` sets the page's background, text colour and font. Leave it
+  off if your app owns its document styles.
+- `mode="dark"` makes the whole app dark. To change the look, see
+  [Theme](?path=/docs/foundations-theme--docs).
+
+The styles are static CSS, so server rendering needs no extra setup.
+
+## 3. Add the lint rules
+
+They warn when code rebuilds a control the library has, imports from its
+internals or hard-codes a colour. They catch the mistakes agents make most:
+
+```js
+// eslint.config.js
+import squonkUi from "@squonkstack/ui/eslint";
+
+export default [...squonkUi.configs.recommended /*, your config */];
+```
+
+## 4. Build your first screen
+
+Import each component from its own entry point:
+
+```tsx
+import { Button } from "@squonkstack/ui/button";
+import { Card } from "@squonkstack/ui/card";
+import { Heading } from "@squonkstack/ui/heading";
+import { Text } from "@squonkstack/ui/text";
+import { TextField } from "@squonkstack/ui/text-field";
+import { VStack } from "@squonkstack/ui/vstack";
+
+export function CreateWorkspace() {
+  return (
+    <Card>
+      <VStack gap="md">
+        <Heading level={3} as="p">Your workspace</Heading>
+        <Text tone="secondary">Give it a name your team will recognise.</Text>
+        <TextField label="Workspace name" />
+        <div><Button variant="primary">Create workspace</Button></div>
+      </VStack>
+    </Card>
+  );
+}
+```
+
+Here it is, live:
+
+<FirstScreen />
+
+Or ask your agent: *"Build a sign-in form with @squonkstack/ui."* It will look up
+the components, write the screen and check it in your running app. Ask it to
+show you a component's stories, and you can try them in the chat.
+
+## Without the setup command
+
+Install the packages yourself, then do steps 2 to 4:
+
+```sh
+npm install @squonkstack/ui "react@^19.2.0" "react-dom@^19.2.0"
+npm install --save-dev @squonkstack/ui-mcp
+```
+
+React and React DOM 19.2 or later are required, on Node 22.14+ or 24.10+.
+
+## Where next
+
+- [Foundations](?path=/docs/foundations-overview--docs): colour, type, space and the theme.
+- [Forms](?path=/docs/patterns-forms-overview--docs): every form works the same way; start here before building one.
+- [Components](?path=/docs/components-overview--docs): everything in the library, grouped by what it's for.
+- [Examples](?path=/story/examples-member-dashboard--overview): complete screens built only from the library.
+- [Developing the library](?path=/docs/contributing-developing-the-library--docs): for contributors.

@@ -1,0 +1,19 @@
+@layer dt.components {
+  .root {
+    min-height: 0;
+    min-width: 0;
+  }
+
+  .root[data-axis="vertical"] { overflow-y: auto; overflow-x: hidden; }
+  .root[data-axis="horizontal"] { overflow-x: auto; overflow-y: hidden; }
+  .root[data-axis="both"] { overflow: auto; }
+
+  .maxHeight { max-height: var(--scroll-box-max-height); }
+  .maxWidth { max-width: var(--scroll-box-max-width); }
+
+  /* Paper doesn't scroll: print everything inside. */
+  @media print {
+    .root[data-axis] { overflow: visible; }
+    .maxHeight { max-height: none; }
+  }
+}

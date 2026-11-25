@@ -1,0 +1,191 @@
+@layer dt.components {
+  /* The group fills its container; panels share its length by flex-grow,
+     set from their percentage sizes, so the handles keep their own size. */
+  .root {
+    display: flex;
+    flex-direction: row;
+    inline-size: 100%;
+    block-size: 100%;
+    min-inline-size: 0;
+    min-block-size: 0;
+    overflow: hidden;
+  }
+
+  .root[data-orientation="vertical"] {
+    flex-direction: column;
+  }
+
+  /* While a handle is dragged, nothing under the pointer (text, an iframe in
+     a panel) takes the drag away from it. */
+  .root[data-dragging] {
+    user-select: none;
+  }
+
+  .root[data-dragging] > .panel {
+    pointer-events: none;
+  }
+
+  /* A panel clips to its size: a panel's content must not push the layout
+     around while it's resized. Long content scrolls inside it. */
+  .panel {
+    flex: var(--resizable-panel-size, 1) 1 0px;
+    min-inline-size: 0;
+    min-block-size: 0;
+    overflow: hidden;
+  }
+
+  /* ── The handle ── */
+  .handle {
+    --resizable-line-width: var(--squonk-components-resizable-line-width);
+    --resizable-line-color: var(--squonk-components-resizable-line-color);
+    --resizable-thumb-edge: var(--squonk-components-resizable-grip-border);
+    --resizable-bar-color: var(--squonk-components-resizable-bar-color);
+    --resizable-glow: none;
+
+    position: relative;
+    z-index: var(--squonk-components-resizable-hit-layer);
+    display: flex;
+    flex: 0 0 var(--squonk-components-resizable-gutter);
+    /* A bar or grip overhangs the gutter rather than widening it. */
+    min-inline-size: 0;
+    min-block-size: 0;
+    align-items: center;
+    justify-content: center;
+    outline: none;
+    touch-action: none;
+    cursor: col-resize;
+  }
+
+  .handle[data-orientation="vertical"] {
+    flex-direction: column;
+    cursor: row-resize;
+  }
+
+  /* The grab target: wider than the line, overhanging the panels. */
+  .handle::before {
+    position: absolute;
+    inset-block: 0;
+    left: 50%;
+    inline-size: var(--squonk-components-resizable-hit-area);
+    translate: -50% 0;
+    content: "";
+  }
+
+  /* Between rows the target spans the handle's full width. Both edges are
+     set after the column rule's left: 50%, so the box can't collapse to no
+     width (an empty box with one edge set shrinks to nothing). */
+  .handle[data-orientation="vertical"]::before {
+    inset-block: auto;
+    top: 50%;
+    left: 0;
+    right: 0;
+    inline-size: auto;
+    block-size: var(--squonk-components-resizable-hit-area);
+    translate: 0 -50%;
+  }
+
+  .handle[data-hovered] {
+    --resizable-line-width: var(--squonk-components-resizable-line-width-hover);
+    --resizable-line-color: var(--squonk-components-resizable-line-color-hover);
+    --resizable-thumb-edge: var(--squonk-components-resizable-line-color-hover);
+    --resizable-bar-color: var(--squonk-components-resizable-line-color-hover);
+    --resizable-glow: var(--squonk-components-resizable-glow);
+  }
+
+  /* Light up only once the pointer rests (when the theme sets a delay);
+     going back to rest, dragging and focus answer at once. */
+  .handle[data-hovered]:not([data-dragging], [data-focus-visible]) > * {
+    --motion-delay: var(--squonk-components-resizable-hover-delay);
+  }
+
+  .handle[data-focus-visible] {
+    --resizable-line-width: var(--squonk-components-resizable-focus-width);
+    --resizable-line-color: var(--squonk-components-resizable-focus-color);
+    --resizable-thumb-edge: var(--squonk-components-resizable-focus-color);
+    --resizable-bar-color: var(--squonk-components-resizable-focus-color);
+  }
+
+  .handle[data-dragging] {
+    --resizable-line-width: var(--squonk-components-resizable-line-width-active);
+    --resizable-line-color: var(--squonk-components-resizable-line-color-active);
+    --resizable-thumb-edge: var(--squonk-components-resizable-line-color-active);
+    --resizable-bar-color: var(--squonk-components-resizable-line-color-active);
+    --resizable-glow: var(--squonk-components-resizable-glow);
+  }
+
+  .handle[data-disabled] {
+    cursor: auto;
+  }
+
+  .handle[data-disabled] > :is(.bar, .grip) {
+    opacity: var(--squonk-roles-state-disabled-opacity);
+  }
+
+  /* The line runs the full length of the handle, centred in it. */
+  .line {
+    --motion-property: background-color, inline-size, block-size, box-shadow;
+    --motion-duration: var(--squonk-components-resizable-transition);
+
+    position: absolute;
+    inset-block: 0;
+    left: 50%;
+    inline-size: var(--resizable-line-width);
+    translate: -50% 0;
+    background-color: var(--resizable-line-color);
+    box-shadow: var(--resizable-glow);
+  }
+
+  .handle[data-orientation="vertical"] .line {
+    inset-block: auto;
+    inset-inline: 0;
+    top: 50%;
+    left: auto;
+    inline-size: auto;
+    block-size: var(--resizable-line-width);
+    translate: 0 -50%;
+  }
+
+  /* The thumbs sit over the line, overhanging the gutter. */
+  .bar {
+    --motion-property: background-color;
+    --motion-duration: var(--squonk-components-resizable-transition);
+
+    position: relative;
+    flex: none;
+    inline-size: var(--squonk-components-resizable-bar-thickness);
+    block-size: var(--squonk-components-resizable-bar-length);
+    border-radius: var(--squonk-components-resizable-bar-radius);
+    background-color: var(--resizable-bar-color);
+  }
+
+  .handle[data-orientation="vertical"] .bar {
+    inline-size: var(--squonk-components-resizable-bar-length);
+    block-size: var(--squonk-components-resizable-bar-thickness);
+  }
+
+  .grip {
+    --motion-property: border-color;
+    --motion-duration: var(--squonk-components-resizable-transition);
+
+    position: relative;
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    gap: var(--squonk-components-resizable-grip-dot-gap);
+    padding: var(--squonk-components-resizable-grip-padding);
+    border: var(--squonk-roles-border-width) solid var(--resizable-thumb-edge);
+    border-radius: var(--squonk-components-resizable-grip-radius);
+    background-color: var(--squonk-components-resizable-grip-background);
+  }
+
+  .handle[data-orientation="vertical"] .grip {
+    flex-direction: row;
+  }
+
+  .dot {
+    inline-size: var(--squonk-components-resizable-grip-dot-size);
+    block-size: var(--squonk-components-resizable-grip-dot-size);
+    border-radius: var(--squonk-roles-radius-pill);
+    background-color: var(--squonk-components-resizable-grip-dot-color);
+  }
+}

@@ -1,0 +1,217 @@
+import { Controls, Meta, Source } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as CurrencyFieldStories from "./currency-field.stories.tsx";
+import meta from "./currency-field.stories.tsx";
+import { CurrencyField } from "./currency-field.tsx";
+import { Presentation } from "../../style/presentation/presentation.tsx";
+import { VStack } from "../../layout-primitive/vstack/vstack.tsx";
+import { Block } from "../../layout-primitive/block/block.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# CurrencyField
+
+<ResizableCanvas of={CurrencyFieldStories.WithValue} />
+
+`CurrencyField` is the input for an amount of money: a payment, a price, a
+figure on a dues statement. It is built on React Aria's `NumberField`, so it formats
+and reads amounts with `Intl.NumberFormat`: the symbol, the separators and the
+decimal places follow the `currency` and the `locale`, and the amount is
+rounded to the currency's places when it's committed. Type `12.5`, leave the
+field, and it shows `$12.50`; its value is the number `12.5`.
+
+It looks and behaves like [TextField](?path=/docs/functional-text-field--docs)
+(label, `helperText`, `error`, `Presentation` register, `fullWidth`) so it sits
+in a form beside the other fields. It is not for quantities, percentages or
+account numbers: use `TextField` for an identifier such as a bank account, and
+a plain number input for counts. To show an amount, not edit it, use
+[Currency](?path=/docs/components-data-display-currency--docs).
+
+<Controls />
+
+## The value
+
+The value is a `number` in major units (dollars, not cents), or `null` when
+the field is empty. `onChange` fires when the amount is committed (on blur,
+Enter, paste or an arrow-key step), not on every keystroke, and always gets
+the rounded amount: never `0.30000000000000004`, never `12.555`.
+
+<InlineCodeExample>
+  <Block width="320px">
+    <CurrencyField label="Amount to pay" locale="en-NZ" defaultValue={1240.5} helperText="You can pay part now and the rest later." />
+  </Block>
+</InlineCodeExample>
+
+<Source
+  language="tsx"
+  code={`const [amount, setAmount] = React.useState<number | null>(null);
+
+<CurrencyField label="Amount" value={amount} onChange={setAmount} />`}
+/>
+
+With a `name`, the field submits a plain decimal with the currency's places
+(`"1240.50"`, or `""` when empty), whatever the locale shows.
+
+## Currencies and locales
+
+`currency` is an ISO 4217 code and defaults to `"NZD"`. It sets the symbol and
+the decimal places: two for NZD, GBP and EUR, none for JPY, three for KWD and
+BHD. `locale` sets the separators and where the symbol goes; it defaults to
+React Aria's locale (an `I18nProvider` above, else the browser's). Set it when
+the app serves one country, so amounts don't change shape between browsers.
+
+<InlineCodeExample>
+  <Block width="320px">
+    <VStack gap="sm">
+      <CurrencyField label="New Zealand dollars" currency="NZD" locale="en-NZ" defaultValue={1234.5} />
+      <CurrencyField label="Pounds sterling" currency="GBP" locale="en-GB" defaultValue={1234.5} />
+      <CurrencyField label="Euros" currency="EUR" locale="de-DE" defaultValue={1234.5} />
+      <CurrencyField label="Japanese yen" currency="JPY" locale="ja-JP" defaultValue={1234} />
+      <CurrencyField label="Kuwaiti dinar" currency="KWD" locale="en-NZ" defaultValue={1234.5} />
+    </VStack>
+  </Block>
+</InlineCodeExample>
+
+## Which dollar? The currency code
+
+The default `currencyDisplay="symbol"` is relative to the locale: in en-NZ,
+NZD shows as `$` and US dollars as `US$`; in en-US, NZD shows as `NZ$`. So a
+foreign dollar is already told apart. Add `showCurrencyCode` when people work
+in several currencies at once, or when you can't be sure of the locale: the ISO
+code sits at the end of the field and is read as part of its description.
+`currencyDisplay="code"` puts the code in the value instead (`NZD 1,234.50`).
+
+<InlineCodeExample>
+  <Block width="320px">
+    <VStack gap="sm">
+      <CurrencyField label="Invoice amount" currency="USD" locale="en-NZ" defaultValue={980} showCurrencyCode />
+      <CurrencyField label="Invoice amount" currency="AUD" locale="en-NZ" defaultValue={980} currencyDisplay="code" />
+    </VStack>
+  </Block>
+</InlineCodeExample>
+
+## Negative amounts
+
+Amounts can't go below zero unless `allowNegative` is set: a minus sign can't be
+typed, and pasted negatives are raised to zero. Allow negatives only where they
+mean something, such as an adjustment or a credit, and say so in the helper text.
+
+<InlineCodeExample>
+  <Block width="320px">
+    <CurrencyField label="Credit adjustment" locale="en-NZ" allowNegative defaultValue={-42.1} helperText="Enter a negative amount to reduce what you owe." />
+  </Block>
+</InlineCodeExample>
+
+## Limits, steps and whole dollars
+
+`minValue` and `maxValue` clamp the amount when it's committed. The arrow keys
+step by `step`, a dollar by default; setting `step` also snaps typed amounts to
+it, so `step={0.05}` rounds to five cents. `fractionDigits` overrides the
+currency's places, such as `0` for a whole-dollar estimate. When a limit is a
+rule people should be told about, validate it and show an `error` instead of
+clamping silently.
+
+<InlineCodeExample>
+  <Block width="320px">
+    <VStack gap="sm">
+      <CurrencyField label="Instalment" locale="en-NZ" minValue={20} maxValue={5000} defaultValue={250} helperText="Between $20 and $5,000." />
+      <CurrencyField label="Chapter fundraising target" locale="en-NZ" fractionDigits={0} step={1000} defaultValue={60000} helperText="Before costs. A rough figure is fine." />
+    </VStack>
+  </Block>
+</InlineCodeExample>
+
+## Paste
+
+Pasting over the whole field reads amounts in any common shape: `1,234.56`,
+`$1,234.56`, `NZ$1,234.56`, `NZD 1234.56`, `(12.00)` and `1.234,56 €`. Symbols,
+codes and spaces are dropped; when both `.` and `,` appear, the last one is
+the decimal point. The amount is then rounded and clamped like a typed one.
+
+## Error, disabled and read-only
+
+`error` replaces `helperText`, turns the border and message the error colour and
+sets `aria-invalid`. A disabled field isn't submitted; a read-only field is,
+and can still be focused and copied.
+
+<InlineCodeExample>
+  <Block width="320px">
+    <VStack gap="sm">
+      <CurrencyField label="Amount" locale="en-NZ" defaultValue={0} error="Enter an amount more than $0" />
+      <CurrencyField label="Credit" locale="en-NZ" defaultValue={31.24} disabled />
+      <CurrencyField label="Balance" locale="en-NZ" defaultValue={148.2} readOnly />
+    </VStack>
+  </Block>
+</InlineCodeExample>
+
+## Sizing via Presentation
+
+Height, padding and font follow the surrounding register, like `TextField`.
+
+<InlineCodeExample>
+  <Block width="320px">
+    <VStack gap="sm">
+      <Presentation register="compact"><CurrencyField label="Compact" locale="en-NZ" defaultValue={99.95} /></Presentation>
+      <Presentation register="default"><CurrencyField label="Default" locale="en-NZ" defaultValue={99.95} /></Presentation>
+      <Presentation register="large"><CurrencyField label="Large" locale="en-NZ" defaultValue={99.95} /></Presentation>
+    </VStack>
+  </Block>
+</InlineCodeExample>
+
+## In a form
+
+Inside `form.AppField`, use `field.CurrencyField`. Its value is `number | null`,
+so validate it with `z.number()`: the `error` given to `z.number({ error })`
+covers the empty field. See [Forms: the basics](?path=/docs/patterns-forms-the-basics--docs)
+and the money example in [Forms examples](?path=/story/forms-examples--money-amount).
+
+<Source
+  language="tsx"
+  code={`const schema = z.object({
+  amount: z.number({ error: "Enter how much you are paying" }).positive("Enter an amount more than $0"),
+});
+
+const form = useAppForm({
+  defaultValues: { amount: null as number | null },
+  validators: { onChange: schema },
+  onSubmit: ({ value }) => pay({ cents: toMinorUnits(value.amount ?? 0, 2) }),
+});
+
+<form.AppField name="amount">
+  {(field) => <field.CurrencyField label="Amount" locale="en-NZ" />}
+</form.AppField>`}
+/>
+
+## Accessibility
+
+- The label is a real `<label>` for the input, so clicking it focuses the field.
+  Give every field a `label`, or an `aria-label` when the label is elsewhere.
+- The input is a text box described as a number field. `helperText`, then `error`,
+  then the currency code (with `showCurrencyCode`) and any `aria-describedby` you
+  pass are read as its description; an error is announced politely when it appears.
+- Up and Down arrows step the amount by `step`. The mouse wheel never changes an amount, so scrolling past a focused
+  field can't alter a payment.
+- On phones the keyboard is the decimal pad, or one with a minus key when
+  `allowNegative` is set.
+- The value includes the symbol (`$12.50`), so it is read with its currency.
+  Don't repeat the currency in the label unless people choose it elsewhere.
+
+## Common pitfalls
+
+- **Don't use `TextField` with `inputMode="decimal"` for money.** You lose
+  formatting, rounding and paste handling, and end up parsing `"$1,234.50"` yourself.
+- **Don't add amounts up as floats.** `0.1 + 0.2` is `0.30000000000000004`. Convert
+  with `toMinorUnits(amount, 2)` and add integer cents, or add on the server.
+- **Send integer minor units or a decimal string to the server,** not a float:
+  `toMinorUnits(12.5, 2)` is `1250`; a form `name` submits `"12.50"`.
+- **Don't expect `onChange` on every keystroke.** It fires when the amount is
+  committed. Show a running total from committed values, as the dues instalment plan demo does.
+- **Don't hard-code `$` in the label or helper text for a multi-currency form.**
+  Let the field show the symbol, and use `showCurrencyCode` if dollars could be confused.
+- **Don't leave `locale` to chance in a single-country app.** Without it the
+  browser decides, and an en-US browser shows NZD as `NZ$`.
+- **Don't clamp a rule silently.** `maxValue` quietly lowers an amount; for a
+  limit people must know about ("up to what you owe"), validate and show an error.

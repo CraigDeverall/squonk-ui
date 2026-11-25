@@ -1,0 +1,131 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as RadioStories from "./radio.stories.tsx";
+import meta from "./radio.stories.tsx";
+import { RadioGroup } from "./radio.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# RadioGroup
+
+<ResizableCanvas of={RadioStories.Default} />
+
+`RadioGroup` is a controlled, single-select group of radio buttons. The library exports the *group* rather than a standalone `Radio` because a lone radio is almost always a UX bug — radios only make sense among mutually-exclusive choices. For two-or-three short options consider `Switch` (binary) or a segmented `Button` group; for many options, prefer a `Select`.
+
+<Controls />
+
+## Default
+
+Pass `options`, a controlled `value`, and an `onChange`. The component renders a `<fieldset>` with `role="radiogroup"` and a `<legend>` that names it, so screen readers announce the group before each option. Tab moves into the group once (to the selected option); the arrow keys move and select, skipping disabled options. An uncontrolled form reset and a disabled ancestor `<fieldset>` are respected.
+
+<InlineCodeExample>
+  <RadioGroup
+    name="plan"
+    legend="Choose a plan"
+    value="pro"
+    onChange={() => {}}
+    options={[
+      { value: "free", label: "Free", helperText: "$0 / month" },
+      { value: "pro", label: "Pro", helperText: "$12 / month" },
+      { value: "team", label: "Team", helperText: "$30 / month" },
+    ]}
+  />
+</InlineCodeExample>
+
+## Horizontal layout
+
+`direction="row"` lays the options out in a row with larger gaps. Use it for short labels that fit on one line; long helper text reads poorly side-by-side.
+
+<InlineCodeExample>
+  <RadioGroup
+    name="size"
+    legend="T-shirt size"
+    direction="row"
+    value="m"
+    onChange={() => {}}
+    options={[
+      { value: "s", label: "Small" },
+      { value: "m", label: "Medium" },
+      { value: "l", label: "Large" },
+      { value: "xl", label: "X-Large" },
+    ]}
+  />
+</InlineCodeExample>
+
+## Helper text per option
+
+Each option can carry its own `helperText` for "what does this choice mean" hints. Keep it short — if the explanation runs to a paragraph, the option needs a different control (a card with a description, perhaps).
+
+<InlineCodeExample>
+  <RadioGroup
+    name="env"
+    legend="Deployment target"
+    value="staging"
+    onChange={() => {}}
+    options={[
+      { value: "preview", label: "Preview", helperText: "Throwaway URL, auto-deleted in 24h" },
+      { value: "staging", label: "Staging", helperText: "Shared internal environment" },
+      { value: "production", label: "Production", helperText: "Customer-facing — requires approval" },
+    ]}
+  />
+</InlineCodeExample>
+
+## Error
+
+`error` sets `aria-invalid` on the fieldset and switches the helper text + dot border to the error color.
+
+<InlineCodeExample>
+  <RadioGroup
+    name="consent"
+    legend="Marketing emails"
+    error="Please choose an option to continue."
+    onChange={() => {}}
+    options={[
+      { value: "yes", label: "Yes, please" },
+      { value: "no", label: "No thanks" },
+    ]}
+  />
+</InlineCodeExample>
+
+## Disabled option
+
+Disable a single option via `disabled: true`; the rest stay interactive.
+
+<InlineCodeExample>
+  <RadioGroup
+    name="tier"
+    legend="Subscription tier"
+    value="pro"
+    onChange={() => {}}
+    options={[
+      { value: "free", label: "Free" },
+      { value: "pro", label: "Pro" },
+      { value: "enterprise", label: "Enterprise", helperText: "Contact sales", disabled: true },
+    ]}
+  />
+</InlineCodeExample>
+
+## Accessibility
+
+Helper and error text are exposed as descriptions, separate from the visible label. A supplied `aria-describedby` is preserved and combined with the component’s message.
+
+- Renders a real `<fieldset>` + `<legend>` so screen readers announce the group's name before each option.
+- Native `<input type="radio">` is preserved (visually hidden), so arrow keys cycle through options and Space selects — no custom keybindings needed.
+- `error` sets `aria-invalid="true"` on the fieldset, paired with a visible error message styled in `theme.colors.error`.
+- The focus ring is the standard `theme.colors.border.focus`, applied to the visible dot via `:has` + `:focus-visible`.
+
+## Common pitfalls
+
+- **Don't ship a single radio.** If there's only one choice, it should be a `Checkbox` (consent) or `Switch` (toggle). A lone radio reads as broken.
+- **Don't use `RadioGroup` for many options.** Past ~7 options the user can't scan the list; switch to a `Select`.
+- **Don't omit the legend.** The legend is the group's accessible name — without it, each option is announced in isolation.
+- **Don't put long-form copy in `helperText`.** It's for a one-line clarification. For paragraphs, build a card-based selector instead.
+
+## UX guidance
+
+- [Choosing a selection control](?path=/docs/patterns-choosing-a-selection-control--docs)
+- [Labels, help and validation](?path=/docs/patterns-labels-help-and-validation--docs)

@@ -1,0 +1,55 @@
+@layer dt.components {
+  .root {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--squonk-roles-space-group-gap);
+    font-family: var(--squonk-roles-type-font);
+    color: var(--squonk-roles-color-label);
+  }
+
+  /* A legend is laid out specially unless it floats; float it so it joins
+     the flex column like any other child. */
+  .legend {
+    float: left;
+    width: 100%;
+    padding: 0;
+    font-size: var(--squonk-roles-type-legend);
+    font-weight: var(--squonk-roles-type-strong);
+    line-height: var(--squonk-roles-type-tight-line-height);
+  }
+
+  .helper {
+    font-size: var(--squonk-roles-type-group-hint);
+    color: var(--squonk-roles-color-hint);
+  }
+
+  .error {
+    font-size: var(--squonk-roles-type-group-hint);
+    color: var(--squonk-roles-color-invalid-text);
+  }
+
+  .fields {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fieldset-gap);
+    margin-top: var(--squonk-roles-space-group-options-offset);
+  }
+
+  .root[data-invalid] .fields {
+    padding-inline-start: var(--squonk-roles-space-invalid-indent);
+    border-inline-start: var(--squonk-roles-border-rule-width) solid var(--squonk-roles-color-invalid);
+  }
+
+  .visuallyHidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}

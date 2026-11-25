@@ -1,0 +1,160 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as BadgeStories from "./badge.stories.tsx";
+import meta from "./badge.stories.tsx";
+import { Badge } from "./badge.tsx";
+import { Cluster } from "../../layout/cluster/cluster.tsx";
+import { HStack } from "../../layout-primitive/hstack/hstack.tsx";
+import { VStack } from "../../layout-primitive/vstack/vstack.tsx";
+import { Heading } from "../../functional-primitive/heading/heading.tsx";
+import { Text } from "../../functional-primitive/text/text.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Badge
+
+<ResizableCanvas
+  of={BadgeStories.Default}
+  defaultRecipe="centered"
+  defaultHeight={100}
+/>
+
+`Badge` reports the state or count of the thing beside it: "Overdue", "Paid", "3". The system sets it and it changes on its own; people never act on it. Use the `tone` for *meaning* (success, warning, error) and the `variant` for *emphasis* (`subtle` for ambient state, `solid` for headline status, `outline` for a quieter callout). A value people chose or can remove is a `Tag`; a flow-level message is an `Alert`.
+
+<Controls />
+
+## Badge or Tag?
+
+A Badge reports the state or count of the thing beside it, set by the system
+("Overdue", "3"). A Tag names a value: a category, keyword or filter the person
+chose, added or can remove ("Waikato Chapter ×"). Tags never carry a status colour. See
+[Labels: Badge or Tag](?path=/docs/patterns-labels-badge-or-tag--docs).
+
+## Tones
+
+Six semantic tones map to the theme's status palette. Pick by meaning, not by which shade looks best on the page.
+
+<InlineCodeExample>
+  <Cluster gap="sm">
+    <Badge tone="neutral">Draft</Badge>
+    <Badge tone="primary">New</Badge>
+    <Badge tone="success">Active</Badge>
+    <Badge tone="warning">Pending</Badge>
+    <Badge tone="error">Failed</Badge>
+    <Badge tone="info">Sync</Badge>
+  </Cluster>
+</InlineCodeExample>
+
+## Variants
+
+Three variants on the same tone — pick by how much attention the badge should pull. `subtle` is the default; `solid` is for live status the user must notice; `outline` is a quieter status that should sit back from the content around it. Categories and tags are `Tag`s.
+
+<InlineCodeExample>
+  <HStack gap="sm">
+    <Badge tone="success" variant="subtle">Active</Badge>
+    <Badge tone="success" variant="solid">Active</Badge>
+    <Badge tone="success" variant="outline">Active</Badge>
+  </HStack>
+</InlineCodeExample>
+
+## Dot
+
+`variant="dot"` is a small filled dot in the tone's colour followed by bold text, with no background, border or padding, so it sits inline like text. Use it for a quiet status in a dense list, table row or card, where a pill on every row would be too heavy. It works with every tone, and `pulsing` makes its dot breathe.
+
+<InlineCodeExample>
+  <VStack gap="sm">
+    <HStack gap="md" align="center">
+      <Badge tone="success" variant="dot">Active</Badge>
+      <Badge tone="warning" variant="dot">Pending</Badge>
+      <Badge tone="error" variant="dot">Failed</Badge>
+      <Badge tone="neutral" variant="dot">Draft</Badge>
+    </HStack>
+    <Badge tone="success" variant="dot" pulsing>Live</Badge>
+  </VStack>
+</InlineCodeExample>
+
+## A theme's own colours as tones
+
+`tone` also takes the key of a colour the theme added with `addedColorPrimitives`. The theme derives the same palette for it as for a built-in tone, in light and dark mode, so every variant works. Use an added colour to tell categories apart; the built-in tones keep their meaning, and a built-in name always means the built-in tone.
+
+```tsx
+<SquonkThemeProvider addedColorPrimitives={{ violet: { light: "#7c3aed", dark: "#a78bfa" } }}>
+  <Badge tone="violet">Beta</Badge>
+</SquonkThemeProvider>
+```
+
+<ResizableCanvas of={BadgeStories.AddedTone} defaultRecipe="centered" defaultHeight={180} />
+
+## Pulsing status dot
+
+`pulsing` adds a small breathing dot to the left of the label — for live, streaming, or "now" status. Reserve it for actually-live signals; a stale "pulsing" badge is more dishonest than helpful.
+
+<InlineCodeExample>
+  <HStack gap="sm">
+    <Badge tone="success" pulsing>Live</Badge>
+    <Badge tone="info" pulsing variant="solid">Recording</Badge>
+    <Badge tone="warning" pulsing variant="outline">Preview</Badge>
+  </HStack>
+</InlineCodeExample>
+
+## Eyebrow caps
+
+`caps` uppercases the label, widens the tracking, and drops to the small size — the classic "eyebrow" treatment above a headline.
+
+<InlineCodeExample>
+  <VStack gap="sm">
+    <Badge tone="primary" caps>New in v2</Badge>
+    <Heading level={2}>Faster snapshot diffs</Heading>
+  </VStack>
+</InlineCodeExample>
+
+## Polymorphic
+
+`Badge` defaults to `<span>` so it composes inside inline text. `as` swaps in
+another non-interactive element when the meaning calls for it, such as
+`<strong>` for a status that must be emphasised. A Badge is never a link or a
+button: a value people act on is a [Tag](?path=/docs/functional-tag--docs), and
+a count on an action goes inside that action's `Button` ("Filters 3").
+
+## Composition
+
+Pair a `Badge` with body copy or list rows to communicate state at a glance.
+
+<InlineCodeExample>
+  <VStack gap="sm">
+    <HStack gap="sm" align="center">
+      <Text>auth-service</Text>
+      <Badge tone="success" pulsing>Live</Badge>
+    </HStack>
+    <HStack gap="sm" align="center">
+      <Text>billing-worker</Text>
+      <Badge tone="warning">Degraded</Badge>
+    </HStack>
+    <HStack gap="sm" align="center">
+      <Text>email-relay</Text>
+      <Badge tone="error" variant="solid">Down</Badge>
+    </HStack>
+  </VStack>
+</InlineCodeExample>
+
+## Accessibility
+
+- Tone is conveyed by color *and* text — never use a tone alone to signal state. The `dot` variant always keeps its text; the dot itself is `aria-hidden`.
+- A colour the theme added gets the same contrast-checked palette as a built-in tone, but check your own colours in light and dark mode.
+- Reduced-motion users see a static status dot.
+- The pulsing dot carries `aria-hidden="true"`; the meaning lives in the label text.
+- `solid` and `subtle` variants are checked via `getMinContrastTextColor` / `themeHelpers.darken` to hit WCAG AA on every tone.
+- When used as a link or button (`as="a" / as="button"`), the underlying element supplies the focus ring and keyboard semantics.
+
+## Common pitfalls
+
+- **Don't use `dot` for the one status that matters.** A dot is quiet on purpose. The status of the record a page is about is a `subtle` or `solid` pill.
+- **Don't pulse a badge that isn't actually live.** If the data is from a 5-minute-old poll, the breathing dot lies. Use `subtle` instead.
+- **Don't pair `solid` with long copy.** Solid badges scream — reserve them for one or two words.
+- **Don't make a Badge interactive.** Badges report; they never link, toggle or remove. Something people pick or remove is a `Tag`; a count on an action sits inside the `Button`.
+- **Don't use a Badge for a value or category.** "Waikato Chapter" as a chosen filter, or a record's category, is a `Tag`.
+- **Don't use Badge for flow-level messages.** A failed build summary belongs in an `Alert`, not a badge.

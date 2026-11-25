@@ -1,0 +1,241 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as LineChartStories from "./line-chart.stories.tsx";
+import meta from "./line-chart.stories.tsx";
+import { LineChart } from "./line-chart.tsx";
+import { Heading } from "../../functional-primitive/heading/heading.tsx";
+import { Text } from "../../functional-primitive/text/text.tsx";
+import { Card } from "../../layout/card/card.tsx";
+import { Block } from "../../layout-primitive/block/block.tsx";
+import { Grid } from "../../layout-primitive/grid/grid.tsx";
+import { VStack } from "../../layout-primitive/vstack/vstack.tsx";
+import { Presentation } from "../../style/presentation/presentation.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# LineChart
+
+<ResizableCanvas of={LineChartStories.Default} defaultRecipe="block" defaultHeight={380} />
+
+`LineChart` shows how one to eight measures change over an ordered axis, usually time: dues collected by month, sightings logged by week. Each series is one line; hover, or focus the plot and use the arrow keys, to read every value at a point, and the "Table view" toggle swaps the plot for a table of all of them. It is not for unordered categories (chapters, account types): a line between Auckland and Otago implies a trend that isn't there, so use a [BarChart](?path=/docs/functional-bar-chart--docs). For volumes where the area under the line means "how much", use an [AreaChart](?path=/docs/functional-area-chart--docs); for a trend beside a single figure, a [Sparkline](?path=/docs/functional-sparkline--docs).
+
+<Controls />
+
+## Data and series
+
+Pass one row per point in time, in the order to plot them. `xKey` names the field on the axis and each entry in `series` names a numeric field and its `label`. The labels appear in the legend, tooltip and table, so write them as people say them ("Swamp Fund levy", not `paye_total`). `xLabel` heads the first table column, and `formatValue` gives values their unit everywhere they appear, including the value axis.
+
+<InlineCodeExample>
+  <Block width="640px">
+    <LineChart
+      title="Dues collected by month"
+      description="NZD, first half of 2026"
+      data={[
+        { month: "Jan", levy: 58300, dues: 41200 },
+        { month: "Feb", levy: 57100, dues: 39800 },
+        { month: "Mar", levy: 60400, dues: 45600 },
+        { month: "Apr", levy: 59800, dues: 43100 },
+        { month: "May", levy: 61200, dues: 47900 },
+        { month: "Jun", levy: 63900, dues: 52300 },
+      ]}
+      xKey="month"
+      xLabel="Month"
+      series={[
+        { key: "levy", label: "Swamp Fund levy" },
+        { key: "dues", label: "Annual dues" },
+      ]}
+      formatValue={(v) => v.toLocaleString("en-NZ", { style: "currency", currency: "NZD", maximumFractionDigits: 0 })}
+    />
+  </Block>
+</InlineCodeExample>
+
+A missing value (`null` or `undefined`) leaves a gap in the line rather than dropping to zero, and shows as "—" in the table. Don't fill gaps with `0`: the line would plunge to a value nobody recorded.
+
+## Curve
+
+`curve="linear"` (the default) draws straight segments between points and never invents values between them. Use `monotone` for dense series where the joins look jagged; it smooths without overshooting a point. Use `step` for levels that change at a moment and hold until the next change: a late fee rate, a plan tier, a threshold.
+
+<InlineCodeExample>
+  <Block width="640px">
+    <LineChart
+      title="Late fee rate"
+      description="Rate charged on overdue dues, per cent"
+      curve="step"
+      showPoints
+      data={[
+        { quarter: "Q1 2025", rate: 10.88 },
+        { quarter: "Q2 2025", rate: 10.88 },
+        { quarter: "Q3 2025", rate: 10.12 },
+        { quarter: "Q4 2025", rate: 9.89 },
+        { quarter: "Q1 2026", rate: 9.21 },
+        { quarter: "Q2 2026", rate: 9.21 },
+      ]}
+      xKey="quarter"
+      xLabel="Quarter"
+      series={[{ key: "rate", label: "Late fee rate" }]}
+      formatValue={(v) => `${v.toFixed(2)}%`}
+    />
+  </Block>
+</InlineCodeExample>
+
+## Points
+
+`showPoints` marks every reading with a dot. Use it for sparse series, a dozen points or fewer, where each reading matters and the reader may want to aim for one. Leave it off for dense series: dots crowd the line and hide its shape. Each dot carries a surface-coloured ring (`--chart-mark-gap`) so it stands off the line beneath.
+
+## Colours and slots
+
+Series take the eight categorical palette slots in order: the first series gets slot 1, the second slot 2, and so on. Colour follows the series, so when a filter removes one series the others should not change colour. Pin them with `slot`:
+
+<InlineCodeExample>
+  <Block width="640px">
+    <LineChart
+      title="Night-watch kit hire by month"
+      description="Slot 3 matches the colour it has beside Swamp Fund levy and Annual dues"
+      data={[
+        { month: "Jan", kit: 22800 },
+        { month: "Feb", kit: 24100 },
+        { month: "Mar", kit: 31900 },
+        { month: "Apr", kit: 29400 },
+        { month: "May", kit: 27600 },
+        { month: "Jun", kit: 35200 },
+      ]}
+      xKey="month"
+      xLabel="Month"
+      series={[{ key: "kit", label: "Night-watch kit hire", slot: 3 }]}
+    />
+  </Block>
+</InlineCodeExample>
+
+The palette has eight slots and never cycles. Pass more than eight series and only the first eight are drawn, with a console warning. Fold the smaller series into an "Other" series, or split the chart into small multiples.
+
+## Height and small multiples
+
+The plot height follows the [Presentation](?path=/docs/style-presentation--docs) register: 160px in `compact`, 240px in `default`, 320px in `large` and 400px in `hero`. Width is the container's. A `compact` register suits small multiples: one chart per measure in a `Grid`, each with a single series, which reads better than one chart with many crossing lines. Give each the same scale of data so the reader compares like with like.
+
+<InlineCodeExample>
+  <Presentation register="compact">
+    <Grid columns={{ mobile: 1, tablet: 2 }} gap="md">
+      <LineChart
+        title="Auckland sightings"
+        data={[
+          { week: "W1", sightings: 3900 },
+          { week: "W2", sightings: 4100 },
+          { week: "W3", sightings: 4300 },
+          { week: "W4", sightings: 4820 },
+        ]}
+        xKey="week"
+        xLabel="Week"
+        series={[{ key: "sightings", label: "Sightings" }]}
+      />
+      <LineChart
+        title="Wellington sightings"
+        data={[
+          { week: "W1", sightings: 2300 },
+          { week: "W2", sightings: 2250 },
+          { week: "W3", sightings: 2180 },
+          { week: "W4", sightings: 2194 },
+        ]}
+        xKey="week"
+        xLabel="Week"
+        series={[{ key: "sightings", label: "Sightings" }]}
+      />
+    </Grid>
+  </Presentation>
+</InlineCodeExample>
+
+## Loading and empty
+
+`loading` holds the plot's height with a skeleton so the layout doesn't jump when the data arrives, and marks the figure `aria-busy`. With no rows the plot area shows "No data to show"; pass `empty` to say why ("No sightings logged in this period"). The table toggle is hidden in both states.
+
+## In a card
+
+On a dashboard the card usually carries the heading. Keep `title` (it still names the chart for screen readers and captions the table view) and set `hideTitle` so the heading isn't said twice.
+
+<InlineCodeExample>
+  <Block width="640px">
+    <Card>
+      <VStack gap="md">
+        <VStack gap="xs">
+          <Heading level={3}>Dues collected</Heading>
+          <Text tone="secondary">The Swamp Fund levy has grown every month since March.</Text>
+        </VStack>
+        <LineChart
+          title="Dues collected by month"
+          hideTitle
+          data={[
+            { month: "Jan", levy: 58300, dues: 41200 },
+            { month: "Feb", levy: 57100, dues: 39800 },
+            { month: "Mar", levy: 60400, dues: 45600 },
+            { month: "Apr", levy: 59800, dues: 43100 },
+          ]}
+          xKey="month"
+          xLabel="Month"
+          series={[
+            { key: "levy", label: "Swamp Fund levy" },
+            { key: "dues", label: "Annual dues" },
+          ]}
+        />
+      </VStack>
+    </Card>
+  </Block>
+</InlineCodeExample>
+
+## Customising
+
+The chart reads these custom properties from its root `<figure>`. Set them on the chart itself, through `style` or `className`; setting them on a parent has no effect because the figure defines its own defaults.
+
+| Variable | Controls | Default |
+| --- | --- | --- |
+| `--chart-series-1` … `--chart-series-8` | The colour of each palette slot: lines, dots, legend and tooltip keys | `--squonk-roles-color-data-series1` … `8` |
+| `--chart-mark-gap` | The ring around dots, so they stand off the line | `--squonk-components-chart-mark-gap` (the default background) |
+| `--chart-area-opacity` | The wash under an area (AreaChart only) | `--squonk-components-chart-area-opacity` (0.12) |
+| `--chart-gridline` | Horizontal gridlines | `--squonk-components-chart-gridline` (default border) |
+| `--chart-axis-line` | Axis lines and the vertical hover cursor | `--squonk-components-chart-axis-line` (strong border) |
+| `--chart-cursor` | The band that follows the pointer (BarChart) | `--squonk-components-chart-cursor` (subtle background) |
+
+The one you are most likely to need is `--chart-mark-gap`: it defaults to the default background, so on a different surface, such as a `filled` Card, set it to that surface's colour or the rings show as white halos.
+
+<InlineCodeExample>
+  <Card variant="filled">
+    <LineChart
+      title="Annual dues collected by month"
+      style={{ "--chart-mark-gap": "var(--squonk-roles-color-page)" }}
+      showPoints
+      data={[
+        { month: "Jan", dues: 41200 },
+        { month: "Feb", dues: 39800 },
+        { month: "Mar", dues: 45600 },
+        { month: "Apr", dues: 43100 },
+      ]}
+      xKey="month"
+      xLabel="Month"
+      series={[{ key: "dues", label: "Annual dues" }]}
+    />
+  </Card>
+</InlineCodeExample>
+
+Prefer `slot` to overriding `--chart-series-*`: the palette is validated for colour-vision deficiency in light and dark mode, and a hand-picked colour is not.
+
+## Accessibility
+
+- The chart is a `<figure>` named by `title` and described by `description`. `title` is required even with `hideTitle`, which hides it visually only.
+- The "Table view" toggle is a toggle button (`aria-pressed`) that swaps the plot for a table of every value, captioned with `title`. It is the dependable way to read exact values with a keyboard, a screen reader or a magnifier.
+- The plot is focusable (`role="application"`). Arrow keys step through the points and show the tooltip for each, so nothing is reachable only by hovering.
+- Colour never works alone. Two or more series get a legend, the tooltip names each series, and the table labels every column. Light-mode slots 3 to 5 are under 3:1 contrast on white, which is why the legend and table view are always there.
+- Text is never drawn in a series colour: titles, ticks, legend labels and tooltip values stay in text colours. Don't colour a heading or caption to match a line.
+- Write `formatValue` so values are read with their unit ("$58,300"), not as bare numbers.
+
+## Common pitfalls
+
+- **Two value axes.** The chart has one value axis and no dual-axis option. Plotting dollars against a count on one chart invites false correlations; use two charts side by side.
+- **A line across unordered categories.** Chapters or dues types have no order to trend across. Use a BarChart.
+- **More than eight series.** Only the first eight are drawn. Fold the long tail into "Other", or use small multiples.
+- **A rainbow of series.** Every series competes for attention. Highlight the one or two that matter and fold the rest, or move them to their own chart.
+- **Colours shifting under a filter.** Without `slot`, removing the first series hands its colour to the next. Pin slots when series can be toggled.
+- **Colouring text to match a series.** Series colours are for marks; text in slots 3 to 5 fails contrast. Name the series in words.
+- **Filling gaps with zero.** A missing month is `null`, not `0`.
+- **Smoothing sparse data.** `monotone` on six points suggests readings between them that don't exist. Use `linear` with `showPoints`.

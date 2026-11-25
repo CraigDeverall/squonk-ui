@@ -1,0 +1,123 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "./documentation-imports/index.ts";
+
+<Meta title="Contributing/Developing the library" />
+
+<HideSbBar />
+
+# Developing the library
+
+This page is for changing `@squonkstack/ui` itself. To build an app with it, start at
+[Getting started](?path=/docs/get-started-getting-started--docs).
+
+The repository holds two packages, released together at one version:
+`@squonkstack/ui`, the component library, and `packages/ui-mcp` (`@squonkstack/ui-mcp`),
+the MCP server and setup command for coding agents in apps.
+
+## Set up
+
+```sh
+git clone https://github.com/CraigDeverall/squonk-ui.git
+cd squonk-ui
+nvm use        # the Node version in .nvmrc
+npm ci
+npm run dev    # Storybook at http://localhost:6006
+```
+
+## How the library is built
+
+- **Behaviour from React Aria Components** for every component it has a primitive
+  for, with the library's own prop names. Plain HTML only where React Aria has
+  nothing. TanStack Table handles table data; TanStack Form with Zod handles forms.
+- **Styles are CSS Modules** wrapped in `@layer dt.components`, keyed on React
+  Aria's state attributes (`data-selected`, `data-focus-visible`…).
+- **Every value a component uses is a purpose token** (`--squonk-roles-*`) or a
+  component token (`--squonk-components-*`), never a raw scale step. `npm run lint`
+  enforces it. Add a missing purpose to `src/theme/purpose.ts` with its reason;
+  see [Purpose tokens](?path=/docs/foundations-purpose-tokens--docs).
+- **Public props carry JSDoc.** Agents in apps learn the API from the shipped
+  `.d.ts` files.
+
+## Checks
+
+Run what your change touches:
+
+```sh
+npm run typecheck && npm run typecheck:tests   # types
+npm run lint              # lint, including the purpose-token rule
+npm run test:unit         # theme and utility unit tests
+npm run test:scripts      # script tests
+npm run catalog:check     # the design catalog is current (npm run catalog:generate)
+npm run build             # the package builds
+
+# The MCP package
+npm run typecheck -w @squonkstack/ui-mcp
+npm test -w @squonkstack/ui-mcp
+npm run test:e2e -w @squonkstack/ui-mcp
+```
+
+### Component tests
+
+Playwright component tests run in Docker, so snapshots match CI:
+
+```sh
+npm test            # every component test, in Chromium, Firefox, WebKit and mobile
+npm run test:update # regenerate snapshots after an intended visual change
+```
+
+Only one project stack may run in local Docker Desktop at a time, so check before
+starting. Update snapshots only for changes you meant, and look at each new image
+before committing it; the `visual-regression` skill walks through triage. The
+[test report](?path=/docs/contributing-test-report--docs) shows the latest run.
+
+## Working with a coding agent
+
+`AGENTS.md` (imported by `CLAUDE.md`) tells agents how this repository works.
+Skills in `.claude/skills` guide each kind of change; load only the ones the task
+needs.
+
+- **A new component:** `determine-component-intent`, `naming-conventions`, `pick-base-element`, `scaffold-component`
+- **Changing a component's behaviour or API:** `inspect-snapshots`, `non-breaking-refactor`
+- **Wrapping an outside library:** `research-component-patterns`, `wrap-third-party-component`
+- **Layout, containment or responsiveness:** `containment-behavior`, `responsive-conventions`
+- **Theme or tokens:** `theme-scratchpad`, `use-tokens`, `add-token`
+- **Stories and docs:** `write-stories`, `write-mdx-docs`
+- **Keyboard, focus and announcements:** `accessibility-conventions`
+- **Tests:** `test-strategy`, `visual-regression`, `write-unit-tests`
+- **Committing and releasing:** `non-breaking-refactor`, `commit-and-release`
+
+`skills/use-squonk-ui/SKILL.md` is different: it ships in the package for agents
+building apps. Update it, and the catalog, in the same pull request as any change
+that adds, renames or removes a public component, prop or pattern.
+
+## Adding a component
+
+1. Check it doesn't exist already, and that it isn't one app's business logic
+   (`determine-component-intent`).
+2. Scaffold it with the generator (`scaffold-component`): component, CSS module,
+   stories, MDX page and test, in the right folder.
+3. Build it on React Aria where React Aria has the primitive, bind its styles to
+   purpose tokens, and give every public prop JSDoc.
+4. Write its stories and docs page, and test its behaviour and appearance.
+5. Pin its story `id` and add it to its sidebar group, then run
+   `npm run catalog:generate` and update `skills/use-squonk-ui/SKILL.md`.
+
+## Commits and releases
+
+Commits follow Conventional Commits, checked by commitlint: `feat(button): …`,
+`fix(select): …`, with `!` and a `BREAKING CHANGE:` footer when consumers must
+change their code. Choose the type by its effect on the package. Pull requests land
+as merge commits, so every commit on a branch counts toward the release.
+
+Open a pull request against `main` on GitHub; nobody pushes to `main` directly.
+Merge it when its checks pass and a maintainer has approved it.
+
+Each merge runs semantic-release. When the commits call for a release (`feat:`,
+`fix:`, `perf:` or a breaking change), it publishes `@squonkstack/ui` and `@squonkstack/ui-mcp`
+together at one version to the public npm registry with provenance, tags it and
+creates a GitHub Release with the notes. It commits nothing back to `main`. This
+Storybook is rebuilt after every merge and deployed to ui.squonkstack.io with
+GitHub Pages.
+
+`DESIGN_SYSTEM.md` holds the design principles and compatibility rules, and
+`REVIEW_GUIDE.md` what reviewers treat as must-fix.

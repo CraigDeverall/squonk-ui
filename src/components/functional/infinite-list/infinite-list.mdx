@@ -1,0 +1,104 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as InfiniteListStories from "./infinite-list.stories.tsx";
+import meta from "./infinite-list.stories.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# InfiniteList
+
+<ResizableCanvas of={InfiniteListStories.Default} />
+
+`InfiniteList` loads more as people scroll, with no button to press. It suits
+feeds people browse from newest to oldest (membership activity, notifications, a
+case's history). For records people search for and come back to ("it was on
+page 3"), use `Pagination` or a `Table` with `pageSize`.
+
+```tsx
+import { InfiniteList } from "@squonkstack/ui/infinite-list";
+
+<InfiniteList
+  aria-label="Account activity"
+  items={activity}
+  getKey={(item) => item.id}
+  renderItem={(item) => <ActivityRow item={item} />}
+  hasMore={hasMore}
+  loading={loading}
+  error={error}
+  onLoadMore={fetchNextPage}
+/>
+```
+
+You own the data: `onLoadMore` fetches the next page and appends it to `items`,
+sets `loading` while it runs, and sets `hasMore` to `false` at the end.
+
+<Controls />
+
+## When it loads
+
+An observer watches a marker after the last item and calls `onLoadMore` once the
+marker is within `threshold` (600px) of the screen, so the next page usually
+arrives before people reach the end. It never calls while `loading`, after an
+`error`, or once `hasMore` is false. When a page is too short to fill the screen,
+it loads again straight away.
+
+Inside a scrolling container (a `ScrollBox`, a `Drawer` body, a panel with
+`overflow: auto`), the list watches that container instead of the page, so it
+loads as the container scrolls. The demos on this page scroll inside a 420px box.
+
+## Live arrivals
+
+When items can arrive while people read, such as live updates from someone
+else, set `animateArrivals`. An item that joins anywhere but the end slides in
+and flashes the highlight colour once (`Motion.Presence` and
+`Motion.Highlight`), and the items below glide to make room (`Motion.Layout`).
+Pages loaded at the end, and a list replaced as a whole by a new search, just
+show. Reduced motion keeps only the colour fade.
+
+<ResizableCanvas of={InfiniteListStories.LiveArrivals} />
+
+## Errors
+
+A failed load sets `error`. Loading stops, the message is announced, and a
+"Try again" button appears: the only button the list ever shows.
+
+<ResizableCanvas of={InfiniteListStories.LoadError} />
+
+## The end, and nothing at all
+
+Once `hasMore` is false the list says "You've reached the end" (`endText`).
+With no items, it shows `emptyState`.
+
+<ResizableCanvas of={InfiniteListStories.ReachesTheEnd} />
+
+<ResizableCanvas of={InfiniteListStories.Empty} />
+
+## Accessibility
+
+Infinite scrolling is hard for keyboard and screen-reader users, so this follows
+the WAI-ARIA **feed** pattern:
+
+- The list is a `feed` named by `aria-label`, and `aria-busy` while loading. Each
+  item is an `<article>` with `aria-posinset` and `aria-setsize` ("4 of 120";
+  pass `total` when you know it).
+- **Page Down** and **Page Up** move focus between articles.
+- **Ctrl+End** and **Ctrl+Home** jump out of the feed, so the page footer and
+  everything after the list stay reachable however much has loaded.
+- A polite status line announces "Loading more…" and then "Loaded 12 more".
+- Give each item a heading so screen-reader users can skim with heading navigation.
+
+## Common pitfalls
+
+- **Don't use it for search results or tables people act on.** They lose their place
+  when they come back, and can't tell anyone where a record was.
+- **Don't put essential links in the page footer below an infinite list.** People
+  using a mouse may never reach it; keep them in the header or navigation.
+- **Don't load on every scroll event.** Leave the timing to the list; just append
+  the page in `onLoadMore`.
+
+## UX guidance
+
+- [Tables and grids](?path=/docs/patterns-tables-and-grids--docs)

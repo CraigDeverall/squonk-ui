@@ -1,0 +1,45 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../documentation-imports/index.ts";
+import { Do, DoDont, Dont, Example } from "./pattern-blocks.tsx";
+import { EmptyStatesExample, FailedLoadExample, MisleadingEmptyExample } from "./pattern-examples.tsx";
+
+<Meta title="Patterns/Empty and error states" />
+
+<HideSbBar />
+
+# Empty and error states
+
+An empty screen is a message. First use, no matches, no access and a failed load
+each mean something different, so each needs its own words and its own next
+step. Compose [EmptyState](?path=/docs/layout-empty-state--docs) with a
+[Button](?path=/docs/functional-button--docs) or [Link](?path=/docs/functional-link--docs).
+
+<Example caption="First use, no matches and a failed load. “Create”, “Clear search” and “Try again” are not interchangeable.">
+  <EmptyStatesExample />
+</Example>
+
+## The rules
+
+- **Say what happened, then the next useful step.** Keep the title short.
+- **Never show a failed load as “nothing here”.** It tells people their records
+  are gone.
+- **Keep what's already on screen during a refresh.** Show the empty state only
+  once you know there's nothing.
+- **Fit the space.** In a small card or table, drop the icon and use one action.
+  Pass it to [Table](?path=/docs/functional-table--docs) as `empty`.
+
+<DoDont>
+  <Do caption="The load failed, so it says so and offers to try again.">
+    <FailedLoadExample />
+  </Do>
+  <Dont caption="The same failure shown as first use: people think their sightings have gone.">
+    <MisleadingEmptyExample />
+  </Dont>
+</DoDont>
+
+## Related
+
+- [Onboarding and first run](?path=/docs/patterns-onboarding-and-first-run--docs)
+- [Loading and progress](?path=/docs/patterns-loading-and-progress--docs)
+- [Illustrations, icons and images](?path=/docs/patterns-illustrations-icons-and-images--docs)
+- [Writing for the interface](?path=/docs/patterns-writing-for-the-interface--docs)

@@ -1,0 +1,87 @@
+/* The Components overview gallery: a grid of cards, each a live example
+   above the component's name and job. */
+.root {
+  display: grid;
+  gap: var(--squonk-roles-space-overlay-inset);
+  margin-top: var(--squonk-roles-space-overlay-gap);
+}
+
+.group {
+  display: grid;
+  gap: var(--squonk-roles-space-surface-gap);
+}
+
+.groupTitle {
+  margin: 0;
+  font-family: var(--squonk-roles-type-heading-font);
+  font-size: var(--squonk-roles-type-title);
+  font-weight: var(--squonk-roles-type-strong);
+  color: var(--squonk-roles-color-text);
+}
+
+.intro {
+  margin: 0;
+  font-family: var(--squonk-roles-type-font);
+  color: var(--squonk-roles-color-text-supporting);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+  gap: var(--squonk-roles-space-surface-inset);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card {
+  display: grid;
+  grid-template-rows: minmax(7rem, auto) auto;
+  min-width: 0;
+  border: var(--squonk-roles-border-width) solid var(--squonk-roles-color-divider);
+  border-radius: var(--squonk-roles-radius-surface);
+  background-color: var(--squonk-roles-color-surface);
+  overflow: hidden;
+}
+
+.example {
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  padding: var(--squonk-roles-space-surface-inset);
+  background-color: var(--squonk-roles-color-page);
+  overflow: hidden;
+}
+
+/* Wide examples (tables, forms, fields) take the card's width. */
+.example > * { max-width: 100%; }
+
+/* A QR code fills its parent, so give it a small one. */
+.qr { width: 7rem; }
+
+.text {
+  display: grid;
+  gap: var(--squonk-roles-space-text-gap);
+  padding: var(--squonk-roles-space-surface-gap) var(--squonk-roles-space-surface-inset) var(--squonk-roles-space-surface-inset);
+  border-top: var(--squonk-roles-border-width) solid var(--squonk-roles-color-divider);
+  font-family: var(--squonk-roles-type-font);
+}
+
+.name {
+  font-weight: var(--squonk-roles-type-strong);
+  color: var(--squonk-roles-color-link);
+  text-decoration: none;
+}
+
+.name:hover { text-decoration: underline; }
+
+.name:focus-visible {
+  outline: var(--squonk-roles-border-focus-width) solid var(--squonk-roles-color-focus-ring);
+  outline-offset: var(--squonk-roles-border-focus-offset);
+  border-radius: var(--squonk-roles-radius-item);
+}
+
+.purpose {
+  font-size: var(--squonk-roles-type-meta);
+  color: var(--squonk-roles-color-text-supporting);
+}

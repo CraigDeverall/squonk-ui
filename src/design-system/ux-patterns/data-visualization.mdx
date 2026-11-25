@@ -1,0 +1,445 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../documentation-imports/index.ts";
+import { Example } from "./pattern-blocks.tsx";
+import {
+  AreaChart,
+  BarChart,
+  Card,
+  DonutChart,
+  Grid,
+  Heading,
+  HStack,
+  LineChart,
+  Meter,
+  NetworkGraph,
+  NetworkGraphLegend,
+  ProgressBar,
+  ScatterChart,
+  Sparkline,
+  Stat,
+  Table,
+  Text,
+  VStack,
+} from "../../components";
+
+export const chapterNodes = [
+  { id: "auckland", label: "Auckland Chapter", kind: "chapter" },
+  { id: "waikato", label: "Waikato Chapter", kind: "chapter" },
+  { id: "wellington", label: "Wellington Chapter", kind: "chapter" },
+  { id: "fund", label: "Swamp Fund", kind: "fund" },
+  { id: "aroha", label: "Aroha Ngata", kind: "member" },
+  { id: "marcus", label: "Marcus Olu", kind: "member" },
+  { id: "mei", label: "Mei Lin Chen", kind: "member" },
+  { id: "tama", label: "Tama Rāwiri", kind: "member" },
+];
+
+export const chapterLinks = [
+  { source: "fund", target: "auckland", label: "Funds 50%", kind: "funds" },
+  { source: "fund", target: "waikato", label: "Funds 30%", kind: "funds" },
+  { source: "fund", target: "wellington", label: "Funds 20%", kind: "funds" },
+  { source: "aroha", target: "auckland", label: "Leads", kind: "leads" },
+  { source: "marcus", target: "waikato", label: "Leads", kind: "leads" },
+  { source: "mei", target: "wellington", label: "Leads", kind: "leads" },
+  { source: "tama", target: "waikato", label: "Shares maps", kind: "shares" },
+  { source: "tama", target: "wellington", label: "Shares maps", kind: "shares" },
+];
+
+export const chapterNodeKinds = {
+  chapter: { label: "Chapter" },
+  fund: { label: "Fund", shape: "diamond" },
+  member: { label: "Member", shape: "square" },
+};
+
+export const chapterLinkKinds = {
+  funds: { label: "Funds" },
+  leads: { label: "Leads" },
+  shares: { label: "Shares maps", variant: "dashed" },
+};
+
+<Meta title="Patterns/Data visualization" />
+
+<HideSbBar />
+
+# Data visualization
+
+Start from the question people are asking of the data, then pick the form that
+answers it. Every chart in the library shares one frame: a required title, a
+table view of the same data, a legend once there are two series, a tooltip you
+can reach by keyboard, and one categorical palette. Your app owns the data, its
+formatting and the words.
+
+## Choosing a form
+
+| The question | Use |
+| --- | --- |
+| How many, how much, right now? | [Stat](?path=/docs/functional-stat--docs). Sometimes the right chart is a number. |
+| Which way has this figure been heading? | [Sparkline](?path=/docs/functional-sparkline--docs) beside the figure, or a Stat with `trend` |
+| How did it change over time? | [LineChart](?path=/docs/functional-line-chart--docs); [AreaChart](?path=/docs/functional-area-chart--docs) when the total volume matters, stacked to show what it is made of |
+| How do these categories compare? | [BarChart](?path=/docs/functional-bar-chart--docs); horizontal for a ranking or long category names |
+| What is the whole made of? | [DonutChart](?path=/docs/functional-donut-chart--docs) for two to five parts; a BarChart for more, or when parts need comparing with each other |
+| Do these two measures move together? | [ScatterChart](?path=/docs/functional-scatter-chart--docs) |
+| How full is it, against a known limit? | [Meter](?path=/docs/functional-meter--docs) |
+| How far along is this task? | [ProgressBar](?path=/docs/functional-progress-bar--docs). It tracks work toward done, not a measure, so it carries no warning levels. |
+| How are these things connected to each other? | [NetworkGraph](?path=/docs/functional-network-graph--docs), for up to about 150 things linked many-to-many. To look one of them up, use a Table. |
+| What exactly is the value for this row? | [Table](?path=/docs/functional-table--docs). If people will look values up, a chart is the wrong tool. |
+
+A chart shows shape: rising, falling, bigger, smaller, clustered. If no one will
+act on the shape, show the numbers.
+
+## Every form, by example
+
+One example of each, all from the same Squonk Society data, so you can compare
+them side by side. Each component's own page covers its options.
+
+### Figures and trends
+
+[Stat](?path=/docs/functional-stat--docs) leads with the number;
+[Sparkline](?path=/docs/functional-sparkline--docs) shows which way it has been
+heading in the space of a word, beside a figure or in a table cell.
+
+<Example caption="A Stat with its change and trend; Sparklines beside the figures in a list of chapters.">
+  <Grid columns={{ mobile: 1, tablet: 2 }} gap="md">
+    <Card>
+      <Stat label="Members" value="2,418" change={0.034} changeLabel="vs last quarter" trend={[2210, 2264, 2301, 2338, 2392, 2418]} trendLabel="Members, last 6 quarters" />
+    </Card>
+    <Card>
+      <VStack gap="sm">
+        <Text variant="eyebrow">Sightings, last 12 weeks</Text>
+        <HStack gap="md" align="center" justify="between">
+          <Text>Auckland</Text>
+          <HStack gap="sm" align="center">
+            <Sparkline data={[120, 132, 128, 151, 149, 170, 168, 182, 195, 191, 214, 230]} label="Auckland sightings, last 12 weeks" slot={2} />
+            <Text weight="bold">230</Text>
+          </HStack>
+        </HStack>
+        <HStack gap="md" align="center" justify="between">
+          <Text>Wellington</Text>
+          <HStack gap="sm" align="center">
+            <Sparkline data={[96, 92, 99, 94, 90, 88, 91, 85, 83, 86, 80, 78]} label="Wellington sightings, last 12 weeks" slot={2} />
+            <Text weight="bold">78</Text>
+          </HStack>
+        </HStack>
+      </VStack>
+    </Card>
+  </Grid>
+</Example>
+
+### Change over time
+
+[LineChart](?path=/docs/functional-line-chart--docs) for how a figure moved;
+[AreaChart](?path=/docs/functional-area-chart--docs) when the total matters too.
+Stack the areas to show what the total is made of.
+
+<Example caption="Two series on one value axis, then the same kind of data stacked to show the total and its parts.">
+  <Grid columns={{ mobile: 1, desktop: 2 }} gap="md">
+    <LineChart
+      title="Night-watch turnout by month"
+      description="Members attending, 2026"
+      data={[
+        { month: "Jun", auckland: 52, waikato: 31 },
+        { month: "Jul", auckland: 58, waikato: 35 },
+        { month: "Aug", auckland: 56, waikato: 40 },
+        { month: "Sep", auckland: 63, waikato: 44 },
+        { month: "Oct", auckland: 71, waikato: 49 },
+      ]}
+      xKey="month"
+      xLabel="Month"
+      series={[
+        { key: "auckland", label: "Auckland" },
+        { key: "waikato", label: "Waikato" },
+      ]}
+    />
+    <AreaChart
+      title="Sightings logged by channel"
+      description="Sightings per week, first quarter"
+      stacked
+      data={[
+        { week: "W1", online: 82, lead: 31, paper: 12 },
+        { week: "W2", online: 90, lead: 29, paper: 11 },
+        { week: "W3", online: 97, lead: 34, paper: 9 },
+        { week: "W4", online: 104, lead: 33, paper: 8 },
+        { week: "W5", online: 118, lead: 36, paper: 8 },
+        { week: "W6", online: 126, lead: 38, paper: 6 },
+      ]}
+      xKey="week"
+      xLabel="Week"
+      series={[
+        { key: "online", label: "Online" },
+        { key: "lead", label: "Chapter lead" },
+        { key: "paper", label: "Paper" },
+      ]}
+    />
+  </Grid>
+</Example>
+
+### Comparing categories and parts of a whole
+
+[BarChart](?path=/docs/functional-bar-chart--docs) compares categories;
+[DonutChart](?path=/docs/functional-donut-chart--docs) shows the share of a
+whole, for two to five parts.
+
+<Example caption="Grouped bars compare two seasons per chapter; the donut splits one month's dues by type.">
+  <Grid columns={{ mobile: 1, desktop: 2 }} gap="md">
+    <BarChart
+      title="Sightings by chapter"
+      description="2025 and 2026 seasons"
+      data={[
+        { chapter: "Auckland", s2025: 431, s2026: 482 },
+        { chapter: "Wellington", s2025: 240, s2026: 219 },
+        { chapter: "Canterbury", s2025: 171, s2026: 198 },
+        { chapter: "Waikato", s2025: 120, s2026: 143 },
+      ]}
+      xKey="chapter"
+      xLabel="Chapter"
+      series={[
+        { key: "s2025", label: "2025" },
+        { key: "s2026", label: "2026" },
+      ]}
+    />
+    <DonutChart
+      title="Dues collected by type"
+      description="October 2026, NZD"
+      data={[
+        { type: "Annual dues", amount: 38400 },
+        { type: "Swamp Fund levy", amount: 26100 },
+        { type: "Night-watch kit hire", amount: 17900 },
+        { type: "Field-trip deposit", amount: 4200 },
+      ]}
+      nameKey="type"
+      valueKey="amount"
+      nameLabel="Dues type"
+      valueLabel="Collected"
+      formatValue={(v) => `$${(v / 1000).toFixed(1)}K`}
+    />
+  </Grid>
+</Example>
+
+### Two measures together
+
+[ScatterChart](?path=/docs/functional-scatter-chart--docs) plots one thing per
+dot against two measures, to show whether they move together.
+
+<Example caption="Each dot is one membership: how late its dues are against how much is owed.">
+  <ScatterChart
+    title="Overdue dues"
+    description="Each dot is one membership"
+    series={[
+      {
+        label: "Wanderers",
+        data: [
+          { name: "Aroha Ngata", daysLate: 4, owing: 50 },
+          { name: "James Whitfield", daysLate: 12, owing: 120 },
+          { name: "Mei Lin Chen", daysLate: 21, owing: 180 },
+          { name: "Tama Rāwiri", daysLate: 33, owing: 310 },
+          { name: "Sofia Petrov", daysLate: 45, owing: 390 },
+        ],
+      },
+      {
+        label: "Keepers",
+        data: [
+          { name: "Chen Household", daysLate: 8, owing: 240 },
+          { name: "Olu Whānau", daysLate: 19, owing: 520 },
+          { name: "Ngata Trust", daysLate: 30, owing: 760 },
+          { name: "Harbour Keepers", daysLate: 52, owing: 1180 },
+        ],
+      },
+    ]}
+    xKey="daysLate"
+    yKey="owing"
+    nameKey="name"
+    xLabel="Days late"
+    yLabel="Dues owing"
+    formatY={(v) => `$${v}`}
+  />
+</Example>
+
+### Against a limit, and toward done
+
+[Meter](?path=/docs/functional-meter--docs) shows a measure against a known
+limit, with warning and critical levels.
+[ProgressBar](?path=/docs/functional-progress-bar--docs) shows a task moving
+toward done. They look alike, so pick by what the bar means.
+
+<Example caption="The meter turns to warning past 48 GB; the progress bar has no levels, only how far the task has got.">
+  <Card>
+    <VStack gap="lg">
+      <Meter label="Field-photo storage" value={51} maxValue={60} valueLabel="51 of 60 GB" showValue warningAt={48} criticalAt={57} />
+      <ProgressBar label="Importing the 2026 sighting log" value={64} showValue />
+    </VStack>
+  </Card>
+</Example>
+
+### Connections
+
+[NetworkGraph](?path=/docs/functional-network-graph--docs) shows how things link
+to each other, many-to-many: clusters, hubs and things that stand alone. Give it
+a [NetworkGraphLegend](?path=/docs/functional-network-graph--docs) built from
+the same `nodeKinds` and `linkKinds`, so the key always matches the drawing.
+Shape, not only colour, tells the kinds apart.
+
+<Example caption="Who funds, leads and shares maps with each chapter. Select a node to see what it connects to.">
+  <VStack gap="sm">
+    <NetworkGraphLegend nodeKinds={chapterNodeKinds} linkKinds={chapterLinkKinds} nodes={chapterNodes} links={chapterLinks} />
+    <NetworkGraph
+      label="Who funds, leads and shares maps with each chapter"
+      style={{ height: 360 }}
+      nodes={chapterNodes}
+      links={chapterLinks}
+      nodeKinds={chapterNodeKinds}
+      linkKinds={chapterLinkKinds}
+    />
+  </VStack>
+</Example>
+
+### Exact values
+
+[Table](?path=/docs/functional-table--docs) when people look values up, compare
+them exactly or sort them. Every chart above already has a table view of its own
+data; reach for a Table when the table is the point.
+
+<Example caption="The same chapters as the bar chart, as numbers to read and sort.">
+  <Table
+    caption="Sightings by chapter, 2026 season"
+    rowKey="chapter"
+    columns={[
+      { key: "chapter", header: "Chapter" },
+      { key: "sightings", header: "Sightings", align: "right" },
+      { key: "verified", header: "Verified", align: "right" },
+    ]}
+    rows={[
+      { chapter: "Auckland", sightings: 482, verified: "93%" },
+      { chapter: "Wellington", sightings: 219, verified: "90%" },
+      { chapter: "Canterbury", sightings: 198, verified: "88%" },
+      { chapter: "Waikato", sightings: 143, verified: "91%" },
+    ]}
+  />
+</Example>
+
+## Colour
+
+- Series take the eight palette slots (`--squonk-roles-color-data-series1`…`8`) **in
+  order**. The order is fixed and checked for colour-vision deficiencies, so
+  don't reorder it or pick colours by taste.
+- Colour follows the series, never its position. When a series can be filtered
+  out, or the same measure appears in several charts on a page, pin it with
+  `slot` so it keeps its colour. A Sparkline or Stat trend that shows the same
+  measure takes the same slot.
+- Eight series is the most one chart colours apart. Before that, fold the small
+  ones into "Other" (DonutChart does this past seven parts) or split the chart
+  into small multiples.
+- Status colours (success, warning, error) are reserved for good and bad news:
+  Stat's change and Meter's levels. Don't use them as series colours.
+- Text is never drawn in a series colour. Labels, legends and tooltips use text
+  colours and a swatch beside them, so they stay readable for everyone.
+
+## One axis per chart
+
+Charts have one value axis. When two measures have different units or scales
+(dues collected and the number of sightings, say), draw **two charts** side by
+side with the same x axis, rather than one chart with an axis on each side. Dual
+axes invite people to read meaning into where the lines cross, and that point
+depends only on how the axes were scaled.
+
+## Dashboards
+
+Lead with a row of Stats in a [Grid](?path=/docs/layout-primitives-grid--docs) of
+[Cards](?path=/docs/layout-card--docs): the three or four figures people act on.
+Charts that explain them go below, each in its own Card. Give each card a
+`Heading` at the right level for the page and set `hideTitle` on the chart, so the
+heading isn't repeated; the chart's `title` still names it for screen readers and
+captions its table view.
+
+<Example caption="Figures first, then a chart for each question. Each chart's card has a heading; the chart's own title is hidden but still names it.">
+  <VStack gap="md">
+    <Grid columns={{ mobile: 1, tablet: 3 }} gap="md">
+      <Card>
+        <Stat label="Dues collected" value="$86.6K" change={0.052} changeLabel="vs October 2025" trend={[71, 74, 73, 78, 80, 79, 83, 86.6]} trendLabel="Dues collected, last 8 months" />
+      </Card>
+      <Card>
+        <Stat label="Overdue dues" value="$4.2K" change={0.08} changeLabel="vs last quarter" increaseIs="bad" trend={[3.4, 3.6, 3.5, 3.9, 4.0, 4.2]} trendLabel="Overdue dues, last 6 quarters" trendSlot={2} />
+      </Card>
+      <Card>
+        <Stat label="Sightings verified" value="91.2%" change={-0.004} changeLabel="vs last year" trend={[89, 90, 90.5, 91.6, 91.2]} trendLabel="Sightings verified, last 5 years" trendSlot={3} />
+      </Card>
+    </Grid>
+    <Grid columns={{ mobile: 1, desktop: 2 }} gap="md">
+      <Card>
+        <VStack gap="sm">
+          <Heading level={4} as="h3">Dues collected by month</Heading>
+          <LineChart
+            title="Dues collected by month"
+            description="NZD thousands, March to October 2026"
+            hideTitle
+            data={[
+              { month: "Mar", collected: 71 },
+              { month: "Apr", collected: 74 },
+              { month: "May", collected: 73 },
+              { month: "Jun", collected: 78 },
+              { month: "Jul", collected: 80 },
+              { month: "Aug", collected: 79 },
+              { month: "Sep", collected: 83 },
+              { month: "Oct", collected: 86.6 },
+            ]}
+            xKey="month"
+            xLabel="Month"
+            series={[{ key: "collected", label: "Dues collected" }]}
+            formatValue={(v) => `$${v}K`}
+          />
+        </VStack>
+      </Card>
+      <Card>
+        <VStack gap="sm">
+          <Heading level={4} as="h3">Sightings logged by chapter</Heading>
+          <BarChart
+            title="Sightings logged by chapter"
+            description="Ranked, 2026 season"
+            hideTitle
+            orientation="horizontal"
+            data={[
+              { chapter: "Auckland", sightings: 482 },
+              { chapter: "Wellington", sightings: 219 },
+              { chapter: "Canterbury", sightings: 198 },
+              { chapter: "Waikato", sightings: 143 },
+              { chapter: "Bay of Plenty", sightings: 116 },
+            ]}
+            xKey="chapter"
+            xLabel="Chapter"
+            series={[{ key: "sightings", label: "Sightings logged" }]}
+          />
+        </VStack>
+      </Card>
+    </Grid>
+  </VStack>
+</Example>
+
+Keep a dashboard to the questions people bring to it. If a chart doesn't change
+what anyone does, leave it out.
+
+## Accessibility
+
+- **Every chart has a title**, even when `hideTitle` hides it. It names the chart
+  for assistive technology and captions the table view. Say what is shown and
+  over what ("Sightings logged by chapter, 2026"), not "Chart".
+- **Table view.** Every chart has a "Table view" toggle that shows the same data
+  as a [Table](?path=/docs/functional-table--docs). It serves screen reader users,
+  people who need exact values and anyone who can't separate the colours. Don't
+  hide it, and don't build a second table beside the chart.
+- **Keyboard.** Tab to the plot: focus shows the first point, and the left and
+  right arrow keys move the tooltip from point to point, as hover does with a
+  mouse. Horizontal bar charts aren't a focus stop, because the arrow keys
+  can't step through them; there the table view is the keyboard route, as it
+  is for exact values in every chart.
+- **Legend.** A chart with two or more series shows a legend of swatches and
+  names in text colour. Pair colour with something else where you can: direct
+  labels, the order of the legend matching the order of the marks, or a split
+  into separate charts.
+- Sparkline and Stat speak their first and last values and the direction of
+  change in words; Meter announces its `valueLabel`. Say warning and critical
+  levels in words as well as colour.
+
+## Related
+
+- [Dashboards and summaries](?path=/docs/patterns-dashboards-and-summaries--docs)
+- [Tables and grids](?path=/docs/patterns-tables-and-grids--docs)
+- [Cards and landing sections](?path=/docs/patterns-cards-and-landing-sections--docs)
+- [Empty and error states](?path=/docs/patterns-empty-and-error-states--docs)

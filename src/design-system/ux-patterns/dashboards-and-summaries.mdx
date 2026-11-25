@@ -1,0 +1,81 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../documentation-imports/index.ts";
+import { Example } from "./pattern-blocks.tsx";
+import { OverviewScreenExample } from "./screen-examples.tsx";
+
+<Meta title="Patterns/Dashboards and summaries" />
+
+<HideSbBar />
+
+# Dashboards and summaries
+
+An overview screen answers "what needs my attention, and how are things going?"
+in that order. It is usually the first page of an app, so it sets the tone: lead
+with what people must do, then the few figures they act on, then a way into the
+detail. Build it from [Alert](?path=/docs/functional-alert--docs),
+[Stat](?path=/docs/functional-stat--docs), [Card](?path=/docs/layout-card--docs),
+[Grid](?path=/docs/layout-primitives-grid--docs) and, where a trend matters,
+the charts.
+
+<Example caption="What needs doing first, then three figures, then recent activity with a link to all of it.">
+  <OverviewScreenExample />
+</Example>
+
+## What goes where
+
+| Part | Use | Rules |
+| --- | --- | --- |
+| Something that needs action soon | An [Alert](?path=/docs/functional-alert--docs) at the top, with a link to do it | One or two. If everything is urgent, nothing is |
+| The figures people act on | A row of [Stat](?path=/docs/functional-stat--docs)s in a `Grid` of Cards | Three or four. Add `change` only when the comparison means something |
+| A trend behind a figure | Stat `trend`, a [Sparkline](?path=/docs/functional-sparkline--docs), or a chart in its own Card below | See [Data visualization](?path=/docs/patterns-data-visualization--docs) |
+| Recent activity | A short list in a Card, with "See all" | Five items or so; the full list lives on its own page |
+| Ways into common tasks | [InteractiveCard](?path=/docs/layout-interactive-card--docs)s or plain links | Only the tasks most people do most often |
+| A level against a limit | [Meter](?path=/docs/functional-meter--docs) | Say the level in words as well as colour |
+
+## Summaries of one thing
+
+A summary page for one record (a membership account, a case, a member) follows the
+same order on a smaller scale: its status as a [Badge](?path=/docs/functional-badge--docs)
+next to its name, an Alert if something needs doing, the key figures, then
+details grouped under headings, often in [Tabs](?path=/docs/functional-tabs--docs)
+when the views are separate ("Summary", "Payments", "History").
+
+## Before a big action
+
+A review step before submitting ("Check your answers") is a summary too: group
+the answers under the same headings as the form, show each value as people will
+see it, and give each group a "Change" link back to the step. See
+[Multi-step forms](?path=/docs/patterns-forms-multi-step-forms--docs).
+
+## Accessibility
+
+- Give the page one `h1`, and a heading for each card (`Heading level` to match
+  the page's outline). Charts in cards set `hideTitle` so the heading isn't
+  repeated.
+- Stat and Sparkline describe their figures and direction in words; don't add a
+  second description.
+- An Alert that appears as the page loads isn't announced as news; that's
+  intended. Don't move focus to it.
+- Keep the reading order the order of importance: attention, figures, detail.
+
+## Pitfalls
+
+- **A wall of numbers.** Every figure should change what someone does. Leave the
+  rest for a report.
+- **Status colours as decoration.** Green and red mean good and bad news; don't
+  use them to tell figures apart.
+- **Stale figures without a date.** Say when the data was last updated if it
+  isn't live.
+- **Empty dashboards on day one.** A new account has nothing to summarise yet;
+  show set-up steps instead. See
+  [Onboarding and first run](?path=/docs/patterns-onboarding-and-first-run--docs).
+
+The [Member dashboard](?path=/story/examples-member-dashboard--overview) and
+[Sighting insights](?path=/story/examples-sighting-insights--overview) examples
+show a member's overview and a chart-led report.
+
+## Related
+
+- [Data visualization](?path=/docs/patterns-data-visualization--docs)
+- [Lists, tables and cards](?path=/docs/patterns-lists-tables-and-cards--docs)
+- [Page layouts and app shells](?path=/docs/patterns-page-layouts-and-app-shells--docs)

@@ -1,0 +1,92 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as GridStories from "./grid.stories.tsx";
+import meta from "./grid.stories.tsx";
+import { Grid } from "./grid.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Grid
+
+<ResizableCanvas of={GridStories.TwoColumn} />
+
+`Grid` is a thin wrapper around CSS Grid with theme-driven gap tokens, responsive column maps, and an auto-fit mode. Use it when content is two-dimensional — cards in a gallery, fields in a form, items in a dashboard. For a single row or column, prefer `VStack` / `HStack`.
+
+<Controls />
+
+## Fixed columns
+
+Set `columns` to an integer to get N equal-width columns.
+
+<InlineCodeExample>
+  {`<Grid columns={3} gap="md">
+  <Card>Item 1</Card>
+  <Card>Item 2</Card>
+  <Card>Item 3</Card>
+  <Card>Item 4</Card>
+  <Card>Item 5</Card>
+  <Card>Item 6</Card>
+</Grid>`}
+</InlineCodeExample>
+
+## Responsive auto-fit
+
+Pass `minColumnWidth` to fit as many columns as the parent width allows. This is the preferred pattern for galleries and tile views — no breakpoint props, no media queries.
+
+<InlineCodeExample>
+  {`<Grid minColumnWidth="220px" gap="md">
+  {products.map(p => <Card key={p.id}>{p.name}</Card>)}
+</Grid>`}
+</InlineCodeExample>
+
+## Responsive column map
+
+Pass a `{ mobile, tablet, desktop, wide }` map to set explicit column counts at each breakpoint. Mobile-first: omitted breakpoints inherit the previous step's value.
+
+<InlineCodeExample>
+  {`<Grid columns={{ mobile: 1, tablet: 2, desktop: 3 }} gap="md">
+  {items.map(i => <Card key={i.id}>{i.name}</Card>)}
+</Grid>`}
+</InlineCodeExample>
+
+## Custom template
+
+`columns` also accepts a raw `grid-template-columns` value when an asymmetric layout is needed (e.g. a sidebar/content split).
+
+<InlineCodeExample>
+  {`<Grid columns="240px 1fr" gap="lg">
+  <Sidebar>Nav</Sidebar>
+  <main>Content</main>
+</Grid>`}
+</InlineCodeExample>
+
+## Tight gap
+
+For dense grids (icon palettes, color swatches), drop the gap to `xs` or `xxs`.
+
+<InlineCodeExample>
+  {`<Grid columns={4} gap="xs">
+  {swatches.map(s => <Swatch key={s} color={s} />)}
+</Grid>`}
+</InlineCodeExample>
+
+## Accessibility
+
+- Renders a plain `<div>` — semantics come from what you put inside.
+- For a list of equivalent items, wrap each Grid child in an `<li>` and pass `as="ul"` to the Grid so screen-reader users get the list count.
+- Grid is purely visual layout; the source DOM order is the reading order, so make sure the source order is sensible.
+
+## Common pitfalls
+
+- **Don't fight the grid with margins.** Spacing is `gap` only.
+- **Don't reach for a `rows` prop yet.** The library tracks the 95% case (columns, equal rows). If you need explicit row sizing, drop down to `style={{ gridTemplateRows: ... }}`.
+- **`minColumnWidth` wins over `columns`** when both are set.
+- **Don't use Grid for a single row.** That's an `HStack`. Grid implies "two dimensional"; using it for a one-line row is overkill and obscures intent.
+
+## Narrow parents
+
+`minColumnWidth` is a preferred minimum: below that width the grid uses one column that fits its parent. Individual children still need shrinkable content; wrap long code or tables in an appropriate scroll container. Fixed numeric `columns` retain their requested count.

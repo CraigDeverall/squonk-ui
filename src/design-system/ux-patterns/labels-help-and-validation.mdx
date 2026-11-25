@@ -1,0 +1,73 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../documentation-imports/index.ts";
+import { Do, DoDont, Dont } from "./pattern-blocks.tsx";
+import { LabelledFieldExample, PlaceholderFieldExample } from "./pattern-examples.tsx";
+
+<Meta title="Patterns/Labels, help and validation" />
+
+<HideSbBar />
+
+# Labels, help and validation
+
+## Label every field visibly
+
+Give every [TextField](?path=/docs/functional-text-field--docs),
+[Select](?path=/docs/functional-select--docs), [Checkbox](?path=/docs/functional-checkbox--docs)
+and [RadioGroup](?path=/docs/functional-radio-group--docs) a visible `label` (or `legend`).
+A placeholder is not a label: it disappears as soon as someone types. Use
+`aria-label` only when the purpose is already visible some other way, such as a
+search field next to a "Search" button.
+
+<DoDont>
+  <Do caption="Visible labels, help that explains the format, and an error that says what to do.">
+    <LabelledFieldExample />
+  </Do>
+  <Dont caption="Placeholders vanish as people type, and “Invalid input” doesn't say how to fix it.">
+    <PlaceholderFieldExample />
+  </Dont>
+</DoDont>
+
+## Help text explains the format, not the error
+
+`helperText` sits under the field and is read with it. Use it for format and
+constraints ("8 or more characters"). When there is an error, the `error` message
+replaces it and the field is marked invalid.
+
+## When to show errors
+
+- **Not while someone is still typing.** Show a field's error after they leave it
+  or when they submit, so half-typed values aren't called wrong.
+- **Live checking only helps when it guides typing**, such as password rules shown
+  as a checklist.
+- **On submit,** keep every value, mark each invalid field, and move focus once:
+  to an error summary listing the problems as links when there are several, or to
+  the first invalid field.
+- **Server errors** belong on the field they concern and clear when the user
+  edits it.
+
+[Form](?path=/docs/functional-form--docs) (`@squonkstack/ui/form`) does all of this:
+errors after blur or submit, the error summary with focus and links, and server
+errors mapped onto their fields. The [Forms](?path=/docs/patterns-forms-overview--docs)
+section shows each case working.
+
+Write errors as instructions: "Enter a date after today", not "Invalid input".
+
+## Required and optional
+
+Mark whichever is rarer. Most of our forms are mostly required, so mark the
+optional fields ("(optional)" in the label) and say so once at the top. The
+sources we checked don't settle this; it is our convention. Always set
+`required` on the field as well, so assistive technology announces it.
+
+## Related
+
+- [Toasts, alerts and dialogs](?path=/docs/patterns-toasts-alerts-and-dialogs--docs) — a toast never replaces a field error
+- [Forms](?path=/docs/patterns-forms-overview--docs): state, validation, server errors and steps
+
+---
+
+Sources, paraphrased: [React Aria forms guide](https://react-aria.adobe.com/forms) and
+[Form](https://react-aria.adobe.com/Form), [React Spectrum forms](https://react-spectrum.adobe.com/forms), © Adobe;
+[React Aria forms guide](https://react-spectrum.adobe.com/react-aria/forms.html);
+[WAI-ARIA Authoring Practices](https://www.w3.org/WAI/ARIA/apg/), © W3C, under the
+[W3C Software and Document License](https://www.w3.org/copyright/software-license/).

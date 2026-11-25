@@ -1,0 +1,70 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../documentation-imports/index.ts";
+import { Alert, Badge, Checkbox, Code, Heading, HStack, Kbd, Text, TextField, VStack } from "../../components";
+import { PurposeTokenTable } from "../purpose-tokens/purpose-token-table.tsx";
+import { Specimen, TypeScale } from "./foundation-blocks.tsx";
+
+<Meta title="Foundations/Typography" />
+
+<HideSbBar />
+
+# Typography
+
+One family, Inter, carries every heading and label. It ships with the
+package (`@squonkstack/ui/fonts.css`) and falls back to Helvetica Neue and Arial.
+Sizes come from a 16px base, so changing the `fontPx` primitive rescales the whole
+system.
+
+## Headings
+
+Choose the heading level for the document's structure, then the look follows.
+`Heading` takes a `level`, and `as` when the visual level and the element need to
+differ.
+
+<Specimen>
+  <TypeScale />
+</Specimen>
+
+## Text in components
+
+Components size their own text by purpose, so a label is a label everywhere:
+
+<Specimen>
+  <VStack gap="lg">
+    <TextField label="Membership name" helperText="As it appears on your membership card." defaultValue="Aroha Ngata" />
+    <Checkbox label="Send me reminders" helperText="Two weeks before each due date." defaultChecked />
+    <Alert tone="info" title="Callout title">The message under it, at the supporting size.</Alert>
+    <HStack gap="sm" wrap align="center">
+      <Badge tone="success">Paid</Badge>
+      <Text tone="secondary">Meta text, such as "Updated 2 minutes ago"</Text>
+    </HStack>
+  </VStack>
+</Specimen>
+
+<PurposeTokenTable group="type" />
+
+## Body text
+
+Use `Text` for running copy. It sizes itself for the
+[presentation register](?path=/docs/foundations-space-and-layout--docs), and its
+`tone` sets emphasis: `primary` for content, `secondary` for supporting copy,
+`muted` only where the text is genuinely optional.
+
+<Specimen>
+  <VStack gap="sm">
+    <Text>Your annual dues for the 2026–27 season are due on 28 November.</Text>
+    <Text tone="secondary">You can pay any time before then. We'll remind you a week before.</Text>
+    <Text>Press <Kbd>Ctrl</Kbd> <Kbd>K</Kbd> to search, or paste the reference <Code>DUES-0042</Code>.</Text>
+  </VStack>
+</Specimen>
+
+- **Keep lines readable.** Around 45 to 75 characters a line; wrap long copy in a
+  `Container` rather than letting it span a wide screen.
+- **Sentence case** for headings, labels and buttons ("Save changes", not "Save
+  Changes"). Reserve capitals for badges set with `caps`.
+- **Don't fake structure.** A big `Text` is not a heading, and screen-reader users
+  navigate by headings.
+- **Plan for long content.** Names and translated labels get longer; if you
+  truncate, give people a way to see the whole value.
+- `Code` is for literal machine text; `Kbd` is for keys the interface really
+  supports.

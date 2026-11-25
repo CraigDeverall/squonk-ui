@@ -1,0 +1,12 @@
+@layer dt.components {
+  .root[data-size="auto"] {
+    flex: 1 1 auto;
+    align-self: stretch;
+  }
+
+  .root:not([data-size="auto"]) {
+    flex: 0 0 auto;
+    width: var(--spacer-size);
+    height: var(--spacer-size);
+  }
+}

@@ -1,0 +1,254 @@
+@layer dt.components {
+  .root {
+    --chart-series-1: var(--squonk-roles-color-data-series1);
+    --chart-series-2: var(--squonk-roles-color-data-series2);
+    --chart-series-3: var(--squonk-roles-color-data-series3);
+    --chart-series-4: var(--squonk-roles-color-data-series4);
+    --chart-series-5: var(--squonk-roles-color-data-series5);
+    --chart-series-6: var(--squonk-roles-color-data-series6);
+    --chart-series-7: var(--squonk-roles-color-data-series7);
+    --chart-series-8: var(--squonk-roles-color-data-series8);
+    --chart-mark-gap: var(--squonk-components-chart-mark-gap);
+    --chart-area-opacity: var(--squonk-components-chart-area-opacity);
+    --chart-gridline: var(--squonk-components-chart-gridline);
+    --chart-axis-line: var(--squonk-components-chart-axis-line);
+    --chart-cursor: var(--squonk-components-chart-cursor);
+    display: flex;
+    flex-direction: column;
+    gap: var(--squonk-roles-space-surface-gap);
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    font-family: var(--squonk-roles-type-font);
+    color: var(--squonk-roles-color-text);
+  }
+
+  .header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--squonk-components-chart-header-gap);
+  }
+
+  .titleBlock {
+    display: flex;
+    flex-direction: column;
+    gap: var(--squonk-roles-space-text-gap);
+    min-width: 0;
+  }
+
+  .title {
+    font-size: var(--squonk-roles-type-body);
+    font-weight: var(--squonk-roles-type-strong);
+    line-height: var(--squonk-roles-type-tight-line-height);
+    color: var(--squonk-roles-color-heading);
+  }
+
+  .description {
+    font-size: var(--squonk-roles-type-meta);
+    line-height: var(--squonk-roles-type-body-line-height);
+    color: var(--squonk-roles-color-text-supporting);
+  }
+
+  /* With the title hidden, the toggle still sits at the trailing edge. */
+  .header:has(> .visuallyHidden) {
+    justify-content: flex-end;
+  }
+
+  .tableToggle {
+    flex: none;
+    margin-inline-start: auto;
+    padding: var(--squonk-roles-space-segment-gap) var(--squonk-roles-space-item-gap);
+    font: inherit;
+    font-size: var(--squonk-roles-type-meta);
+    color: var(--squonk-roles-color-text-supporting);
+    background: transparent;
+    border: var(--squonk-roles-border-width) solid var(--squonk-roles-color-outline);
+    border-radius: var(--squonk-roles-radius-control);
+    cursor: pointer;
+  }
+
+  .tableToggle[data-hovered] {
+    background-color: var(--squonk-roles-color-hover);
+    color: var(--squonk-roles-color-on-hover);
+  }
+
+  .tableToggle[data-selected] {
+    background-color: var(--squonk-roles-color-selected);
+    color: var(--squonk-roles-color-text);
+    border-color: var(--squonk-roles-color-accent);
+  }
+
+  .tableToggle[data-focus-visible] {
+    outline: var(--squonk-roles-border-focus-width) solid var(--squonk-roles-color-focus-ring);
+    outline-offset: var(--squonk-roles-border-focus-offset);
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--squonk-roles-space-text-gap) var(--squonk-components-chart-legend-gap);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--squonk-roles-type-meta);
+    color: var(--squonk-roles-color-text-supporting);
+  }
+
+  .legendItem {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--squonk-roles-space-icon-gap);
+  }
+
+  /* The colour key carries identity; the text beside it stays in text ink. */
+  .swatch {
+    flex: none;
+    width: var(--squonk-components-chart-swatch-size);
+    height: var(--squonk-components-chart-swatch-size);
+    background-color: var(--chart-swatch);
+    border-radius: var(--squonk-roles-radius-mark);
+  }
+
+  .swatch[data-shape="dot"] {
+    border-radius: var(--squonk-roles-radius-pill);
+  }
+
+  /* A short line key, 2px like the line it stands for. */
+  .swatch[data-shape="line"] {
+    height: 2px;
+    width: calc(var(--squonk-components-chart-swatch-size) * 1.6);
+    border-radius: var(--squonk-roles-radius-pill);
+  }
+
+  .plot {
+    position: relative;
+    width: 100%;
+    height: var(--squonk-components-chart-plot-height-default);
+    min-width: 0;
+  }
+
+  .plot[data-register="compact"] { height: var(--squonk-components-chart-plot-height-compact); }
+  .plot[data-register="large"] { height: var(--squonk-components-chart-plot-height-large); }
+  .plot[data-register="hero"] { height: var(--squonk-components-chart-plot-height-hero); }
+
+  .empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--squonk-roles-type-meta);
+    color: var(--squonk-roles-color-text-supporting);
+    background-color: var(--squonk-roles-color-well);
+    border-radius: var(--squonk-roles-radius-mark);
+  }
+
+  .overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    text-align: center;
+  }
+
+  .totalValue {
+    font-size: var(--squonk-roles-type-title);
+    font-weight: var(--squonk-roles-type-strong);
+    line-height: var(--squonk-roles-type-tight-line-height);
+    color: var(--squonk-roles-color-text);
+  }
+
+  .totalLabel {
+    font-size: var(--squonk-roles-type-supporting);
+    color: var(--squonk-roles-color-text-supporting);
+  }
+
+  /* Recharts chrome: recessive axes and grid in text and border tokens. */
+  .plot :global(.recharts-cartesian-axis-tick-value),
+  .plot :global(.recharts-label) {
+    fill: var(--squonk-components-chart-axis-text);
+    font-size: var(--squonk-roles-type-supporting);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .plot :global(.recharts-cartesian-grid line) {
+    stroke: var(--chart-gridline);
+  }
+
+  /* The wash under an area's line: a tint, never a solid block. */
+  .plot :global(.recharts-area-area) {
+    fill-opacity: var(--chart-area-opacity);
+  }
+
+  .plot :global(.recharts-reference-line line) {
+    stroke: var(--chart-axis-line);
+  }
+
+  .plot :global(.recharts-wrapper),
+  .plot :global(.recharts-surface) {
+    outline: none;
+  }
+
+  /* Keyboard focus on the plot (arrow keys step through the data). */
+  .plot:has(:global(.recharts-surface):focus-visible) {
+    outline: var(--squonk-roles-border-focus-width) solid var(--squonk-roles-color-focus-ring);
+    outline-offset: var(--squonk-roles-border-focus-offset);
+    border-radius: var(--squonk-roles-radius-mark);
+  }
+
+  .tooltip {
+    min-width: 8rem;
+    padding: var(--squonk-roles-space-item-gap) var(--squonk-roles-space-surface-gap);
+    font-family: var(--squonk-roles-type-font);
+    font-size: var(--squonk-roles-type-meta);
+    color: var(--squonk-roles-color-on-surface);
+    background-color: var(--squonk-roles-color-surface);
+    border: var(--squonk-roles-border-width) solid var(--squonk-roles-color-floating-border);
+    border-radius: var(--squonk-roles-radius-mark);
+    box-shadow: var(--squonk-roles-elevation-soft);
+  }
+
+  .tooltipLabel {
+    margin-block-end: var(--squonk-roles-space-text-gap);
+    font-weight: var(--squonk-roles-type-strong);
+  }
+
+  .tooltipList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--squonk-roles-space-text-gap);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .tooltipRow {
+    display: flex;
+    align-items: center;
+    gap: var(--squonk-roles-space-icon-gap);
+  }
+
+  .tooltipName {
+    flex: 1;
+    color: var(--squonk-roles-color-on-surface-supporting);
+  }
+
+  .tooltipValue {
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--squonk-roles-type-strong);
+  }
+
+  .visuallyHidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}

@@ -1,0 +1,129 @@
+<!--
+  Manager iframe equivalent of preview-head.html: paints the chrome
+  surface to the dark color before Storybook bootstraps, so the
+  sidebar/toolbar doesn't flash white when reloading in dark mode.
+-->
+<script>
+  (function () {
+    try {
+      var raw = localStorage.getItem("squonk-storybook-mode");
+      var mode = raw === "dark" ? "dark" : "light";
+      document.documentElement.setAttribute("data-mode", mode);
+      var bg = mode === "dark" ? "#0d1117" : "#ffffff";
+      var fg = mode === "dark" ? "#f0f6fc" : "#212529";
+      var style = document.createElement("style");
+      style.textContent =
+        "html, body { background-color: " +
+        bg +
+        " !important; color: " +
+        fg +
+        "; }";
+      document.head.appendChild(style);
+    } catch (e) {
+      /* fall through to defaults */
+    }
+  })();
+</script>
+<!--
+  What a shared link to the site shows: search results, and the preview card in
+  Slack, Teams, iMessage, LinkedIn and the rest. Those readers want absolute
+  addresses and don't run scripts, so the public address is written out here
+  and every page of the site gets this one card. public/og.png comes from
+  scripts/generate-og-image.mjs; the page <title> is set after the build by
+  scripts/storybook-site-title.mjs, which reads og:title below.
+-->
+<meta
+  name="description"
+  content="React components, a theme and patterns for building interfaces that look right and work for everyone. Accessible, light and dark, and ready for coding agents."
+/>
+<link rel="canonical" href="https://ui.squonkstack.io/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="SquonkUI" />
+<meta property="og:locale" content="en_NZ" />
+<meta property="og:url" content="https://ui.squonkstack.io/" />
+<meta
+  property="og:title"
+  content="SquonkUI: React components, theme and patterns"
+/>
+<meta
+  property="og:description"
+  content="Build interfaces that look right and work for everyone. Accessible React components, a theme and patterns, in light and dark, ready for coding agents."
+/>
+<meta property="og:image" content="https://ui.squonkstack.io/og.png" />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta
+  property="og:image:alt"
+  content="SquonkUI: build interfaces that look right and work for everyone. Two example screens built with the library, one light and one dark."
+/>
+<meta name="twitter:card" content="summary_large_image" />
+<meta
+  name="twitter:title"
+  content="SquonkUI: React components, theme and patterns"
+/>
+<meta
+  name="twitter:description"
+  content="Build interfaces that look right and work for everyone. Accessible React components, a theme and patterns, in light and dark, ready for coding agents."
+/>
+<meta name="twitter:image" content="https://ui.squonkstack.io/og.png" />
+<meta
+  name="twitter:image:alt"
+  content="SquonkUI: build interfaces that look right and work for everyone. Two example screens built with the library, one light and one dark."
+/>
+<!--
+  Makes the published site installable as an app (Windows, macOS, Android,
+  iOS). The manifest is fetched with credentials because the private Pages
+  site needs its sign-in cookie. The service worker only registers over
+  HTTPS, so local Storybook is unaffected.
+-->
+<link
+  rel="manifest"
+  href="manifest.webmanifest"
+  crossorigin="use-credentials"
+/>
+<link rel="apple-touch-icon" href="pwa/apple-touch-icon.png" />
+<meta
+  name="theme-color"
+  content="#ffffff"
+  media="(prefers-color-scheme: light)"
+/>
+<meta
+  name="theme-color"
+  content="#0d1117"
+  media="(prefers-color-scheme: dark)"
+/>
+<meta name="apple-mobile-web-app-title" content="SquonkUI" />
+<meta name="mobile-web-app-capable" content="yes" />
+<script>
+  if ("serviceWorker" in navigator && location.protocol === "https:") {
+    navigator.serviceWorker.register("sw.js").catch(function () {
+      /* the site still works without it */
+    });
+  }
+</script>
+<!--
+  Back from the sign-in (see pages-session.ts): a sign-in proxy can return
+  to the path but drop the query, where Storybook keeps the current page.
+  Put it back before Storybook reads the URL.
+-->
+<script>
+  (function () {
+    try {
+      var saved = sessionStorage.getItem("squonk-pages-return-to");
+      if (!saved) return;
+      sessionStorage.removeItem("squonk-pages-return-to");
+      var target = new URL(saved);
+      if (
+        target.origin === location.origin &&
+        target.pathname === location.pathname &&
+        !location.search &&
+        target.search
+      ) {
+        history.replaceState(history.state, "", target.href);
+      }
+    } catch (e) {
+      /* stay where the sign-in left us */
+    }
+  })();
+</script>

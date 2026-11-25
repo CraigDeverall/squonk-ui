@@ -1,0 +1,30 @@
+@layer dt.components {
+  /* Variant colours come from card.module.css. When rendered as an anchor,
+     suppress the underline that would otherwise leak into card text. */
+  .root {
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  .root:is([data-hovered], :not([data-rac]):hover) {
+    transform: translateY(-3px);
+    box-shadow: var(--card-relief-edge), var(--squonk-components-card-hover-elevation);
+  }
+
+  .root[data-variant="featured"]:is([data-hovered], :not([data-rac]):hover) {
+    box-shadow: var(--card-relief-edge), var(--squonk-components-card-featured-elevation);
+  }
+
+  .root[data-variant="outlined"]:is([data-hovered], :not([data-rac]):hover) {
+    border-color: var(--squonk-components-card-hover-border);
+  }
+
+  .root:is([data-focus-visible], :not([data-rac]):focus-visible) {
+    outline: var(--squonk-roles-border-focus-width) solid var(--squonk-roles-color-focus-ring);
+    outline-offset: var(--squonk-roles-border-focus-offset);
+  }
+
+  @media print {
+    .root { break-inside: avoid; }
+  }
+}

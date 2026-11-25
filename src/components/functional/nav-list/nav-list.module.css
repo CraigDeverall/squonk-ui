@@ -1,0 +1,145 @@
+/* NavList. The current item and the item under the pointer are marked from
+   the theme's indicator tokens. The item draws the marks (a start-edge bar,
+   an underline and a ring, each zero unless the theme sets it) as inset
+   strokes; its fill stands off the edge by the ring and its gap, so a ring
+   reads as a border with a gap. Motion.Feedback fades both. */
+@layer dt.components {
+  .root {
+    font-family: var(--squonk-roles-type-font);
+    font-size: var(--squonk-roles-type-body);
+    line-height: var(--squonk-roles-type-tight-line-height);
+    color: var(--squonk-roles-color-text);
+  }
+
+  .list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--squonk-roles-space-adjoining);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .root[data-orientation="horizontal"] .list {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--squonk-roles-space-related);
+  }
+
+  .entry { display: flex; min-inline-size: 0; }
+
+  .item {
+    /* At rest an item draws nothing; hover and current set these. */
+    --nav-fill: transparent;
+    --nav-text: var(--squonk-roles-color-text);
+    --nav-mark: var(--squonk-roles-indicator-current-color);
+    --nav-bar: 0px;
+    --nav-underline: 0px;
+    --nav-ring: 0px;
+    --nav-gap: 0px;
+    /* The fill stands off each edge far enough to show the marks there:
+       the ring and its gap all round, the bar at the start, the underline
+       at the bottom. */
+    --nav-stand-off: calc(var(--nav-ring) + var(--nav-gap));
+    --nav-off-start: max(var(--nav-stand-off), var(--nav-bar));
+    --nav-off-end: max(var(--nav-stand-off), var(--nav-underline));
+    /* The bar sits on the start edge, so it flips in right-to-left text. */
+    --nav-bar-side: 1;
+    display: flex;
+    flex: 1;
+    min-inline-size: 0;
+    border-radius: var(--squonk-roles-indicator-radius);
+    color: var(--nav-text);
+    text-decoration: none;
+    cursor: pointer;
+    box-shadow:
+      inset calc(var(--nav-bar) * var(--nav-bar-side)) 0 0 0 var(--nav-mark),
+      inset 0 calc(-1 * var(--nav-underline)) 0 0 var(--nav-mark),
+      inset 0 0 0 var(--nav-ring) var(--nav-mark);
+  }
+
+  .item:dir(rtl) { --nav-bar-side: -1; }
+
+  /* The fill, inset to show the marks, with concentric corners. Its padding
+     shrinks by the same amounts, so the item never changes size. */
+  .fill {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: var(--squonk-roles-space-icon-gap);
+    min-inline-size: 0;
+    margin-block: var(--nav-stand-off) var(--nav-off-end);
+    margin-inline: var(--nav-off-start) var(--nav-stand-off);
+    padding-block:
+      max(0px, calc(var(--squonk-roles-space-list-item-inset-block) - var(--nav-stand-off)))
+      max(0px, calc(var(--squonk-roles-space-list-item-inset-block) - var(--nav-off-end)));
+    padding-inline:
+      max(0px, calc(var(--squonk-roles-space-list-item-inset-inline) - var(--nav-off-start)))
+      max(0px, calc(var(--squonk-roles-space-list-item-inset-inline) - var(--nav-stand-off)));
+    border-radius: max(0px, calc(var(--squonk-roles-indicator-radius) - var(--nav-stand-off)));
+    background-color: var(--nav-fill);
+  }
+
+  .item[data-hovered],
+  .item:not([data-rac]):hover {
+    --nav-fill: var(--squonk-roles-indicator-hover-background);
+    --nav-text: var(--squonk-roles-indicator-hover-text);
+    --nav-mark: var(--squonk-roles-indicator-hover-color);
+    --nav-bar: var(--squonk-roles-indicator-hover-bar);
+    --nav-underline: var(--squonk-roles-indicator-hover-underline);
+    --nav-ring: var(--squonk-roles-indicator-hover-ring);
+    --nav-gap: var(--squonk-roles-indicator-hover-gap);
+  }
+
+  .item[data-current] {
+    --nav-fill: var(--squonk-roles-indicator-current-background);
+    --nav-text: var(--squonk-roles-indicator-current-text);
+    --nav-mark: var(--squonk-roles-indicator-current-color);
+    --nav-bar: var(--squonk-roles-indicator-current-bar);
+    --nav-underline: var(--squonk-roles-indicator-current-underline);
+    --nav-ring: var(--squonk-roles-indicator-current-ring);
+    --nav-gap: var(--squonk-roles-indicator-current-gap);
+    font-weight: var(--squonk-roles-indicator-current-weight);
+  }
+
+  /* A page that can't be opened yet: dimmed, with no hover marks. */
+  .item[data-disabled],
+  .item[data-disabled]:hover {
+    --nav-fill: transparent;
+    --nav-text: var(--squonk-roles-color-text);
+    --nav-bar: 0px;
+    --nav-underline: 0px;
+    --nav-ring: 0px;
+    --nav-gap: 0px;
+    cursor: not-allowed;
+    opacity: var(--squonk-roles-state-disabled-opacity);
+  }
+
+  .item[data-focus-visible],
+  .item:not([data-rac]):focus-visible {
+    outline: var(--squonk-roles-border-focus-width) solid var(--squonk-roles-color-focus-ring);
+    outline-offset: var(--squonk-roles-border-focus-offset);
+  }
+
+  .icon {
+    display: inline-flex;
+    flex: none;
+    font-size: var(--squonk-presentation-icon-size-default);
+  }
+
+  .label {
+    flex: 1;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .root[data-orientation="horizontal"] .label { flex: none; }
+
+  .end {
+    flex: none;
+    color: var(--squonk-roles-color-text-supporting);
+    font-size: var(--squonk-roles-type-meta);
+  }
+}

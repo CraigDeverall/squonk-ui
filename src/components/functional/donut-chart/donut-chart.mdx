@@ -1,0 +1,196 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as DonutChartStories from "./donut-chart.stories.tsx";
+import meta from "./donut-chart.stories.tsx";
+import { DonutChart } from "./donut-chart.tsx";
+import { Heading } from "../../functional-primitive/heading/heading.tsx";
+import { Text } from "../../functional-primitive/text/text.tsx";
+import { Card } from "../../layout/card/card.tsx";
+import { Block } from "../../layout-primitive/block/block.tsx";
+import { Grid } from "../../layout-primitive/grid/grid.tsx";
+import { VStack } from "../../layout-primitive/vstack/vstack.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# DonutChart
+
+<ResizableCanvas of={DonutChartStories.Default} defaultRecipe="block" defaultHeight={360} />
+
+`DonutChart` shows how one whole splits into a few parts, as a ring with the total in the middle: dues collected by type, sightings verified against still under review. It works best with two to five parts, where the reader wants the rough share rather than exact comparisons. Angles are hard to compare precisely, so when the parts are close in size, there are more than five, or you need to compare the same split across periods, use a sorted horizontal [BarChart](?path=/docs/functional-bar-chart--docs). For a single value against a target or capacity, use a [Meter](?path=/docs/functional-meter--docs); for a headline number, a [Stat](?path=/docs/functional-stat--docs).
+
+<Controls />
+
+## Data
+
+Pass one row per part. `nameKey` names the field labelling each part and `valueKey` the field holding its size. Parts are drawn clockwise from the top in the order given, so sort largest first unless the parts have a natural order (verified before under review, low before high). `formatValue` formats the total, the tooltip and the table.
+
+<InlineCodeExample>
+  <Block width="480px">
+    <DonutChart
+      title="Dues collected by type"
+      description="October 2026"
+      data={[
+        { type: "Annual dues", amount: 38400000 },
+        { type: "Swamp Fund levy", amount: 26100000 },
+        { type: "Night-watch kit hire", amount: 17900000 },
+        { type: "Field-trip deposit", amount: 4200000 },
+      ]}
+      nameKey="type"
+      valueKey="amount"
+      nameLabel="Dues type"
+      valueLabel="Collected"
+      formatValue={(v) => v.toLocaleString("en-NZ", { style: "currency", currency: "NZD", notation: "compact", maximumFractionDigits: 1 })}
+    />
+  </Block>
+</InlineCodeExample>
+
+Parts with a zero or negative value are dropped: a ring can't show a negative share. If negatives are meaningful (credits against payments), use a BarChart.
+
+## The total
+
+The centre shows the sum of the parts with `totalLabel` under it ("Total" by default). Name what is being counted ("Sightings", "Collected") so the number reads on its own. Set `hideTotal` when the total is already printed nearby or means nothing, such as when the parts are percentages that always sum to 100.
+
+<InlineCodeExample>
+  <Block width="480px">
+    <DonutChart
+      title="Sightings verified"
+      description="2026-27 season"
+      data={[
+        { status: "Verified", count: 9120 },
+        { status: "Under review", count: 880 },
+      ]}
+      nameKey="status"
+      valueKey="count"
+      totalLabel="Sightings"
+    />
+  </Block>
+</InlineCodeExample>
+
+## Folding into Other
+
+The ring colours at most eight slices. With more than eight parts, the first seven are drawn and the rest fold into one slice named by `otherLabel` ("Other" by default). Sort largest first so the parts that fold are the small ones. The table view still lists every original part, so nothing is lost; but if the folded parts matter, the chart is the wrong form, and a BarChart shows them all.
+
+<InlineCodeExample>
+  <Block width="480px">
+    <DonutChart
+      title="Sightings by chapter"
+      description="Parts past the seventh fold into Other"
+      data={[
+        { chapter: "Auckland", sightings: 3420 },
+        { chapter: "Wellington", sightings: 2810 },
+        { chapter: "Canterbury", sightings: 2290 },
+        { chapter: "Waikato", sightings: 2140 },
+        { chapter: "Bay of Plenty", sightings: 1380 },
+        { chapter: "Otago", sightings: 420 },
+        { chapter: "Taranaki", sightings: 260 },
+        { chapter: "Northland", sightings: 140 },
+        { chapter: "Southland", sightings: 90 },
+      ]}
+      nameKey="chapter"
+      valueKey="sightings"
+      totalLabel="Sightings"
+      otherLabel="Other chapters"
+    />
+  </Block>
+</InlineCodeExample>
+
+## The table view
+
+"Table view" lists every part with its value and its share of the total as a percentage. `nameLabel` heads the first column ("Dues type") and `valueLabel` the value column ("Collected"; "Value" by default). Set both: a table with an empty first header and "Value" makes the reader guess what they are looking at.
+
+## Colours
+
+Slices take the palette slots in order: the first part slot 1, the second slot 2. The palette is fixed and never cycles. Two or more parts get a legend; the tooltip names the part with its value and share.
+
+## In a card
+
+Donuts often sit in a row of dashboard cards. Let the card carry the heading and set `hideTitle`; keep `title`, which names the chart for screen readers and captions the table view.
+
+<InlineCodeExample>
+  <Grid columns={{ mobile: 1, tablet: 2 }} gap="md">
+    <Card>
+      <VStack gap="md">
+        <VStack gap="xs">
+          <Heading level={3}>Verification</Heading>
+          <Text tone="secondary">About one sighting in eleven is still under review.</Text>
+        </VStack>
+        <DonutChart
+          title="Sightings verified"
+          hideTitle
+          data={[
+            { status: "Verified", count: 9120 },
+            { status: "Under review", count: 880 },
+          ]}
+          nameKey="status"
+          valueKey="count"
+          nameLabel="Status"
+          valueLabel="Sightings"
+          totalLabel="Sightings"
+        />
+      </VStack>
+    </Card>
+    <Card>
+      <VStack gap="md">
+        <VStack gap="xs">
+          <Heading level={3}>Logging channel</Heading>
+          <Text tone="secondary">Most sightings are now logged online.</Text>
+        </VStack>
+        <DonutChart
+          title="Sightings by logging channel"
+          hideTitle
+          data={[
+            { channel: "Online", count: 6420 },
+            { channel: "Chapter lead", count: 3190 },
+            { channel: "Paper", count: 390 },
+          ]}
+          nameKey="channel"
+          valueKey="count"
+          nameLabel="Channel"
+          valueLabel="Sightings"
+          totalLabel="Sightings"
+        />
+      </VStack>
+    </Card>
+  </Grid>
+</InlineCodeExample>
+
+## Height, loading and empty
+
+The ring's height follows the [Presentation](?path=/docs/style-presentation--docs) register: 160px `compact`, 240px `default`, 320px `large`, 400px `hero`. `loading` holds that height with a skeleton and marks the figure `aria-busy`; with no positive values the plot shows "No data to show", or your `empty` message.
+
+## Customising
+
+The chart reads these custom properties from its root `<figure>`. Set them on the chart itself through `style` or `className`; a parent can't override them because the figure defines its own defaults.
+
+| Variable | Controls | Default |
+| --- | --- | --- |
+| `--chart-series-1` … `--chart-series-8` | The colour of each slice, legend and tooltip key | `--squonk-roles-color-data-series1` … `8` |
+| `--chart-mark-gap` | The gap between slices | `--squonk-components-chart-mark-gap` (the default background) |
+| `--chart-area-opacity` | The wash under an area (AreaChart only) | `--squonk-components-chart-area-opacity` (0.12) |
+| `--chart-gridline` | Gridlines (not drawn on a donut) | `--squonk-components-chart-gridline` (default border) |
+| `--chart-axis-line` | Axis lines (not drawn on a donut) | `--squonk-components-chart-axis-line` (strong border) |
+| `--chart-cursor` | The band that follows the pointer (BarChart) | `--squonk-components-chart-cursor` (subtle background) |
+
+On a surface other than the default background, such as a `filled` Card, set `--chart-mark-gap` to that surface (`var(--squonk-roles-color-page)` for `filled`) or the gaps between slices show as white spokes. Prefer the palette to overriding `--chart-series-*`: it is validated for colour-vision deficiency in light and dark mode.
+
+## Accessibility
+
+- The chart is a `<figure>` named by `title` and described by `description`. `title` is required; `hideTitle` hides it visually only.
+- The "Table view" toggle button (`aria-pressed`) swaps the ring for a table of every part, its value and its share, captioned with `title`. It is the dependable way to read exact values with a keyboard, screen reader or magnifier, and it includes any parts folded into "Other".
+- The plot is focusable (`role="application"`) and arrow keys move the tooltip between slices.
+- Colour never works alone: two or more parts get a legend, the tooltip names each part, and the table labels every row. Light-mode slots 3 to 5 are under 3:1 contrast on white, which is why the legend and table view are always present.
+- The total and its label are text, never coloured to match a slice.
+
+## Common pitfalls
+
+- **Too many parts.** Past five, slices get thin and similar colours sit side by side. Use a sorted horizontal BarChart.
+- **Comparing two donuts.** Reading the change in a slice's angle between two rings is guesswork. Show the same split across periods as a stacked BarChart.
+- **Parts that don't make a whole.** A donut says "these add up to the total". Overlapping categories (a member can hold both a Keeper and a Life membership) belong in a BarChart.
+- **Unsorted parts.** Without an order, the ring is hard to scan and the wrong parts fold into "Other". Sort largest first.
+- **Hiding the folded parts.** If "Other" holds something people need, a donut is the wrong chart.
+- **Colouring the legend or total text.** Text stays in text colours; the swatch carries the colour.
+- **A donut for a single value against a target.** "72% of sightings verified" is a Meter, not a two-slice ring.

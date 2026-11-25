@@ -1,0 +1,72 @@
+@layer dt.components {
+  /* Word-sized: its height follows the register, its width is four heights
+     unless the parent or `style` sets one. */
+  .root {
+    --sparkline-height: var(--squonk-components-sparkline-height-default);
+    --sparkline-gap: var(--squonk-components-chart-mark-gap);
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    box-sizing: border-box;
+    height: var(--sparkline-height);
+    width: calc(var(--sparkline-height) * 4);
+    max-width: 100%;
+    /* Room for the end dot (8px and its 2px ring) inside the box. */
+    padding: 4px 6px;
+    /* The palette slots, as the chart frame names them. */
+    --chart-series-1: var(--squonk-roles-color-data-series1);
+    --chart-series-2: var(--squonk-roles-color-data-series2);
+    --chart-series-3: var(--squonk-roles-color-data-series3);
+    --chart-series-4: var(--squonk-roles-color-data-series4);
+    --chart-series-5: var(--squonk-roles-color-data-series5);
+    --chart-series-6: var(--squonk-roles-color-data-series6);
+    --chart-series-7: var(--squonk-roles-color-data-series7);
+    --chart-series-8: var(--squonk-roles-color-data-series8);
+  }
+
+  .root[data-register="compact"] { --sparkline-height: var(--squonk-components-sparkline-height-compact); }
+  .root[data-register="large"] { --sparkline-height: var(--squonk-components-sparkline-height-large); }
+  .root[data-register="hero"] { --sparkline-height: var(--squonk-components-sparkline-height-hero); }
+
+  .plot {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  /* 2px whatever the stretch: the stroke does not scale with the viewBox. */
+  .line {
+    fill: none;
+    stroke: var(--sparkline-color);
+    stroke-width: 2px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .area {
+    fill: var(--sparkline-color);
+    fill-opacity: var(--squonk-components-chart-area-opacity);
+    stroke: none;
+  }
+
+  /* The latest value, ringed in the surface colour. 8px is the minimum dot. */
+  .end {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    transform: translate(-50%, -50%);
+    background-color: var(--sparkline-color);
+    border: 2px solid var(--sparkline-gap);
+    border-radius: var(--squonk-roles-radius-pill);
+    box-sizing: content-box;
+  }
+}

@@ -1,0 +1,208 @@
+/* Plain shapes for the Motion stories: the motion is the point, not the look. */
+@layer dt.components {
+  .control {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--squonk-roles-space-icon-gap);
+    min-height: var(--squonk-presentation-control-height-default);
+    padding: 0 var(--squonk-components-button-padding-inline-default);
+    border: var(--squonk-roles-border-width) solid var(--squonk-roles-color-field-border);
+    border-radius: var(--squonk-roles-radius-control);
+    background: var(--squonk-roles-color-field-background);
+    color: var(--squonk-roles-color-text);
+    font-family: var(--squonk-roles-type-font);
+    font-size: var(--squonk-roles-type-body);
+    cursor: pointer;
+  }
+
+  .control:is([data-hovered], [data-pressed]) {
+    background: var(--squonk-roles-color-hover);
+    color: var(--squonk-roles-color-on-hover);
+  }
+
+  .control[data-focus-visible] {
+    outline: var(--squonk-roles-border-focus-width) solid var(--squonk-roles-color-focus-ring);
+    outline-offset: var(--squonk-roles-border-focus-offset);
+  }
+
+  .panel {
+    max-width: 22rem;
+    border-radius: var(--squonk-roles-radius-surface);
+    background: var(--squonk-roles-color-surface);
+    color: var(--squonk-roles-color-text);
+    box-shadow: var(--squonk-roles-elevation-floating);
+  }
+
+  .backdrop {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--squonk-roles-color-backdrop);
+  }
+
+  .sheet {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(22rem, 90vw);
+    background: var(--squonk-roles-color-surface);
+    color: var(--squonk-roles-color-text);
+    box-shadow: var(--squonk-roles-elevation-overlay);
+  }
+
+  .dialog {
+    font-family: var(--squonk-roles-type-font);
+    display: grid;
+    gap: var(--squonk-roles-space-surface-gap);
+    padding: var(--squonk-roles-space-overlay-inset);
+    outline: none;
+  }
+
+  .title {
+    margin: 0;
+    font-size: var(--squonk-roles-type-title);
+  }
+
+  .disclosure {
+    max-width: 28rem;
+  }
+
+  .chevron {
+    display: inline-block;
+    --motion-property: rotate;
+  }
+
+  [data-expanded] .chevron {
+    rotate: 180deg;
+  }
+
+  .body {
+    margin: 0;
+    padding-block: var(--squonk-roles-space-surface-gap);
+  }
+
+  .row {
+    display: flex;
+    align-items: center;
+    gap: var(--squonk-roles-space-overlay-gap);
+  }
+
+  .spinner {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 3px solid var(--squonk-roles-color-well);
+    border-top-color: var(--squonk-roles-color-accent);
+  }
+
+  .track {
+    position: relative;
+    display: block;
+    width: 160px;
+    height: 8px;
+    overflow: hidden;
+    border-radius: var(--squonk-roles-radius-pill);
+    background: var(--squonk-roles-color-well);
+  }
+
+  .sweep {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 30%;
+    border-radius: var(--squonk-roles-radius-pill);
+    background: var(--squonk-roles-color-accent);
+  }
+
+  .shimmer {
+    display: block;
+    width: 160px;
+    height: 16px;
+    border-radius: var(--squonk-roles-radius-item);
+    background-color: var(--squonk-roles-color-well);
+    background-image: linear-gradient(90deg, var(--squonk-roles-color-well) 0px, var(--squonk-components-skeleton-highlight) 40px, var(--squonk-roles-color-well) 80px);
+    background-size: 200px 100%;
+    background-repeat: no-repeat;
+  }
+
+  .dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--squonk-roles-color-accent);
+  }
+
+  /* A short line for Flow and Travel. */
+  .line {
+    fill: none;
+    stroke: var(--squonk-roles-color-accent);
+    stroke-width: 2px;
+  }
+
+  .dashes {
+    stroke-dasharray: 10 8;
+  }
+
+  .traveller {
+    fill: var(--squonk-roles-color-accent);
+    offset-path: path("M4,8 L76,8");
+  }
+
+  .stack {
+    display: grid;
+    gap: var(--squonk-roles-space-surface-gap);
+    max-width: 28rem;
+    font-family: var(--squonk-roles-type-font);
+    color: var(--squonk-roles-color-text);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+    gap: var(--squonk-roles-space-surface-gap);
+  }
+
+  .card {
+    display: grid;
+    gap: var(--squonk-roles-space-text-gap);
+    padding: var(--squonk-roles-space-surface-inset);
+    border: var(--squonk-roles-border-width) solid var(--squonk-roles-color-divider);
+    border-radius: var(--squonk-roles-radius-surface);
+    background: var(--squonk-roles-color-surface);
+    font-family: var(--squonk-roles-type-font);
+    color: var(--squonk-roles-color-text);
+  }
+
+  .list {
+    display: grid;
+    gap: var(--squonk-roles-space-segment-gap);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .item {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--squonk-roles-space-segment-gap) var(--squonk-roles-space-surface-gap);
+    border: var(--squonk-roles-border-width) solid var(--squonk-roles-color-divider);
+    border-radius: var(--squonk-roles-radius-item);
+    background: var(--squonk-roles-color-surface);
+  }
+
+  .figure {
+    font-size: var(--squonk-roles-type-title);
+    font-weight: var(--squonk-roles-type-strong);
+  }
+
+  .notice {
+    padding: var(--squonk-roles-space-surface-inset);
+    border-radius: var(--squonk-roles-radius-surface);
+    background: var(--squonk-colors-tone-info-wash);
+    color: var(--squonk-colors-tone-info-on-wash);
+  }
+}

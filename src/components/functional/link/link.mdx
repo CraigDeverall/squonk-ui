@@ -1,0 +1,90 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as LinkStories from "./link.stories.tsx";
+import meta from "./link.stories.tsx";
+import { Link } from "./link.tsx";
+import { Cluster } from "../../layout/cluster/cluster.tsx";
+import { HStack } from "../../layout-primitive/hstack/hstack.tsx";
+import { VStack } from "../../layout-primitive/vstack/vstack.tsx";
+import { Text } from "../../functional-primitive/text/text.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Link
+
+<ResizableCanvas of={LinkStories.Default} defaultRecipe="inline" />
+
+`Link` is a themed anchor with consistent color, focus ring, and underline policy across the library. Use it for *navigation* — anything that changes the URL. For actions that mutate state, use `Button` (or `Button as="a"` when a CTA looks like a link but acts like a button). For off-site destinations set `external` so the browser opens a new tab and ships safe `rel` attributes.
+
+<Controls />
+
+## Variants
+
+Five variants cover where a link can live. `default` is the brand-color link for body copy; `subtle` recedes until hovered (header nav); `muted` is for footnotes and footers; `inherit` takes the parent's text color (inline links that should match surrounding prose without standing out); `danger` is reserved for destructive destinations.
+
+<InlineCodeExample>
+  <Cluster gap="md">
+    <Link href="#">Read the changelog</Link>
+    <Link href="#" variant="subtle">Settings</Link>
+    <Link href="#" variant="muted">Privacy policy</Link>
+    <Link href="#" variant="inherit">inline reference</Link>
+    <Link href="#" variant="danger">Delete this workspace</Link>
+  </Cluster>
+</InlineCodeExample>
+
+## Underline policy
+
+`underline="hover"` is the default — quiet at rest, discoverable on hover. Use `always` for body-copy links where discoverability matters (long-form articles); use `never` for header / footer links where underlines would be visual noise.
+
+<InlineCodeExample>
+  <VStack gap="sm">
+    <Text>Default: <Link href="#">hover me</Link></Text>
+    <Text>Always: <Link href="#" underline="always">always underlined</Link></Text>
+    <Text>Never: <Link href="#" underline="never">no underline ever</Link></Text>
+  </VStack>
+</InlineCodeExample>
+
+## External
+
+`external` sets `target="_blank"` and `rel="noopener noreferrer"` in one prop — safer and less to remember than wiring both manually.
+
+<InlineCodeExample>
+  <Link href="https://squonkstack.io" external>squonkstack.io</Link>
+</InlineCodeExample>
+
+## Weight
+
+`weight="bold"` upgrades the link to bold — for the headline link in a card, or a nav item that doubles as the page title.
+
+<InlineCodeExample>
+  <HStack gap="md">
+    <Link href="#">Regular</Link>
+    <Link href="#" weight="bold">Bold</Link>
+  </HStack>
+</InlineCodeExample>
+
+## Polymorphic
+
+`Link` is polymorphic via `as` so a router `<Link>` (e.g. React Router, Next.js) can drive the underlying element while keeping the same visual treatment.
+
+<InlineCodeExample>
+  <Link as="span">Behaves as a span</Link>
+</InlineCodeExample>
+
+## Accessibility
+
+- Renders a real `<a>` by default — full browser affordances (middle-click, copy URL, right-click menu).
+- `:focus-visible` outline uses `theme.colors.border.focus` so keyboard users always see the active link.
+- Color is paired with the underline policy — color alone never carries the "this is a link" signal in body copy (use `underline="always"`).
+- `external` sets `rel="noopener noreferrer"` to prevent `window.opener` exploitation and keep referrer policy tight.
+
+## Common pitfalls
+
+- **Don't use Link for actions.** Clicking should change the URL. If it submits a form or mutates state, use `Button`.
+- **Don't drop the underline in body copy.** `underline="never"` on inline prose hides the link from anyone who isn't hovering — fine for nav, harmful in an article.
+- **Don't set `target="_blank"` without `external`.** It works, but you lose the safe `rel` attributes. Use `external` so both happen together.
+- **Don't nest a Link inside a Button (or vice versa).** Two interactive elements at the same spot break focus order and screen-reader announcements. Pick one.

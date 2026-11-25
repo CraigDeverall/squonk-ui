@@ -1,0 +1,109 @@
+import { Canvas, Controls, Meta } from "@storybook/addon-docs/blocks";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as Stories from "./nav-list.stories";
+
+<Meta of={Stories} />
+
+# NavList
+
+Navigation between the pages of an app, marking the one you're on. Use it in a
+`Sidebar` for an app's main navigation, or across the top of a section for its
+sub-pages.
+
+```tsx
+import { NavList } from "@squonkstack/ui/nav-list";
+
+<NavList
+  label="Main"
+  current="sightings"
+  items={[
+    { id: "overview", label: "Overview", href: "/" , icon: <HomeIcon /> },
+    { id: "sightings", label: "Sightings", href: "/sightings", icon: <DocumentIcon />, end: <Badge tone="warning">1 due</Badge> },
+    { id: "payments", label: "Payments", href: "/payments", icon: <PaymentIcon /> },
+  ]}
+/>
+```
+
+<ResizableCanvas of={Stories.Default} defaultRecipe="centered" />
+
+<Controls />
+
+## When to use it
+
+- **Use it** for moving between the pages of an app or a section.
+- **Use `Tabs`** to switch between views of the same content on one page.
+- **Use `Breadcrumb`** to show where a page sits in a hierarchy.
+- **Use `DropdownMenu`** for actions, not places.
+
+## Icons, counts and badges
+
+`icon` goes before the label and is decorative: the label names the link.
+`end` goes after it, for a count or a `Badge`. Long labels truncate.
+
+<Canvas of={Stories.WithIconsAndCounts} />
+
+## Horizontal
+
+`orientation="horizontal"` lays the items in a row that wraps.
+
+<Canvas of={Stories.Horizontal} />
+
+## How the current page is marked
+
+The theme decides, not the component, so every navigation in an app agrees.
+Its `indicatorStyle` picks a style, and each style is a set of
+`roles.indicator.*` tokens, which a theme can still re-point one by one. Point
+at the items to see each hover.
+
+<Canvas of={Stories.IndicatorStyles} />
+
+| `indicatorStyle` | Current page | Under the pointer |
+| --- | --- | --- |
+| `bar` (default) | A bar along the start edge on a quiet fill | A quiet fill |
+| `fill` | Filled with the accent | A quiet fill |
+| `underline` | An underline, no fill | A thinner underline |
+| `ring` | A ring standing off a quiet fill by a gap | A thinner ring, also standing off |
+| `quiet` | A quiet fill and a stronger label | A quiet fill |
+| `tint` | A tint of the primary, with text to match | A quiet fill |
+
+```tsx
+<SquonkThemeProvider primitives={{ indicatorStyle: "ring" }}>
+```
+
+The component draws the mark from parts, so any effect is a few token values:
+
+| Token | Default | What it sets |
+| --- | --- | --- |
+| `roles.indicator.current.background` / `.text` / `.weight` | `roles.color.well`, `roles.color.onWell`, `roles.type.strong` | The current page's fill, text and weight |
+| `roles.indicator.current.color` | `roles.color.accent` | The colour of its bar, underline or ring |
+| `roles.indicator.current.bar` / `.underline` / `.ring` | `3px`, `0px`, `0px` | Each mark's width; `0px` draws none |
+| `roles.indicator.current.gap` | `0px` | How far the fill stands off the ring |
+| `roles.indicator.hover.*` | A quiet fill, no marks | The same parts, under the pointer |
+| `roles.indicator.radius` | `roles.radius.item` | The corners; the fill's corners stay concentric |
+
+<Canvas of={Stories.BorderWithAGap} />
+
+## Routing
+
+Links use React Aria's link, which navigates through your app's
+`RouterProvider` when there is one. To render your router's own link component
+instead, pass it as `linkAs`. `onNavigate` is called with the chosen item's
+`id`, for jobs like closing a mobile drawer; navigation still follows `href`.
+
+## Accessibility
+
+- `label` names the navigation; a page often has several, so it's required.
+- The current page has `aria-current="page"`, so screen readers announce it.
+- Links are in the tab order, and Enter follows them. Focus shows the theme's
+  focus ring, separate from the current-page mark.
+- The current page is marked by more than colour: its label is stronger, and
+  the bar, underline or ring is a shape.
+
+## Common pitfalls
+
+- **Styling the current page in app CSS.** Set `indicatorStyle` or re-point
+  `roles.indicator.*` so every navigation agrees.
+- **Using it for tabs.** Tabs switch content in place and have their own
+  keyboard pattern; use `Tabs`.
+- **Leaving `current` unset.** Without it, no page is marked as the one
+  you're on.

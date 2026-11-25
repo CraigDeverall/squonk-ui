@@ -1,0 +1,20 @@
+@layer dt.components {
+  .root {
+    box-sizing: border-box;
+    flex: 0 0 var(--sidebar-width);
+    width: var(--sidebar-width);
+    min-height: 0;
+    padding: var(--squonk-roles-space-surface-inset);
+    background-color: var(--squonk-roles-color-page);
+    color: var(--squonk-roles-color-on-page);
+    overflow-y: auto;
+  }
+
+  .root[data-side="left"] {
+    border-right: var(--squonk-roles-border-width) solid var(--squonk-roles-color-divider);
+  }
+
+  .root[data-side="right"] {
+    border-left: var(--squonk-roles-border-width) solid var(--squonk-roles-color-divider);
+  }
+}

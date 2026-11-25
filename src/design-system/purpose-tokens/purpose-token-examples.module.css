@@ -1,0 +1,14 @@
+/* Docs-only layout for the Purpose tokens page's examples. */
+.columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  gap: var(--squonk-roles-space-distinct);
+  align-items: start;
+}
+
+.column {
+  display: grid;
+  align-content: start;
+  gap: var(--squonk-roles-space-related);
+  min-inline-size: 0;
+}

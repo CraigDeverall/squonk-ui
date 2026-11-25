@@ -1,0 +1,197 @@
+# One workflow for pull requests, the merge queue and main, so the release and
+# the documentation deploy can depend on every check in the same run.
+#
+# Pull requests and the merge queue: checks, commitlint and component tests.
+# main: the same, then semantic-release publishes @squonkstack/ui and
+# @squonkstack/ui-mcp to npm and the Storybook site is deployed to GitHub Pages.
+name: CI
+
+on:
+  pull_request:
+  merge_group:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  # Never cancel a run on main: each one may publish a release.
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  checks:
+    name: Lint, typecheck, unit tests and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run check:secrets
+      - run: npm run typecheck
+      - run: npm run typecheck:tests
+      - name: Exports, catalog and token checks
+        run: |
+          node scripts/generate-package-exports.mjs --check
+          npm run catalog:check
+          npm run tokens:check
+      - run: npm run audit:dependencies
+      - name: Unit, script and generator tests
+        run: |
+          npm run test:unit
+          npm run test:scripts
+          npm run test:generator
+      - name: "@squonkstack/ui-mcp"
+        run: |
+          npm run typecheck -w @squonkstack/ui-mcp
+          npm test -w @squonkstack/ui-mcp
+          npm run build -w @squonkstack/ui-mcp
+      - name: "@squonkstack/ui-devtools"
+        run: |
+          npm run typecheck -w @squonkstack/ui-devtools
+          npm test -w @squonkstack/ui-devtools
+          npm run package -w @squonkstack/ui-devtools
+      - name: Build and check the packed package
+        run: |
+          npm run build
+          npm run test:package
+
+  commitlint:
+    name: Conventional Commits
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      # Releases are commit-driven, so every commit on the branch is checked,
+      # not just the pull request title.
+      - run: npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose
+
+  component-tests:
+    name: Component tests and Storybook
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    # The same image as test-setup/Dockerfile, so the chromium-linux snapshot
+    # baselines rendered by `npm test` match here. Keep the tag in step with
+    # the playwright version in package.json.
+    container:
+      image: mcr.microsoft.com/playwright:v1.62.1-noble
+    env:
+      HOME: /root
+    steps:
+      - uses: actions/checkout@v5
+      - run: npm ci
+      - run: npx playwright test -c ./playwright.config.ts
+      - run: npm run build-storybook
+      - run: node scripts/test-design-docs-browser.mjs
+        env:
+          DESIGN_BROWSER_OUTPUT_DIR: test-results/design-docs
+      - name: MCP story preview in a real host page
+        run: |
+          npm run build
+          npm run build -w @squonkstack/ui-mcp
+          node packages/ui-mcp/test/host.mjs . test-results
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: |
+            test-results/
+            playwright-report/
+          retention-days: 7
+
+  release:
+    name: Release to npm
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [checks, component-tests]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: npm
+    permissions:
+      contents: write # tags and GitHub Releases
+      issues: write # comments on issues a release fixes
+      pull-requests: write # comments on pull requests a release includes
+      id-token: write # npm provenance
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm run build -w @squonkstack/ui-mcp
+      - run: npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  docs:
+    name: Build documentation site
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [release]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run build-storybook
+      - name: Theme devtools extension download
+        run: |
+          # The release that just ran (if any) is the newest tag.
+          export EXTENSION_VERSION="$(git describe --tags --abbrev=0 2>/dev/null | sed 's/^v//')"
+          npm run package -w @squonkstack/ui-devtools
+          mkdir -p storybook-static/downloads
+          cp -R packages/ui-devtools/package/. storybook-static/downloads/
+      # The Contributing/Test report page frames /test-report/: this run's
+      # Playwright report from the component-tests job.
+      - uses: actions/download-artifact@v4
+        with:
+          name: test-results
+          path: test-results-artifact
+      - name: Playwright report
+        run: |
+          mkdir -p storybook-static/test-report
+          cp -R test-results-artifact/playwright-report/. storybook-static/test-report/ 2>/dev/null || echo "No Playwright report in this run"
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: storybook-static
+
+  deploy-docs:
+    name: Deploy documentation site
+    needs: [docs]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

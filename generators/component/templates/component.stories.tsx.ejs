@@ -1,0 +1,21 @@
+import type { Meta, StoryObj } from "@storybook/react";
+import { SquonkThemeProvider } from "../../../theme/theme-provider";
+import { <%= componentName %> } from "./<%= componentNameKebab %>";
+
+const meta = {
+  title: "<%= componentType === "LayoutPrimitive" ? "Layout/Primitives" : componentType === "FunctionalPrimitive" ? "Functional/Primitives" : componentType %>/<%= componentName %>",
+  component: <%= componentName %>,
+  args: {
+<% if (acceptsChildren) { %>    children: "<%= exampleLabel %>",
+<% } else if (baseElement === "img") { %>    alt: "<%= exampleLabel %>",
+<% } else if (["input", "button"].includes(baseElement)) { %>    "aria-label": "<%= exampleLabel %>",
+<% } %>  },
+} satisfies Meta<typeof <%= componentName %>>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {};
+export const Dark: Story = {
+  decorators: [(Story) => <SquonkThemeProvider mode="dark"><Story /></SquonkThemeProvider>],
+};

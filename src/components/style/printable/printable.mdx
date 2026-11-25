@@ -1,0 +1,87 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as PrintableStories from "./printable.stories.tsx";
+import meta from "./printable.stories.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Printable, NotPrintable and PrintOnly
+
+<ResizableCanvas of={PrintableStories.Statement} />
+
+Three marks that decide what goes on paper. None of them adds a box or changes
+anything on screen. Print the example above (Ctrl+P or ⌘P) to see them work:
+only the statement prints, the app bar and help line are left off, and a
+letterhead and reference appear.
+
+```tsx
+import { NotPrintable, Printable, PrintOnly } from "@squonkstack/ui/printable";
+
+<NotPrintable><AppHeader /></NotPrintable>
+<Printable>
+  <PrintOnly><Letterhead /></PrintOnly>
+  <Heading level={1}>Statement of account</Heading>
+  <Table … />
+</Printable>
+```
+
+- **`Printable`** marks what to print. While at least one is on the page, printing
+  includes only the `Printable` areas and everything inside them. The layout
+  around them is flattened, so a statement deep in a sidebar layout starts at
+  the top of the paper. With none on the page, the whole page prints. Areas can
+  sit anywhere on the page and can nest.
+- **`NotPrintable`** leaves its contents off paper, anywhere, including inside a
+  `Printable`: actions, navigation, filters, help that only makes sense on
+  screen.
+- **`PrintOnly`** shows its contents only on paper: a letterhead, a reference
+  number, the date printed, a note that stands in for an interactive control.
+
+<Controls />
+
+## Props
+
+`Printable` takes `breakBefore` (start the area on a new page) and
+`keepTogether` (keep it on one page where it fits, rather than splitting it).
+All three take `inline`, which renders a `span` instead of a `div` for a mark
+inside a line of text, and pass other attributes (an `id`, a `data-testid`) to
+the element.
+
+<ResizableCanvas of={PrintableStories.Inline} defaultHeight={120} />
+
+## What every component does on paper
+
+You don't need these marks for a page to print well. Whenever a page prints,
+the library restyles it from the theme's print purposes:
+
+- Colours become ink on white, so a dark theme doesn't print a black page. A
+  theme that should keep its colours turns on the `printBackgrounds` switch.
+- Shadows, relief and motion are switched off.
+- Buttons are left off: they do nothing on paper. So are pagination, toasts and
+  tooltips.
+- Links to web and email addresses print their address after the text. A
+  theme turns that off with the `printLinkUrls` switch.
+- Tables print every row, repeat their header on each page and don't split a
+  row across pages. Scroll boxes print all of their contents.
+- Cards are kept on one page where they fit, and pinned headers print once, in
+  place.
+
+See [Printing](?path=/docs/patterns-printing--docs) for when to use each mark.
+
+## Accessibility
+
+`PrintOnly` is hidden on screen from everyone, including screen reader users, so
+put nothing there that people on screen need. `NotPrintable` and `Printable`
+change nothing on screen.
+
+## Pitfalls
+
+- **Don't hide what a printed record needs.** A printed statement still needs
+  its totals, dates and reference, even when they sit in a part of the screen
+  you'd otherwise leave off.
+- **Wrap whole regions.** Marking the content you want, once, is sturdier than
+  marking everything else `NotPrintable`.
+- **A `PrintOnly` outside every `Printable` doesn't print** while a `Printable`
+  is on the page, like anything else outside one.

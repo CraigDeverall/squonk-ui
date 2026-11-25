@@ -1,0 +1,45 @@
+@layer dt.components {
+  .root {
+    display: block;
+    padding: var(--card-padding);
+    border-radius: var(--squonk-roles-radius-surface);
+    /* Relief: raised panels; a filled card is a well in the page. */
+    --card-relief-fill: var(--squonk-roles-relief-surface-fill);
+    --card-relief-edge: var(--squonk-roles-relief-surface-edge);
+    background-image: var(--card-relief-fill);
+    background-blend-mode: var(--squonk-roles-relief-blend);
+    box-shadow: var(--card-relief-edge);
+  }
+
+  .root[data-variant="elevated"] {
+    background-color: var(--squonk-roles-color-surface);
+    color: var(--squonk-roles-color-on-surface);
+    box-shadow: var(--card-relief-edge), var(--squonk-roles-elevation-soft);
+  }
+
+  .root[data-variant="outlined"] {
+    background-color: var(--squonk-roles-color-surface);
+    color: var(--squonk-roles-color-on-surface);
+    border: var(--squonk-roles-border-width) solid var(--squonk-roles-color-outline);
+    box-shadow: var(--card-relief-edge), var(--squonk-components-card-outlined-elevation);
+  }
+
+  .root[data-variant="filled"] {
+    --card-relief-fill: var(--squonk-roles-relief-well-fill);
+    --card-relief-edge: var(--squonk-roles-relief-well-edge);
+    background-color: var(--squonk-roles-color-page);
+    color: var(--squonk-roles-color-on-page);
+  }
+
+  .root[data-variant="featured"] {
+    background-color: var(--squonk-roles-color-inverse-surface);
+    color: var(--squonk-roles-color-on-inverse-surface);
+    border: var(--squonk-roles-border-width) solid var(--squonk-roles-color-inverse-surface);
+    box-shadow: var(--card-relief-edge), var(--squonk-components-card-featured-elevation);
+  }
+
+  /* Keep a card on one page where it fits. */
+  @media print {
+    .root { break-inside: avoid; }
+  }
+}

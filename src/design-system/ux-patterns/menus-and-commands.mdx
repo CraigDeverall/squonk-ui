@@ -1,0 +1,38 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../documentation-imports/index.ts";
+import { Do, DoDont, Dont, Example } from "./pattern-blocks.tsx";
+import { RowActionsExample, VagueMenuExample } from "./pattern-examples.tsx";
+
+<Meta title="Patterns/Menus and commands" />
+
+<HideSbBar />
+
+# Menus and commands
+
+A [DropdownMenu](?path=/docs/functional-dropdown-menu--docs) holds a short list
+of things to **do** with an item. It has no value of its own and closes after a
+choice. Your app owns what each command does, and any confirmation after it.
+
+<Example caption="Open it with the keyboard (Enter or ↓), move with the arrows, choose with Enter, close with Escape: focus returns to the trigger.">
+  <RowActionsExample />
+</Example>
+
+## The rules
+
+- **Name the trigger for the item**: "Actions for statement 1042". An icon-only
+  trigger still needs a name; `triggerLabel` gives it one.
+- **Use verbs**: "Send reminder", not "Reminder".
+- **Group related commands, and put destructive ones last**, after a separator,
+  with `tone: "danger"`. Confirm or offer undo as on
+  [Destructive actions](?path=/docs/patterns-destructive-actions--docs).
+- **Keep it short.** A long searchable list is a [Select](?path=/docs/functional-select--docs)
+  with `searchable`; places to go are [links](?path=/docs/patterns-app-navigation--docs).
+
+<DoDont>
+  <Do caption="The trigger names the item it acts on, and the destructive command is last.">
+    <RowActionsExample />
+  </Do>
+  <Dont caption="“More” on its own says nothing to someone moving through a list of rows, and the delete sits between routine commands.">
+    <VagueMenuExample />
+  </Dont>
+</DoDont>

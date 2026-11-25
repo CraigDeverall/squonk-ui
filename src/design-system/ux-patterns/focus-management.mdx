@@ -1,0 +1,60 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../documentation-imports/index.ts";
+import { Example } from "./pattern-blocks.tsx";
+import { FocusAfterDeleteExample } from "./pattern-examples.tsx";
+
+<Meta title="Patterns/Focus management" />
+
+<HideSbBar />
+
+# Focus management
+
+Keyboard and screen-reader users follow focus. Move it only when the user's
+context changes, and always to somewhere they expect.
+
+| When… | Focus goes to | Handled by |
+| --- | --- | --- |
+| A dialog opens | The dialog itself (so its title is read first) | [Modal](?path=/docs/functional-modal--docs) |
+| A dialog closes | Back to the control that opened it, or the next sensible place if that control has gone | Modal |
+| A menu or list opens | Into it, with the first item highlighted | [DropdownMenu](?path=/docs/functional-dropdown-menu--docs), [Select](?path=/docs/functional-select--docs) |
+| A menu or list closes | Back to its trigger | DropdownMenu, Select |
+| A form submit fails | The error summary or the first invalid field, once | Your form |
+| Content loads or refreshes | Nowhere — announce it instead | Your page |
+| A focused row is deleted or filtered out | The nearest remaining row | [Table](?path=/docs/functional-table--docs) in grid mode; your list otherwise |
+| A toast or alert appears | Nowhere | [Toast](?path=/docs/functional-toast--docs), [Alert](?path=/docs/functional-alert--docs) |
+
+## Don't strand focus
+
+When the focused element disappears (a deleted row, a closed panel), browsers
+send focus to the top of the page. Move it to the next item, or to the list
+that held it, before removing the element.
+
+<Example caption="Tab to a Remove button and press Enter: focus moves to the next member's button, or to the list when the last one goes.">
+  <FocusAfterDeleteExample />
+</Example>
+
+## Don't steal focus on load
+
+Don't move focus when a page opens or data arrives, unless almost everyone needs
+the same single control straight away (a sign-in form, for example).
+
+## Keep focus visible
+
+All library components show a focus ring for keyboard use and none for mouse
+clicks. Don't remove it. In grids and menus the focused or highlighted item shows
+it.
+
+## Related
+
+- [Overlays and disclosures](?path=/docs/patterns-overlays-and-disclosures--docs)
+- [Tables and grids](?path=/docs/patterns-tables-and-grids--docs)
+
+---
+
+Sources, paraphrased: [WAI-ARIA Authoring Practices: dialog (modal)](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/),
+[menu button](https://www.w3.org/WAI/ARIA/apg/patterns/menu-button/) and
+[developing a keyboard interface](https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/), © W3C, under the
+[W3C Software and Document License](https://www.w3.org/copyright/software-license/);
+[React Aria FocusScope](https://react-aria.adobe.com/FocusScope) and
+[Building a Button, part 3](https://react-aria.adobe.com/blog/building-a-button-part-3), © Adobe;
+[React Aria Dialog](https://react-spectrum.adobe.com/react-aria/Dialog.html).

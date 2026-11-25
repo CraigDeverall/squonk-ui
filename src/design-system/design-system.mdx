@@ -1,0 +1,87 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../documentation-imports/index.ts";
+import { Button, Card, Heading, HStack, Text, TextField, VStack } from "../components";
+import { Specimen } from "./foundations/foundation-blocks.tsx";
+
+<Meta title="Foundations/Overview" />
+
+<HideSbBar />
+
+# Foundations
+
+SquonkUI is a small set of decisions applied the same way everywhere: one
+type family, one spacing scale, a handful of named shapes and colours, and
+components that already behave correctly for keyboards, screen readers and
+narrow screens. These pages show those decisions with the real components, in
+the theme you are viewing.
+
+<Specimen label="Built only from library components and theme tokens.">
+  <Card variant="outlined">
+    <VStack gap="md">
+      <Heading level={3} as="h2">Contact details</Heading>
+      <TextField label="Email" defaultValue="aroha@example.org" helperText="We send notices here." />
+      <HStack gap="sm" wrap>
+        <Button variant="primary">Save</Button>
+        <Button variant="ghost">Cancel</Button>
+      </HStack>
+    </VStack>
+  </Card>
+</Specimen>
+
+## Principles
+
+- **Calm and readable.** Clear hierarchy, generous but deliberate space, one leading
+  action per task, and emphasis used sparingly.
+- **Named decisions, not numbers.** Components read purpose tokens such as "the gap
+  between a field's label and its input", so a theme changes what a purpose means
+  in one place. See [Purpose tokens](?path=/docs/foundations-purpose-tokens--docs).
+- **Accessible by construction.** Behaviour comes from React Aria: labels, focus,
+  keyboard and announcements are built in. Your content still has to be clear.
+- **Every state counts.** Empty, loading, error, long-text and phone-width states
+  get the same care as the populated desktop screen.
+
+## How the pieces fit
+
+| Layer | What it is | Use it to |
+| --- | --- | --- |
+| Layout primitives | `VStack`, `HStack`, `Cluster`, `Grid`, `Split`, `Container`… | Arrange components; the parent owns placement and spacing |
+| Named layouts | `Page`, `Section`, `Card`, `Header`, `Sidebar` | Give common screens a consistent shape |
+| Components | Buttons, fields, overlays, tables… | Do the work, with behaviour and accessibility built in |
+| Presentation | `compact`, `default`, `large`, `hero` registers | Size a region's controls for its job, from dense admin to marketing |
+| Theme | `SquonkThemeProvider`, `ThemeModifier`, `ThemeStyleBlock` | Change primitives, purposes, mode or density for an app or a subtree |
+
+## What the library promises, and what your app checks
+
+The library ships tested components: keyboard and focus behaviour, light and dark
+contrast for its own text roles, visual baselines and React Aria semantics. Your
+app is responsible for its content and composition: meaningful labels and
+headings, the contrast of any custom colours or images, sensible focus order
+across the screen, and testing with real data at real widths.
+
+## Foundations
+
+| Page | Covers |
+| --- | --- |
+| [Colour](?path=/docs/foundations-colour--docs) | The palette, purpose colours and status tones |
+| [Typography](?path=/docs/foundations-typography--docs) | The type scale and the type purposes |
+| [Space and layout](?path=/docs/foundations-space-and-layout--docs) | Spacing, registers, breakpoints and layout primitives |
+| [Shape and elevation](?path=/docs/foundations-shape-and-elevation--docs) | Corner radii, shadows and surface relief by role |
+| [Motion](?path=/docs/foundations-motion--docs) | How motion is themed (tempo, travel, curves, bounce, stagger), the Motion components, and the motion level (reduced motion) |
+| [Icons](?path=/docs/foundations-icons--docs) | The icon set, sizes and labelling |
+| [Accessibility](?path=/docs/foundations-accessibility--docs) | What you get for free and what you still check |
+| [Theme](?path=/docs/foundations-theme--docs) | Primitives, getters, density and theme files |
+| [Purpose tokens](?path=/docs/foundations-purpose-tokens--docs) | Every purpose and component token |
+
+For whole compositions (forms, navigation, tables, feedback, overlays) see
+[Patterns](?path=/docs/patterns-overview--docs). To find the right component
+for a job, start with [Choosing components](?path=/docs/patterns-choosing-components--docs);
+for the shape of a screen, [Page layouts and app shells](?path=/docs/patterns-page-layouts-and-app-shells--docs).
+
+## Before adding something new
+
+Start from the user's need and compare it with what exists: a composition of
+existing components, a scoped theme change or a new purpose token is usually the
+right answer. A new public component needs use and avoid criteria, its states,
+keyboard and focus behaviour, responsive behaviour, the tokens it binds to, a live
+example and tests. When several teams ask for similar changes, prefer one shared
+extension over several local ones.

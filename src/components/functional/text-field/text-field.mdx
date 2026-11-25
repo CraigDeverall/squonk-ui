@@ -1,0 +1,130 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as TextFieldStories from "./text-field.stories.tsx";
+import meta from "./text-field.stories.tsx";
+import { TextField } from "./text-field.tsx";
+import { Presentation } from "../../style/presentation/presentation.tsx";
+import { VStack } from "../../layout-primitive/vstack/vstack.tsx";
+import { HStack } from "../../layout-primitive/hstack/hstack.tsx";
+import { Block } from "../../layout-primitive/block/block.tsx";
+import { Button } from "../button/button.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# TextField
+
+<ResizableCanvas of={TextFieldStories.Default} />
+
+`TextField` is the canonical single-line text input — email, password, URL, search, anything that fits on one row. The `<label>` is associated with the input, so clicking it focuses the field; `error` switches the input into a validated state with `aria-invalid` set. For multi-line text use a `Textarea`; for one-of-many use `Select` or `RadioGroup`.
+
+<Controls />
+
+## With label and placeholder
+
+A label sits above the input; the placeholder is shorthand for *example input*, not a label substitute.
+
+<InlineCodeExample>
+  <TextField label="Email address" placeholder="you@example.com" />
+</InlineCodeExample>
+
+## Helper text
+
+`helperText` sits under the input — use it for format hints or rules ("must contain a number"), not validation results.
+
+<InlineCodeExample>
+  <TextField
+    label="Password"
+    type="password"
+    placeholder="••••••••"
+    helperText="At least 8 characters, one number."
+  />
+</InlineCodeExample>
+
+## Error
+
+`error` replaces `helperText`, switches the border + helper to the error color, and sets `aria-invalid` on the input.
+
+<InlineCodeExample>
+  <TextField
+    label="Email address"
+    defaultValue="not-an-email"
+    error="Enter a valid email address."
+  />
+</InlineCodeExample>
+
+## Disabled
+
+A disabled input has a subtle background tint and is removed from keyboard Tab navigation and cannot be edited (assistive technology can still discover it).
+
+<InlineCodeExample>
+  <TextField label="Workspace ID" defaultValue="wks_3aF2nQ" disabled />
+</InlineCodeExample>
+
+## Input types
+
+Pass any standard input `type` — `email`, `url`, `password`, `number`, `search`, `tel`. Mobile keyboards adapt automatically.
+
+<InlineCodeExample>
+  <Block width="320px">
+    <VStack gap="sm">
+      <TextField label="Email" type="email" placeholder="you@example.com" />
+      <TextField label="URL" type="url" placeholder="https://squonkstack.io" />
+      <TextField label="Phone" type="tel" placeholder="+1 555 0142" />
+      <TextField label="Search" type="search" placeholder="Search docs…" />
+    </VStack>
+  </Block>
+</InlineCodeExample>
+
+## Sizing via Presentation
+
+Padding and font scale with the surrounding register; use `compact` for inline filters, `large` / `hero` for marketing or onboarding surfaces.
+
+<InlineCodeExample>
+  <Block width="320px">
+    <VStack gap="sm">
+      <Presentation register="compact"><TextField label="Compact" placeholder="Search…" /></Presentation>
+      <Presentation register="default"><TextField label="Default" placeholder="Search…" /></Presentation>
+      <Presentation register="large"><TextField label="Large" placeholder="Search…" /></Presentation>
+    </VStack>
+  </Block>
+</InlineCodeExample>
+
+## Not full-width
+
+`fullWidth` defaults to `true`. Set `fullWidth={false}` for a fit-to-content input — useful for inline filters or short fields next to a button.
+
+<InlineCodeExample>
+  <HStack gap="sm" align="end">
+    <TextField label="Coupon code" placeholder="SQUONK20" fullWidth={false} />
+    <Button variant="primary">Apply</Button>
+  </HStack>
+</InlineCodeExample>
+
+## Accessibility
+
+Helper and error text are exposed as descriptions, separate from the visible label. A supplied `aria-describedby` is preserved and combined with the component’s message.
+
+- The label is a real `<label>` associated with the input by `for`/`id` (pass `id` to choose it), so a label click focuses the input. `required`, `disabled` and `readOnly` reach the input, and an error message is announced politely when it appears.
+- `error` sets `aria-invalid="true"` on the input; the error text is connected with `aria-describedby` and kept separate from the field’s accessible name.
+- The focus ring uses `--squonk-colors-border-focus` with a 2px box-shadow halo — visible against light and dark backgrounds.
+- All standard `<input>` props (`autoComplete`, `inputMode`, `pattern`, `required`) are forwarded — accessibility hints work as expected.
+
+## Common pitfalls
+
+- **Don't use the placeholder as a label.** Placeholders disappear on focus and are low-contrast — always pair them with a real `label`.
+- **Don't put validation results in `helperText`.** Use `error` so the field gets `aria-invalid` and the styling switches; helper text is for format hints only.
+- **Don't forget `type` for non-text fields.** `type="email"` triggers the right mobile keyboard and gives free browser validation; `type="password"` masks the value.
+- **Don't disable a field without explanation.** Pair with a tooltip or helper text so the user knows why it's locked.
+
+
+## Validation and submission ownership
+
+`TextField` renders the supplied error; it does not validate data, decide when an error appears, submit requests or focus the first invalid field. Keep entered values when submission fails, explain how to correct each invalid value, and connect a form-level error summary to the affected fields when several errors occur. Use persistent [Alert](?path=/docs/functional-alert--docs) feedback for a failed save; a disappearing toast should not be the only recovery instruction. See [WAI form notifications](https://www.w3.org/WAI/tutorials/forms/notifications/).
+
+## UX guidance
+
+- [Labels, help and validation](?path=/docs/patterns-labels-help-and-validation--docs)

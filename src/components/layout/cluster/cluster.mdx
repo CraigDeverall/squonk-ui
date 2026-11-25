@@ -1,0 +1,92 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as ClusterStories from "./cluster.stories.tsx";
+import meta from "./cluster.stories.tsx";
+import { Cluster } from "./cluster.tsx";
+import { Badge } from "../../functional/badge/badge.tsx";
+import { Button } from "../../functional/button/button.tsx";
+import { Block } from "../../layout-primitive/block/block.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Cluster
+
+<ResizableCanvas of={ClusterStories.Tags} />
+
+`Cluster` is a wrapping horizontal flow for a group of small related items — tags, chips, breadcrumbs, button rows, badge sets. Children flow left-to-right and wrap onto the next line as the parent narrows, all with a consistent gap. Reach for `Cluster` when the *intent* is "a loose group that wraps as needed". For a row that should push children to opposite ends without wrapping, use `Split`; for a strict row that never wraps, use `HStack` directly.
+
+<Controls />
+
+## Tag cloud
+
+The canonical use — a wrapping row of badges, with whatever count comes in. The cluster handles the line breaks; you handle the data.
+
+<InlineCodeExample>
+  <Cluster>
+    <Badge tone="primary" variant="subtle">React</Badge>
+    <Badge tone="primary" variant="subtle">TypeScript</Badge>
+    <Badge tone="primary" variant="subtle">styled-components</Badge>
+    <Badge tone="primary" variant="subtle">Storybook</Badge>
+    <Badge tone="primary" variant="subtle">Playwright</Badge>
+    <Badge tone="primary" variant="subtle">Vitest</Badge>
+  </Cluster>
+</InlineCodeExample>
+
+## Button group
+
+A row of related actions — primary action, secondary, escape. The wrap keeps narrow screens usable without per-breakpoint code.
+
+<InlineCodeExample>
+  <Cluster>
+    <Button variant="primary">Save changes</Button>
+    <Button variant="secondary">Cancel</Button>
+    <Button variant="ghost">Discard draft</Button>
+  </Cluster>
+</InlineCodeExample>
+
+## Centered
+
+`justify="center"` for hero-style call-to-action rows under a headline.
+
+<InlineCodeExample>
+  <Cluster justify="center">
+    <Button variant="primary">Get started</Button>
+    <Button variant="secondary">Read the docs</Button>
+  </Cluster>
+</InlineCodeExample>
+
+## Wrapping
+
+When the parent narrows, items flow to the next line with the same gap on both axes — no extra wiring.
+
+<InlineCodeExample>
+  <Block bordered padding="md" radius="base" maxWidth="320px">
+    <Cluster>
+      <Badge tone="neutral" variant="outline">design</Badge>
+      <Badge tone="neutral" variant="outline">engineering</Badge>
+      <Badge tone="neutral" variant="outline">product</Badge>
+      <Badge tone="neutral" variant="outline">research</Badge>
+      <Badge tone="neutral" variant="outline">support</Badge>
+      <Badge tone="neutral" variant="outline">marketing</Badge>
+      <Badge tone="neutral" variant="outline">finance</Badge>
+      <Badge tone="neutral" variant="outline">people</Badge>
+    </Cluster>
+  </Block>
+</InlineCodeExample>
+
+## Accessibility
+
+- Renders a plain wrapping `<div>` — children supply their own semantics (badge, button, link, breadcrumb).
+- Gap is consistent on both axes, so a wrapping cluster doesn't feel cramped on the second line.
+- For breadcrumbs, wrap the cluster in a `<nav aria-label="Breadcrumb">` to make it a landmark.
+
+## Common pitfalls
+
+- **Don't use `Cluster` when items should split to opposite ends.** That's `Split` — the intent is different.
+- **Don't pack tens of clusters with `gap="xl"`.** Wide gaps look intentional at first and then ridiculous when the cluster wraps. Stick with `xs`–`md` for tag-like content.
+- **Don't put block-level children in a Cluster.** It's meant for inline-flow items; full-width cards inside a cluster turn into a sad single column.
+- **Don't reproduce a Cluster manually with `HStack` + `wrap`.** That's what `Cluster` is — the named component encodes the recurring intent.

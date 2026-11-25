@@ -1,0 +1,40 @@
+@layer dt.components {
+  .root {
+    margin: 0;
+    font-family: var(--squonk-roles-type-font);
+    font-size: var(--text-size);
+    font-weight: var(--text-weight);
+    font-style: normal;
+    line-height: var(--squonk-roles-type-body-line-height);
+    color: var(--squonk-roles-color-text);
+    text-align: var(--text-align);
+  }
+
+  .root[data-tone="secondary"] { color: var(--squonk-roles-color-text-supporting); }
+  .root[data-tone="muted"] { color: var(--squonk-components-text-muted); }
+  .root[data-tone="inverse"] { color: var(--squonk-components-text-inverse); }
+  .root[data-tone="success"] { color: var(--squonk-colors-status-text-success); }
+  .root[data-tone="warning"] { color: var(--squonk-colors-status-text-warning); }
+  .root[data-tone="error"] { color: var(--squonk-colors-status-text-error); }
+  .root[data-tone="info"] { color: var(--squonk-colors-status-text-info); }
+  /* A colour the theme added: its text-on-the-page part, set inline as
+     --tone-outline-text (src/theme/tone.ts). */
+  .root[data-tone="custom"] { color: var(--tone-outline-text); }
+
+  /* Eyebrow: a small capitals label above a heading. After the tones, which
+     still set its colour. */
+  .root[data-variant="eyebrow"] {
+    font-size: var(--squonk-components-text-eyebrow-size);
+    letter-spacing: var(--squonk-components-text-eyebrow-tracking);
+    text-transform: uppercase;
+  }
+
+  .italic { font-style: italic; }
+
+  .truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+  }
+}

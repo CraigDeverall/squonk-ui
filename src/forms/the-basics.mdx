@@ -1,0 +1,47 @@
+import { Meta, Source } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../documentation-imports/index.ts";
+import { ResizableCanvas } from "../utils/resizable-canvas.tsx";
+import * as Examples from "./forms.stories.tsx";
+import code from "./examples/contact-details.tsx?raw";
+
+<Meta title="Patterns/Forms/The basics" />
+
+<HideSbBar />
+
+# The basics
+
+<ResizableCanvas of={Examples.ContactDetails} defaultHeight={620} />
+
+A form is a schema, a `useAppForm` call, and the fields inside `form.AppForm`:
+
+1. **Describe the rules** with a Zod schema. Each rule carries the message people see.
+2. **Create the form** with `useAppForm`: the starting values, the schema as the
+   `onChange` validator, and what to do on submit.
+3. **Render the fields** with `form.AppField`. Its `name` is type-checked
+   against `defaultValues`, and `field.TextField`, `field.RadioGroup` and the rest
+   take the same props as the components they wrap, minus value, change and error.
+4. **Add `form.ErrorSummary` and `form.SubmitButton`** inside `form.Form`.
+
+<Source code={code} language="tsx" />
+
+## Bound fields
+
+| In `form.AppField` | Wraps | Value |
+| --- | --- | --- |
+| `field.TextField` | [TextField](?path=/docs/functional-text-field--docs) | `string` |
+| `field.Textarea` | [Textarea](?path=/docs/functional-textarea--docs) | `string` |
+| `field.CurrencyField` | [CurrencyField](?path=/docs/components-inputs-currency-field--docs) | `number \| null` (major units, `null` when empty) |
+| `field.Select` | [Select](?path=/docs/functional-select--docs), including `searchable` | `string` (`""` for none) |
+| `field.Checkbox` | [Checkbox](?path=/docs/functional-checkbox--docs) | `boolean` |
+| `field.Switch` | [Switch](?path=/docs/functional-switch--docs) | `boolean` |
+| `field.CheckboxGroup` | [CheckboxGroup](?path=/docs/functional-checkbox-group--docs) | `string[]` |
+| `field.RadioGroup` | [RadioGroup](?path=/docs/functional-radio--docs) | `string` |
+
+Anything else: see [Custom fields](?path=/docs/patterns-forms-custom-fields--docs).
+
+## Validate on change, show on blur
+
+`validators: { onChange: schema }` checks the whole form on every change, which
+keeps errors current as people fix them. The fields still hold each error back
+until the field is left or a submit is tried. Use `onBlur` instead only for rules
+too slow to run on every keystroke.

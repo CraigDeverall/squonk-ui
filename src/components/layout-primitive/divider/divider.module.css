@@ -1,0 +1,19 @@
+@layer dt.components {
+  .root {
+    border: none;
+    background-color: var(--squonk-roles-color-divider);
+    margin: 0;
+    flex-shrink: 0;
+  }
+
+  .root[data-orientation="horizontal"] {
+    width: 100%;
+    height: var(--squonk-roles-border-width);
+  }
+
+  .root[data-orientation="vertical"] {
+    width: var(--squonk-roles-border-width);
+    align-self: stretch;
+    min-height: 1em;
+  }
+}

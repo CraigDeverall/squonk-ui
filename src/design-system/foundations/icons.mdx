@@ -1,0 +1,64 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar, IconGallery } from "../../documentation-imports/index.ts";
+import { AddIcon, Button, DeleteIcon, HStack, IconButton, SearchIcon, SettingsIcon, Text, WarningIcon } from "../../components";
+import { Specimen } from "./foundation-blocks.tsx";
+
+<Meta title="Foundations/Icons" />
+
+<HideSbBar />
+
+# Icons
+
+The library exports a curated set of icons named for their meaning (`AddIcon`,
+`CloseIcon`, `WarningIcon`), not their drawing. The house style is Lucide:
+outlined, with one consistent stroke. Import icons from `@squonkstack/ui`, never from
+`react-icons` directly, so a drawing can change in one place.
+
+## Size and colour
+
+Icons take the current text colour and default to the size of the text around
+them. Inside a control, use `size="control"` so the icon grows with the
+[register](?path=/docs/foundations-space-and-layout--docs).
+
+<Specimen>
+  <HStack gap="md" wrap align="center">
+    <Button variant="primary"><AddIcon size="control" /> New sighting</Button>
+    <Button variant="secondary"><SearchIcon size="control" /> Search</Button>
+    <IconButton icon={<SettingsIcon />} label="Settings" />
+    <Text tone="warning"><WarningIcon /> Due in 3 days</Text>
+  </HStack>
+</Specimen>
+
+| `size` | Renders at | Use |
+| --- | --- | --- |
+| `inherit` (default) | The surrounding text size | Icons next to words |
+| `sm`, `md`, `lg` | Small, body and large text sizes | Standalone icons |
+| `control` | The register's control icon size | Icons inside buttons and inputs |
+
+## Labelling icons
+
+- **Next to words:** the icon is decorative; the words carry the meaning, and the
+  icon is hidden from screen readers.
+- **On its own in a control:** the control needs a name. `IconButton` requires a
+  `label`, which is also shown as its tooltip.
+- **On its own as information:** give it a text alternative with `label`.
+- Don't put essential instructions only in a tooltip, and don't use an emoji as an
+  icon: its look and its spoken name vary by platform.
+
+<Specimen label="An icon-only button names its action.">
+  <HStack gap="sm">
+    <IconButton icon={<DeleteIcon />} label="Delete draft" />
+  </HStack>
+</Specimen>
+
+## The set
+
+Search, then click an icon to copy it.
+
+<div className="sb-unstyled">
+  <IconGallery />
+</div>
+
+Need one that isn't here? See [Icon](?path=/docs/functional-primitives-icon--docs)
+for how to add one. Upstream licences (Lucide, Simple Icons, react-icons) are in
+`THIRD_PARTY_NOTICES.md`.

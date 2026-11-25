@@ -1,0 +1,141 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../utils/blocks.tsx";
+import { Card, Motion, Text, VStack } from "../index.ts";
+import { PurposeTokenTable } from "../../design-system/purpose-tokens/purpose-token-table.tsx";
+import { Specimen } from "../../design-system/foundations/foundation-blocks.tsx";
+import { MotionCharacters, MotionLab } from "../../design-system/foundations/motion-blocks.tsx";
+
+<Meta title="Foundations/Motion" />
+
+<HideSbBar />
+
+# Motion
+
+Motion is small and purposeful. It shows where something came from or went,
+keeps your place when things change, and draws the eye to what just arrived. It
+is never decoration that makes someone wait.
+
+## How the system fits together
+
+Four layers, each owned by one place, so they never fight:
+
+| Layer | What it decides | Where it lives |
+| --- | --- | --- |
+| **Character** | How motion feels: tempo, curves, how far things travel, bounce, stagger. | The theme: motion primitives, and the `roles.motion.*` purposes below. |
+| **Vocabulary** | What kinds of motion exist: pop, slide, collapse, reveal, swap, glide… | The [Motion components](?path=/docs/animation-motion--docs). |
+| **Choreography** | How several things move together. | `Motion.Stagger`, and the Layout and Presence components. |
+| **Level** | How much motion there is: full, reduced or none. | The device's reduced-motion setting, and `SquonkThemeProvider`'s `motion` prop. |
+
+The library's components already use the Motion components, so a theme
+changes how every menu, dialog, toast, tab, table and accordion moves, and an
+app's motion level applies to all of them.
+
+## Every theme, the same scene
+
+Press **Play** to run the same scene in each example theme: cards arriving in
+sequence, a figure counting to its new value and highlighting, a list
+reordering, and a popover under **Details**. Only the theme's motion character
+differs: Fieldbook is instant and linear, Tidepool springs, Kauri fades slowly, Monolith slides all at once and Aurora glides. Use **Slow motion** to study the
+curves, and **Reduced motion** to see what someone who asks for less motion
+gets: fades in place, nothing travelling.
+
+<MotionLab />
+
+## Character: the theme's motion primitives
+
+A theme sets its motion with six primitives. Every motion duration, curve and
+distance derives from them, through the purpose tokens below.
+
+| Primitive | Default | What it does |
+| --- | --- | --- |
+| `transitionDurationMs` | `200` | The tempo. Overlays take this long; arrivals and panels 1.5×; counting figures 2.5×. |
+| `motionTravelPx` | `16` | How far things move and grow as they arrive. Overlays grow from `1 − travel ÷ 400` of their size, content rises 1.5 × travel. `0` makes every arrival a plain fade. |
+| `motionStaggerMs` | `40` | The gap between items arriving in sequence. |
+| `motionBounce` | `0` | How much arrivals overshoot and settle, from 0 (none) to 1. Drawn as a CSS `linear()` spring, so it costs no JavaScript. Off by default: use it for a playful brand. |
+| `motionEaseEnter`, `motionEaseExit`, `motionEaseStandard` | Decelerate, accelerate, both | The curves things arrive, leave and move within the page on: a keyword, `cubic-bezier()` or `linear()`. |
+
+<MotionCharacters />
+
+<InlineCodeExample>
+{`<SquonkThemeProvider
+  primitives={{
+    transitionDurationMs: 240,
+    motionTravelPx: 20,
+    motionStaggerMs: 60,
+    motionEaseEnter: "cubic-bezier(0.22, 1, 0.36, 1)",
+  }}
+>`}
+</InlineCodeExample>
+
+Try them live in the **Motion** section of the theme panel, which also has
+slow motion and the motion levels for previewing.
+
+## Timing by purpose
+
+Components time their movement from motion purposes, so menus, dialogs and
+panels all move alike. Things arrive a little slower than they leave, so the
+eye can follow them in. Re-point any of them with `roleBindings`, like
+`{ "roles.motion.revealEasing": "motion.easings.spring" }`.
+
+<PurposeTokenTable group="motion" />
+
+## Level: how much motion
+
+People who ask their device for reduced motion get it everywhere, with nothing
+to set up. Nothing travels or grows: overlays, drawers and content fade in
+place; list items move at once; decorative loops stop; spinners slow down.
+Colour changes, highlights and fades stay, because they don't move anything.
+
+An app can also choose the level itself:
+
+<InlineCodeExample>
+{`// An in-app "Reduce motion" setting
+<SquonkThemeProvider motion={settings.reduceMotion ? "reduced" : "system"}>
+
+// Screenshots and tests: every change is immediate, loops hold still
+<SquonkThemeProvider motion="none">`}
+</InlineCodeExample>
+
+`system` (the default) follows the device. `reduced` reduces motion whatever
+the device says. `none` turns motion off; it's for tests and screenshots, not
+people. The level is published as `--squonk-motion-level-*` custom properties, so
+it applies before the page hydrates. Set them on an element to scope a level,
+or slow motion (`--squonk-motion-level-time: 4`), to part of a page, as the lab
+above does.
+
+## Reveal and stagger
+
+`Motion.Reveal` fades and rises content into place as it scrolls into view.
+Inside `Motion.Stagger`, each item waits one stagger step more than the one
+before, so a group reads as a sequence. Its timing is the `reveal`,
+`revealEasing`, `revealOffset` and `stagger` purposes.
+
+<Specimen label="Reload the page, or scroll this into view, to see it play.">
+  <VStack gap="sm">
+    <Motion.Stagger>
+      <Motion.Reveal><Card variant="outlined"><Text>Annual dues</Text></Card></Motion.Reveal>
+      <Motion.Reveal><Card variant="outlined"><Text>Swamp Fund levy</Text></Card></Motion.Reveal>
+      <Motion.Reveal><Card variant="outlined"><Text>Night-watch kit hire</Text></Card></Motion.Reveal>
+    </Motion.Stagger>
+  </VStack>
+</Specimen>
+
+## Rules
+
+- **Respect the motion level.** Never force motion past it: take timing from
+  the Motion components and they follow it for you.
+- **Never hide content behind motion.** Animated content ends visible and
+  readable, and stays available if the animation never runs. Figures that count
+  are read out once, at their final value.
+- **Animate arrivals and changes, not work.** Page sections, cards and
+  notifications arrive with motion; a list re-sorting glides; a recalculated
+  total highlights. Fields and text someone is reading or typing into don't
+  move.
+- **Subtle by default.** A few pixels and a few hundred milliseconds. Bounce is
+  a brand choice, off unless a theme asks for it, and never on drawers or
+  anything people work in.
+- **Keep timing in the library.** Use the components' own motion, or wrap your
+  own element in a Motion component. A one-off transition in product code
+  drifts from the rest; new motion belongs in the library as a Motion component
+  or a motion purpose.

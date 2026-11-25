@@ -1,0 +1,109 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as TabsStories from "./tabs.stories.tsx";
+import meta from "./tabs.stories.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Tabs
+
+<ResizableCanvas of={TabsStories.Default} defaultHeight={300} />
+
+`Tabs` switch between related panels in the same place, so people can move
+between sections of one thing (a membership's overview, sightings and payments)
+without leaving the page. Only one panel shows at a time.
+
+```tsx
+import { Tabs } from "@squonkstack/ui/tabs";
+
+<Tabs
+  listLabel="Account sections"
+  items={[
+    { value: "overview", label: "Overview", content: <Overview /> },
+    { value: "sightings", label: "Sightings", content: <Sightings /> },
+  ]}
+/>
+```
+
+Use tabs when the panels are parallel and people rarely need two at once. If
+they need to compare panels, show them together. If the steps happen in order,
+use a step-by-step flow. For navigating between pages, use links in the page's
+navigation: tabs don't change the URL.
+
+<Controls />
+
+## Enclosed
+
+`variant="enclosed"` looks like a segmented control. Use it for switching between
+views of the same data (month, quarter, year), and the default `line` for
+sections of a page.
+
+<ResizableCanvas of={TabsStories.Enclosed} defaultHeight={160} />
+
+## Fitted
+
+`fitted` stretches the tabs to share the full width, for a few tabs in a narrow
+card or on a phone.
+
+<ResizableCanvas of={TabsStories.Fitted} defaultHeight={300} />
+
+<ResizableCanvas of={TabsStories.FittedEnclosed} defaultHeight={300} />
+
+## Icons and counts
+
+`icon` and `badge` add a leading icon and a trailing count. Keep the label as
+the main signal; icons alone aren't enough to tell tabs apart.
+
+<ResizableCanvas of={TabsStories.WithIcons} defaultHeight={160} />
+
+## Disabled tabs
+
+A disabled tab is skipped by the arrow keys. Say why in its label or nearby, or
+leave the tab out until it can be used.
+
+<ResizableCanvas of={TabsStories.DisabledTab} defaultHeight={160} />
+
+## Many tabs
+
+When the tabs don't fit, the list scrolls sideways rather than wrapping onto a
+second row. More than five or six tabs is usually a sign the content needs
+another structure.
+
+<ResizableCanvas of={TabsStories.Overflow} defaultHeight={160} />
+
+## A tab list that stays in view
+
+For long panels, such as lists that scroll without end, set `stickyTop` to keep
+the tab list in view as the page scrolls. Give it the height of anything that
+already sticks above it, such as `"64px"` for a sticky header, or a `calc()` of
+custom properties. The panels pass under the list, which takes the page's colour
+(`stickyBackground="page"`, the default) or a card's (`"surface"`). Off by
+default.
+
+<ResizableCanvas of={TabsStories.StickyList} defaultHeight={340} />
+
+## Accessibility
+
+- The WAI-ARIA tabs pattern: a `tablist` of `tab`s, each controlling a `tabpanel`
+  labelled by its tab.
+- The list is a single Tab stop. Arrow keys move between tabs, Home and End go to
+  the ends, and disabled tabs are skipped. The next Tab press moves into the panel.
+- By default a tab is selected as soon as focus reaches it. Use
+  `activationMode="manual"` when panels are slow to render, so arrowing past a tab
+  doesn't load it.
+- Name the list with `listLabel` unless a heading right above already names it.
+
+## Common pitfalls
+
+- **Don't use tabs for navigation between pages.** Tabs don't change the URL or
+  the browser history.
+- **Don't hide something people must do inside a tab they might not open.** Put
+  required fields where they can be seen.
+- **Don't nest tabs inside tabs.**
+
+## UX guidance
+
+- [Overlays and disclosures](?path=/docs/patterns-overlays-and-disclosures--docs)

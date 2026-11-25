@@ -1,0 +1,106 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as ProgressBarStories from "./progress-bar.stories.tsx";
+import meta from "./progress-bar.stories.tsx";
+import { ProgressBar } from "./progress-bar.tsx";
+import { Presentation } from "../../style/presentation/presentation.tsx";
+import { VStack } from "../../layout-primitive/vstack/vstack.tsx";
+import { Block } from "../../layout-primitive/block/block.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# ProgressBar
+
+<ResizableCanvas
+  of={ProgressBarStories.Default}
+  defaultRecipe="centered"
+  defaultHeight={100}
+/>
+
+`ProgressBar` reports progress on a known-length operation — file upload, multi-step job, batch import. Omit `value` and the bar switches to an indeterminate sliding animation for work whose duration can't be measured. For a fast, one-shot action where there's no spatial layout to reserve, prefer `Spinner`; for placeholders during page load, prefer `Skeleton`.
+
+<Controls />
+
+## Determinate
+
+Pass a `value` between 0 and 100. Show the numeric value via `showValue` when the user benefits from a precise readout (file size uploads, queue depth).
+
+<InlineCodeExample>
+  <Block width="320px">
+    <ProgressBar value={42} label="Uploading invoice-2026-05.pdf" showValue />
+  </Block>
+</InlineCodeExample>
+
+## Indeterminate
+
+Drop `value` for "we're working on it, no ETA". The stripe slides; `aria-valuenow` is omitted so assistive tech announces the operation as in-progress without a misleading number.
+
+<InlineCodeExample>
+  <Block width="320px">
+    <ProgressBar label="Connecting to database…" />
+  </Block>
+</InlineCodeExample>
+
+## Tones
+
+Tone communicates the meaning of the progress, not just decoration. Use `success` for a completed bar that should stay on screen briefly; `warning` and `error` for jobs that are over a threshold or have failed mid-way.
+
+<InlineCodeExample>
+  <Block width="320px">
+    <VStack gap="md">
+      <ProgressBar value={25} tone="primary" label="Indexing" showValue />
+      <ProgressBar value={100} tone="success" label="Sync complete" showValue />
+      <ProgressBar value={92} tone="warning" label="Disk usage" showValue />
+      <ProgressBar value={67} tone="error" label="Retrying… (attempt 3 of 5)" showValue />
+    </VStack>
+  </Block>
+</InlineCodeExample>
+
+## A theme's own colours as tones
+
+`tone` also takes the key of a colour the theme added with `addedColorPrimitives`, such as `tone="violet"`: the bar fills with that colour's solid, in light and dark mode. Use it to tell categories of progress apart; `success`, `warning` and `error` keep their meaning, and a built-in name always means the built-in tone.
+
+<ResizableCanvas of={ProgressBarStories.AddedTone} defaultRecipe="centered" defaultHeight={200} />
+
+## Sizing via Presentation
+
+The track height tracks the surrounding register — `compact` is a hairline for inline use, `hero` is a chunky bar for marketing surfaces.
+
+<InlineCodeExample>
+  <Block width="320px">
+    <VStack gap="md">
+      <Presentation register="compact"><ProgressBar value={40} label="Compact" /></Presentation>
+      <Presentation register="default"><ProgressBar value={40} label="Default" /></Presentation>
+      <Presentation register="large"><ProgressBar value={40} label="Large" /></Presentation>
+      <Presentation register="hero"><ProgressBar value={40} label="Hero" /></Presentation>
+    </VStack>
+  </Block>
+</InlineCodeExample>
+
+## No visible label
+
+Omit `label` and pass `ariaLabel` instead when the surrounding UI already names the operation but you still need to announce it to screen readers.
+
+<InlineCodeExample>
+  <Block width="320px">
+    <ProgressBar value={60} ariaLabel="Backup progress" />
+  </Block>
+</InlineCodeExample>
+
+## Accessibility
+
+- Uses `role="progressbar"` with `aria-valuemin={0}`, `aria-valuemax={100}`, and `aria-valuenow` (determinate only — omitted when indeterminate).
+- Provide either a visible `label` or `ariaLabel`; without one, the bar has no name for assistive tech.
+- The indeterminate animation slows under `prefers-reduced-motion` from 1.4s to 3s rather than disappearing entirely — the user still sees something is happening.
+- Tones are color *and* (when paired with a label) text — never use color alone to convey "error" or "warning".
+
+## Common pitfalls
+
+- **Don't fake progress.** If you don't know how long it'll take, render the indeterminate variant. Slowly counting up to 99% then stalling is worse than no number at all.
+- **Don't leave a determinate bar at the same value for >2 seconds.** If it stops moving, swap to indeterminate or surface an error — a frozen number reads as "broken".
+- **Don't omit the label.** Screen readers need either `label` or `ariaLabel`. A nameless progress bar is a soundless signal.
+- **Don't reuse `tone="error"` for "loading is slow".** Reserve `error` for actual failure states; warnings or a label change ("Retrying…") are better for slowness.

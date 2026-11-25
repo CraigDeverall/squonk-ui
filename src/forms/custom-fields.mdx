@@ -1,0 +1,34 @@
+import { Meta, Source } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../documentation-imports/index.ts";
+import { ResizableCanvas } from "../utils/resizable-canvas.tsx";
+import * as Examples from "./forms.stories.tsx";
+import code from "./examples/planned-gift-field.tsx?raw";
+
+<Meta title="Patterns/Forms/Custom fields" />
+
+<HideSbBar />
+
+# Custom fields
+
+<ResizableCanvas of={Examples.CustomField} defaultHeight={360} />
+
+For money, use the library's `field.CurrencyField`
+([CurrencyField](?path=/docs/components-inputs-currency-field--docs)); this page uses a
+whole-dollar amount only to show the technique.
+
+When a form needs a control the library doesn't ship, build it from React Aria
+and bind it with `useFieldContext`, inside `form.AppField`:
+
+- **React Aria brings the behaviour.** Here, `NumberField` formats the amount for
+  the locale, accepts arrow keys, and wires the label, description and error.
+- **The form brings the state.** `useFieldContext` gives the value,
+  `handleChange`, `handleBlur` and the errors. Show the error after blur or a
+  submit attempt, like the library's fields do.
+- **The theme brings the look.** Style with the `--squonk-*` tokens, using the same
+  control height, border, radius and focus ring as the other fields.
+
+<Source code={code} language="tsx" />
+
+If you need the field in more than one product, it belongs in the library: ask
+for it rather than copying it between apps. To add your own field to `form.AppField`
+everywhere in an app, use `extendForm`.

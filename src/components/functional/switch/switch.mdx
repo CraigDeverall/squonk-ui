@@ -1,0 +1,113 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as SwitchStories from "./switch.stories.tsx";
+import meta from "./switch.stories.tsx";
+import { Switch } from "./switch.tsx";
+import { Presentation } from "../../style/presentation/presentation.tsx";
+import { VStack } from "../../layout-primitive/vstack/vstack.tsx";
+import { Block } from "../../layout-primitive/block/block.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Switch
+
+<ResizableCanvas
+  of={SwitchStories.Default}
+  defaultRecipe="centered"
+  defaultHeight={120}
+/>
+
+`Switch` is a binary toggle for settings that take effect *immediately* — flipping it sends the change right now. Visually distinct from `Checkbox` (which stages a value to be submitted later) on purpose. Use `Switch` for preferences and live toggles; use `Checkbox` for form fields and multi-select.
+
+<Controls />
+
+## Default
+
+Manage `checked` in the parent and react in `onChange` for controlled usage. For native uncontrolled usage, pass `defaultChecked`; the visible state follows the input, including form resets.
+
+<InlineCodeExample>
+  <Switch label="Email notifications" />
+</InlineCodeExample>
+
+## On
+
+`checked={true}` slides the knob to the right and tints the track with the primary color.
+
+<InlineCodeExample>
+  <Switch label="Auto-save drafts" checked />
+</InlineCodeExample>
+
+## With helper text
+
+Use `helperText` to spell out the consequence — switches affect behavior immediately, so users benefit from a one-line "what does this do" hint.
+
+<InlineCodeExample>
+  <Switch
+    label="Public profile"
+    helperText="Anyone with the link can view your profile page."
+  />
+</InlineCodeExample>
+
+## Sizing via Presentation
+
+The track + knob scale with the surrounding register.
+
+<InlineCodeExample>
+  <VStack gap="sm">
+    <Presentation register="compact"><Switch label="Compact" checked /></Presentation>
+    <Presentation register="default"><Switch label="Default" checked /></Presentation>
+    <Presentation register="large"><Switch label="Large" checked /></Presentation>
+    <Presentation register="hero"><Switch label="Hero" checked /></Presentation>
+  </VStack>
+</InlineCodeExample>
+
+## Disabled
+
+A disabled switch is removed from keyboard Tab navigation and cannot be toggled; assistive technology can still discover it. Pair with a tooltip or helper text if the user might wonder why.
+
+<InlineCodeExample>
+  <VStack gap="sm">
+    <Switch label="Workspace SSO" checked disabled helperText="Configured by your admin" />
+    <Switch label="Beta features" disabled helperText="Unavailable on the free plan" />
+  </VStack>
+</InlineCodeExample>
+
+## In a settings panel
+
+Group switches with consistent labels + helper text for the canonical "preferences" pattern.
+
+<InlineCodeExample>
+  <Block width="360px">
+    <VStack gap="md">
+      <Switch label="Email notifications" helperText="Daily digest at 8am" checked />
+      <Switch label="Desktop notifications" helperText="Mentions and replies, in real time" />
+      <Switch label="Mobile push" helperText="Critical alerts only" checked />
+    </VStack>
+  </Block>
+</InlineCodeExample>
+
+## Accessibility
+
+Helper and error text are exposed as descriptions, separate from the visible label. A supplied `aria-describedby` is preserved and combined with the component’s message.
+
+- Uses a real `<input type="checkbox">` with `role="switch"` — assistive tech announces the control as a toggle (not as a generic checkbox).
+- Keyboard: Space toggles the state; Tab moves focus. Enter does not toggle a native checkbox.
+- The focus ring lives on the visible track and shows for keyboard focus only, using `--squonk-colors-border-focus`.
+- The wrapping `<label>` makes the whole row clickable, including helper text — no `htmlFor` plumbing needed.
+- An uncontrolled switch returns to `defaultChecked` when its form resets, and a disabled ancestor `<fieldset>` disables it.
+
+## Common pitfalls
+
+- **Don't use a Switch in a form that submits.** Switches imply immediate effect. If the user has to click "Save" for the change to take hold, use a `Checkbox` instead.
+- **Don't ship a switch with destructive immediate effect and no confirmation.** "Delete on shutdown" should not be a one-click toggle — add a confirmation step.
+- **Don't disable a switch without explanation.** A non-interactive toggle is confusing; pair `disabled` with helper text explaining why.
+- **Don't forget to forward `onChange`.** The first argument is the new boolean — not the event. Read the signature before swapping in a native input handler.
+
+## UX guidance
+
+- [Switches, checkboxes and saving](?path=/docs/patterns-switches-checkboxes-and-saving--docs)
+- [Choosing a selection control](?path=/docs/patterns-choosing-a-selection-control--docs)

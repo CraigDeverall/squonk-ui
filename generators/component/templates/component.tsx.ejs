@@ -1,0 +1,39 @@
+"use client";
+
+import { clsx } from "clsx";
+import type React from "react";
+import { useThemeCssVars } from "../../../theme/use-theme-css-vars";
+<% if (isPolymorphic) { %>import type { PolymorphicComponentProps } from "../../../types/polymorphic-types";
+<% } %>import styles from "./<%= componentNameKebab %>.module.css";
+
+<% if (isPolymorphic) { %>export type <%= componentName %>Props<E extends React.ElementType = "<%= baseElement %>"> =
+  PolymorphicComponentProps<E, {
+    children?: <% if (acceptsChildren) { %>E extends "area" | "base" | "br" | "col" | "embed" | "hr" | "img" | "input" | "link" | "meta" | "param" | "source" | "track" | "wbr" ? never : React.ReactNode<% } else { %>never<% } %>;
+  }>;
+<% } else { %>export type <%= componentName %>Props = Omit<React.ComponentPropsWithRef<"<%= baseElement %>">, "children"> & {
+  children?: <%= acceptsChildren ? "React.ReactNode" : "never" %>;
+};
+<% } %>
+/** <%- purpose.replaceAll("*/", "* /").replaceAll("\n", " ") %> */
+export function <%= componentName %><% if (isPolymorphic) { %><E extends React.ElementType = "<%= baseElement %>"><% } %>({
+<% if (isPolymorphic) { %>  as,
+<% } %><% if (acceptsChildren) { %>  children,
+<% } %>  className,
+  style,
+  ...otherProps
+}: <%= componentName %>Props<% if (isPolymorphic) { %><E><% } %>) {
+<% if (isPolymorphic) { %>  const Component = as || "<%= baseElement %>";
+<% } %>  const themeVars = useThemeCssVars();
+
+  return (
+    <<%= isPolymorphic ? "Component" : baseElement %>
+      className={clsx(styles.root, className)}
+      style={{ ...themeVars.style, ...style }}<% if (baseElement === "button") { %>
+      type={<%- isPolymorphic ? '!as || as === "button" ? "button" : undefined' : '"button"' %>}<% } %>
+      {...otherProps}<% if (acceptsChildren) { %>
+    >
+      {themeVars.provide(children)}
+    </<%= isPolymorphic ? "Component" : baseElement %>><% } else { %>
+    /><% } %>
+  );
+}

@@ -1,0 +1,46 @@
+@layer dt.components {
+  /* `default` uses the dedicated colors.link token, not colors.primary, so a
+     strong brand primary doesn't paint every link. Opt back in with the
+     colorBindings entry { "colors.link": "colors.primary" }. */
+  .root {
+    color: var(--squonk-roles-color-link);
+    font-family: var(--squonk-roles-type-font);
+    font-weight: var(--link-weight);
+    border-radius: var(--squonk-components-link-focus-radius);
+    cursor: pointer;
+  }
+
+  .root:is([data-focus-visible], :not([data-rac]):focus-visible) {
+    outline: var(--squonk-roles-border-focus-width) solid var(--squonk-roles-color-focus-ring);
+    outline-offset: var(--squonk-roles-border-focus-offset);
+  }
+
+  .root[data-underline="always"] { text-decoration: underline; }
+  .root[data-underline="hover"],
+  .root[data-underline="never"] { text-decoration: none; }
+  .root[data-underline="hover"]:is([data-hovered], :not([data-rac]):hover) { text-decoration: underline; }
+  /* Unset: the theme decides (the underlineLinks switch); pointing at it always underlines. */
+  .root[data-underline="theme"] { text-decoration-line: var(--squonk-roles-type-link-decoration); }
+  .root[data-underline="theme"]:is([data-hovered], :not([data-rac]):hover) { text-decoration-line: underline; }
+
+  /* On paper a link can't be followed, so print its address after it (the
+     printLinkUrls switch). Only addresses that work on their own. */
+  @media print {
+    .root[href^="http"]::after,
+    .root[href^="mailto:"]::after {
+      content: " (" attr(href) ")";
+      display: var(--squonk-roles-print-link-urls);
+      font-weight: normal;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  .root[data-variant="subtle"] { color: var(--squonk-roles-color-text-supporting); }
+  .root[data-variant="muted"] { color: var(--squonk-components-link-muted); }
+  .root[data-variant="inherit"] { color: inherit; }
+  .root[data-variant="danger"] { color: var(--squonk-components-link-danger); }
+
+  .root[data-variant="subtle"]:is([data-hovered], :not([data-rac]):hover),
+  .root[data-variant="muted"]:is([data-hovered], :not([data-rac]):hover) { color: var(--squonk-roles-color-text); }
+  .root[data-variant="inherit"]:is([data-hovered], :not([data-rac]):hover) { color: var(--squonk-roles-color-link); }
+}

@@ -1,0 +1,13 @@
+/* The Introduction page's spot illustrations. Docs-only. */
+
+/* The square box (media-box.module.css) at a fixed size, the drawing
+   inset in it. */
+.tile {
+  width: 72px;
+  padding: 10px;
+}
+
+.drawing {
+  inline-size: 100%;
+  block-size: 100%;
+}

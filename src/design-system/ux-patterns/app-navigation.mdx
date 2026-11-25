@@ -1,0 +1,57 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../documentation-imports/index.ts";
+import { Do, DoDont, Dont, Example } from "./pattern-blocks.tsx";
+import { AppFrameExample, MenuAsNavigationExample, TabsForViewsExample } from "./pattern-examples.tsx";
+
+<Meta title="Patterns/App navigation" />
+
+<HideSbBar />
+
+# App navigation
+
+The frame around a signed-in app: where you are, where you can go, and how to
+get back. Compose it from [Header](?path=/docs/layout-header--docs),
+[Sidebar](?path=/docs/layout-sidebar--docs), [NavList](?path=/docs/components-navigation-navlist--docs)
+for the links between pages, [Breadcrumb](?path=/docs/functional-breadcrumb--docs),
+[Link](?path=/docs/functional-link--docs) and, on phones, a
+[Drawer](?path=/docs/functional-drawer--docs) for the menu.
+
+<Example caption="Named navigation with the current page marked, and a breadcrumb that ends at the page's own heading.">
+  <AppFrameExample />
+</Example>
+
+## The rules
+
+- **Name each navigation landmark** (`<nav aria-label="Account">`) so screen-reader
+  users can tell two apart.
+- **Mark the current page** with `aria-current="page"` and a visible style, and
+  make the page's heading match the item.
+- **Keep the reading order sensible** when the sidebar stacks above the content
+  on a phone, and add a skip link when the navigation is long.
+- **Your app owns routing.** Pass your router's link component to Breadcrumb's
+  `linkAs`; Sidebar is a layout region, not a router or a modal.
+
+## Tabs switch views; links change pages
+
+Use [Tabs](?path=/docs/functional-tabs--docs) to switch between views of one
+thing on the same page. Use links for places in the app.
+
+<Example caption="Views of one sighting. The URL and the page heading don't change.">
+  <TabsForViewsExample />
+</Example>
+
+## Menus are for actions
+
+<DoDont>
+  <Do caption="Navigation as links in a named nav: each one is a real link people can open in a new tab.">
+    <AppFrameExample />
+  </Do>
+  <Dont caption="Navigation in a dropdown menu: menus promise app-like keyboard behaviour and hide where people can go.">
+    <MenuAsNavigationExample />
+  </Dont>
+</DoDont>
+
+The [Member dashboard](?path=/story/examples-member-dashboard--overview) shows
+the full frame: header, sidebar, a drawer menu on phones and a breadcrumb. For
+the layout around the navigation, and how it changes on phones, see
+[Page layouts and app shells](?path=/docs/patterns-page-layouts-and-app-shells--docs).

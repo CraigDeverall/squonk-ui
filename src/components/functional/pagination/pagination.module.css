@@ -1,0 +1,114 @@
+@layer dt.components {
+  .root {
+    --pagination-size: var(--squonk-presentation-control-height-default);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--squonk-components-pagination-row-gap) var(--squonk-components-pagination-column-gap);
+    font-family: var(--squonk-roles-type-font);
+    font-size: var(--squonk-roles-type-meta);
+    color: var(--squonk-roles-color-text);
+  }
+
+  .root[data-register="compact"] { --pagination-size: var(--squonk-presentation-control-height-compact); }
+  .root[data-register="large"] { --pagination-size: var(--squonk-presentation-control-height-large); }
+  .root[data-register="hero"] { --pagination-size: var(--squonk-presentation-control-height-hero); }
+
+  .range {
+    color: var(--squonk-roles-color-text-supporting);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--squonk-roles-space-segment-gap);
+    margin-inline-start: auto;
+  }
+
+  .button {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--squonk-components-pagination-icon-gap);
+    box-sizing: border-box;
+    height: var(--pagination-size);
+    min-width: var(--pagination-size);
+    padding: 0 var(--squonk-components-pagination-button-inset-inline);
+    border: var(--squonk-roles-border-width) solid transparent;
+    border-radius: var(--squonk-roles-radius-control);
+    background: transparent;
+    color: var(--squonk-roles-color-text);
+    font: inherit;
+    font-variant-numeric: tabular-nums;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .button[data-hovered]:not([data-disabled], [data-selected]) {
+    background-color: var(--squonk-roles-color-hover);
+    color: var(--squonk-roles-color-on-hover);
+  }
+
+  .button[data-focus-visible] {
+    outline: var(--squonk-roles-border-focus-width) solid var(--squonk-roles-color-focus-ring);
+    outline-offset: var(--squonk-roles-border-focus-offset);
+  }
+
+  .button[data-disabled] {
+    cursor: not-allowed;
+    opacity: var(--squonk-roles-state-disabled-opacity);
+  }
+
+  .item[data-selected] {
+    background-color: var(--squonk-roles-color-accent);
+    color: var(--squonk-roles-color-on-accent);
+    font-weight: var(--squonk-roles-type-strong);
+    cursor: default;
+  }
+
+  .step { padding: 0 var(--squonk-components-pagination-step-inset-inline); }
+
+  .ellipsis {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--pagination-size);
+    color: var(--squonk-roles-color-text-supporting);
+  }
+
+  .status {
+    padding: 0 var(--squonk-components-pagination-status-inset-inline);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  /* Mobile first: the step buttons show arrows only, and gain their words
+     from the tablet breakpoint (768px, theme.breakpoints.tablet). */
+  .stepText {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  @media (min-width: 768px) {
+    .stepText {
+      position: static;
+      width: auto;
+      height: auto;
+      overflow: visible;
+      clip-path: none;
+    }
+  }
+
+  /* Page controls do nothing on paper. */
+  @media print {
+    .root { display: none; }
+  }
+}

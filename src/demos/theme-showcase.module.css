@@ -1,0 +1,126 @@
+/* The theme showcase: one band per theme, each on its own page colour. */
+
+.page {
+  display: grid;
+  gap: var(--squonk-spacing-xl);
+  padding: var(--squonk-spacing-xl) var(--squonk-roles-space-page-gutter);
+  background-color: var(--squonk-roles-color-page);
+  color: var(--squonk-roles-color-on-page);
+  font-family: var(--squonk-roles-type-font);
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.intro {
+  display: grid;
+  gap: var(--squonk-spacing-sm);
+  max-width: 60rem;
+}
+
+/* Each theme paints its own page behind its panels, edge to edge. */
+.specimen {
+  display: grid;
+  gap: var(--squonk-spacing-lg);
+  padding: var(--squonk-spacing-xl) var(--squonk-roles-space-page-gutter);
+  margin-inline: calc(-1 * var(--squonk-roles-space-page-gutter));
+  background-color: var(--squonk-roles-color-page);
+  color: var(--squonk-roles-color-on-page);
+  font-family: var(--squonk-roles-type-font);
+  border-block-start: var(--squonk-roles-border-width) solid var(--squonk-roles-color-divider);
+}
+
+.specimenHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--squonk-spacing-md);
+}
+
+.titles {
+  display: grid;
+  gap: var(--squonk-roles-space-text-gap);
+  max-width: 40rem;
+}
+
+.palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--squonk-spacing-sm);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.swatch {
+  display: grid;
+  justify-items: center;
+  gap: var(--squonk-spacing-xxs);
+}
+
+.chip {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--squonk-roles-radius-control);
+  border: var(--squonk-roles-border-width) solid var(--squonk-roles-color-outline);
+}
+
+.swatchLabel {
+  font-size: var(--squonk-roles-type-meta);
+  color: var(--squonk-roles-color-on-page-supporting);
+}
+
+.panel { height: 100%; box-sizing: border-box; }
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--squonk-roles-space-action-gap);
+}
+
+/* Two short fields side by side once there's room. */
+.pair {
+  display: grid;
+  gap: var(--squonk-roles-space-question-gap);
+}
+
+@media (min-width: 480px) {
+  .pair { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+}
+
+.inline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--squonk-spacing-md);
+}
+
+.decisions summary {
+  cursor: pointer;
+  width: fit-content;
+}
+
+.decisions summary:focus-visible {
+  outline: var(--squonk-roles-border-focus-width) solid var(--squonk-roles-color-focus-ring);
+  outline-offset: var(--squonk-roles-border-focus-offset);
+}
+
+.bindingList {
+  display: grid;
+  gap: var(--squonk-spacing-xs);
+  margin: var(--squonk-spacing-md) 0 0;
+}
+
+@media (min-width: 1024px) {
+  .bindingList { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--squonk-spacing-xl); }
+}
+
+.binding {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--squonk-spacing-xs);
+}
+
+.binding dd { margin: 0; }

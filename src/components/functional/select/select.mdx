@@ -1,0 +1,222 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as SelectStories from "./select.stories.tsx";
+import meta from "./select.stories.tsx";
+import { Select } from "./select.tsx";
+import { Presentation } from "../../style/presentation/presentation.tsx";
+import { VStack } from "../../layout-primitive/vstack/vstack.tsx";
+import { HStack } from "../../layout-primitive/hstack/hstack.tsx";
+import { Block } from "../../layout-primitive/block/block.tsx";
+import { Button } from "../button/button.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Select
+
+<ResizableCanvas of={SelectStories.Default} />
+
+`Select` is the canonical one-of-many picker: a button that opens a styled listbox, built on React Aria's Select. The listbox flips and shifts at the viewport edges, scrolls when long, and supports full keyboard navigation and type-to-search. A hidden native `<select>` carries the value for forms, so `name`, `form` and `required` behave as before; `ref` reaches the visible trigger button.
+
+Use `Select` for one choice from a list. For a long list, add `searchable` so people can type to filter. For two or three choices that benefit from being always-visible, use `RadioGroup`.
+
+<Controls />
+
+## With placeholder
+
+The `placeholder` is rendered as a disabled first option — "no selection yet". Once the user picks, the placeholder is removed from the menu.
+
+<InlineCodeExample>
+  <Select
+    label="Promote from"
+    placeholder="Pick an upstream env…"
+    options={[
+      { value: "staging", label: "staging (← develop)" },
+      { value: "production", label: "production (← staging)" },
+    ]}
+  />
+</InlineCodeExample>
+
+## Helper text
+
+`helperText` sits under the control — use it for format hints or context, not validation results.
+
+<InlineCodeExample>
+  <Select
+    label="Promote from"
+    placeholder="Pick an upstream env…"
+    helperText="The new env will run whatever image succeeded on the upstream env."
+    options={[
+      { value: "staging", label: "staging (← develop)" },
+      { value: "production", label: "production (← staging)" },
+    ]}
+  />
+</InlineCodeExample>
+
+## Error
+
+`error` replaces `helperText`, switches the border + helper to the error color, and sets `aria-invalid` on the control.
+
+<InlineCodeExample>
+  <Select
+    label="Promote from"
+    placeholder="Pick an upstream env…"
+    error="Pick an upstream environment."
+    options={[
+      { value: "staging", label: "staging (← develop)" },
+      { value: "production", label: "production (← staging)" },
+    ]}
+  />
+</InlineCodeExample>
+
+## Disabled
+
+A disabled `Select` has a subtle background tint and is removed from keyboard Tab navigation and cannot be opened (assistive technology can still discover it).
+
+<InlineCodeExample>
+  <Select
+    label="Promote from"
+    defaultValue="staging"
+    disabled
+    options={[
+      { value: "staging", label: "staging" },
+      { value: "production", label: "production" },
+    ]}
+  />
+</InlineCodeExample>
+
+## Disabling individual options
+
+Pass `disabled: true` on any option to grey it out — useful for locked or insufficient-permission rows.
+
+<InlineCodeExample>
+  <Select
+    label="Environment"
+    placeholder="Pick an env…"
+    options={[
+      { value: "dev", label: "dev" },
+      { value: "staging", label: "staging" },
+      { value: "production", label: "production (locked)", disabled: true },
+    ]}
+  />
+</InlineCodeExample>
+
+## Sizing via Presentation
+
+Padding and font scale with the surrounding register — `compact` for inline filters / sidebars, `large` / `hero` for marketing or onboarding surfaces.
+
+<InlineCodeExample>
+  <Block width="320px">
+    <VStack gap="sm">
+      <Presentation register="compact"><Select label="Compact" defaultValue="open" options={[{value:"open",label:"Open"},{value:"closed",label:"Closed"}]} /></Presentation>
+      <Presentation register="default"><Select label="Default" defaultValue="open" options={[{value:"open",label:"Open"},{value:"closed",label:"Closed"}]} /></Presentation>
+      <Presentation register="large"><Select label="Large" defaultValue="open" options={[{value:"open",label:"Open"},{value:"closed",label:"Closed"}]} /></Presentation>
+    </VStack>
+  </Block>
+</InlineCodeExample>
+
+## Not full-width
+
+`fullWidth` defaults to `true`. Set `fullWidth={false}` for a fit-to-content select — useful for inline filters next to a button.
+
+<InlineCodeExample>
+  <HStack gap="sm" align="end">
+    <Select
+      label="Sort by"
+      defaultValue="newest"
+      fullWidth={false}
+      options={[
+        { value: "newest", label: "Newest" },
+        { value: "oldest", label: "Oldest" },
+      ]}
+    />
+    <Button variant="primary">Apply</Button>
+  </HStack>
+</InlineCodeExample>
+
+## Searchable
+
+`searchable` turns the button into a text input that filters the options as
+people type: for lists too long to scroll (countries, offices, interest codes,
+members). Matching ignores case and accents and also searches each option's
+`description`. Arrow keys move through the matches, Enter chooses, and Escape
+closes and puts the chosen label back.
+
+```tsx
+<Select searchable label="Country of residence" name="country" options={countries} />
+```
+
+Use the plain list for a dozen options or fewer: people can see them all at once.
+
+<ResizableCanvas of={SelectStories.Searchable} defaultHeight={420} />
+
+### Descriptions and clearing
+
+`description` adds a second line to an option, in either mode. `clearable` adds a
+button that resets the value to `""`.
+
+<ResizableCanvas of={SelectStories.WithDescriptions} defaultHeight={440} />
+
+<ResizableCanvas of={SelectStories.Clearable} defaultHeight={140} />
+
+### Searching a server
+
+Set `filter={false}` and update `options` from `onSearchChange`. Debounce the
+requests, and use `emptyText` to say what to type.
+
+<ResizableCanvas of={SelectStories.ServerSearch} defaultHeight={340} />
+
+### Several choices: MultiSelect
+
+To choose several options, such as people to invite, use `MultiSelect` from the same import. It is a searchable Select whose `value` and `onChange` take an array, in the order the options were chosen. It takes the same `options`, `label`, `helperText`, `error`, `filter`, `onSearchChange` and `emptyText`.
+
+```tsx
+import { MultiSelect } from "@squonkstack/ui/select";
+
+<MultiSelect label="Invite" options={people} value={chosen} onChange={setChosen} />
+```
+
+Each choice shows as a removable tag under the input. Typing highlights the first match, so Enter chooses it. Choosing a chosen option again removes it, and Backspace in the empty input removes the last one. The text clears after each choice, ready for the next search. With `filter={false}` and server results, a chosen option keeps its label when later results leave it out.
+
+<ResizableCanvas of={SelectStories.Multiple} defaultHeight={440} />
+
+<ResizableCanvas of={SelectStories.MultipleServerSearch} defaultHeight={380} />
+
+### In a form
+
+`name` submits the chosen option's `value` in both modes, never the typed text.
+A searchable Select's `ref` is its text input.
+
+<ResizableCanvas of={SelectStories.InAForm} defaultHeight={440} />
+
+## Accessibility
+
+Helper and error text are exposed as descriptions, separate from the visible label. A supplied `aria-describedby` is preserved and combined with the component’s message.
+
+- The label is a real `<label>` associated with the control; clicking it focuses the trigger.
+- `error` sets `aria-invalid="true"` on the select; the error text is connected with `aria-describedby` and kept separate from the field’s accessible name.
+- The trigger is a button with `aria-haspopup="listbox"` and `aria-expanded`, named by its value and the label, and described by the helper or error text (a searchable Select's input is `role="combobox"`); the list is `role="listbox"` with `role="option"` items and `aria-selected`. `ArrowDown`/`ArrowUp`/`Enter`/`Space` open it, arrows and typing move the highlight (skipping disabled options), `Enter` selects, `Escape` closes, and focus returns to the trigger.
+- The focus ring uses `--squonk-colors-border-focus` with a 2px box-shadow halo — visible against light and dark backgrounds.
+
+## Common pitfalls
+
+- **Don't make people scroll more than ~20 options.** Past that, they can't scan the list — add `searchable`.
+- **Don't omit the `label`.** A bare select without a label is a screen-reader nightmare. If the label is contextually obvious (e.g. inside a labeled column header), pass `aria-label` instead.
+- **Don't put validation results in `helperText`.** Use `error` so the control gets `aria-invalid` and the styling switches; helper text is for format hints only.
+- **Don't disable a select without explanation.** Pair with a tooltip or helper text so the user knows why it's locked.
+
+## Why a styled listbox?
+
+React Aria supplies the platform behaviour a native `<select>` gave us — edge-aware positioning, scrolling, type-to-search, keyboard navigation and listbox semantics — while letting the open list match the rest of the library in both modes. The trade-off is that touch devices show the styled list rather than the iOS picker wheel or Android bottom sheet. If a form is mostly used on phones and the native picker matters more than a consistent look, use a plain `<select>` styled with the library's tokens.
+
+## Migration: single selection
+
+`Select` now rejects `multiple={true}` at compile time: its value and change callback have always been scalar. Remove `multiple` for ordinary selection. Consumers that need arrays use `MultiSelect`, from the same import; passing an array to `Select` is unsupported.
+
+## UX guidance
+
+- [Choosing a selection control](?path=/docs/patterns-choosing-a-selection-control--docs)
+- [Labels, help and validation](?path=/docs/patterns-labels-help-and-validation--docs)

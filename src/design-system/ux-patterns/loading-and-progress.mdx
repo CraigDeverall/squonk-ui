@@ -1,0 +1,94 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../documentation-imports/index.ts";
+import { Example } from "./pattern-blocks.tsx";
+import { LoadingExample } from "./pattern-examples.tsx";
+import { PendingButtonExample } from "./screen-examples.tsx";
+
+<Meta title="Patterns/Loading and progress" />
+
+<HideSbBar />
+
+# Loading and progress
+
+Waiting is part of every screen. Show the wait in the place it affects, with
+what you actually know about it, and keep everything else usable. Choose from
+[Skeleton](?path=/docs/functional-skeleton--docs),
+[Spinner](?path=/docs/functional-spinner--docs),
+[ProgressBar](?path=/docs/functional-progress-bar--docs) and a
+[Button](?path=/docs/functional-button--docs)'s `pending` state.
+
+## Choosing an indicator
+
+| You know… | Use | Where |
+| --- | --- | --- |
+| The shape of what's coming (a table, a card, a paragraph) | [Skeleton](?path=/docs/functional-skeleton--docs) in that shape | In place of the content, so nothing jumps when it arrives |
+| Nothing about how long, and it should be short | [Spinner](?path=/docs/functional-spinner--docs) with a `label` that names the work | Where the result will appear |
+| How much is done (an upload, an import) | [ProgressBar](?path=/docs/functional-progress-bar--docs) with a `value` and `label` | Where the work was started |
+| It started from a button (save, submit, file) | The Button's `pending` | On the button itself |
+| It takes minutes or runs in the background | A status in the page and a toast when it's done | The page, and wherever people are when it finishes |
+
+<Example caption="A skeleton for a known shape, a spinner for a short wait, and a bar for work you can measure.">
+  <LoadingExample />
+</Example>
+
+## Buttons that are working
+
+<Example caption="The button keeps its label and its place in the tab order, says it's busy, and ignores presses until done.">
+  <PendingButtonExample />
+</Example>
+
+Set `pending` while the action runs. Don't disable the button or replace its
+label with a spinner: people lose their place and screen readers lose the name.
+A form built with `useAppForm` gets this from `form.SubmitButton`, which can
+also show a `pendingLabel` in words, such as "Checking…".
+
+## By how long it takes
+
+| Wait | Show |
+| --- | --- |
+| Under about a second | Nothing new. A flash of a spinner reads as a glitch |
+| A few seconds | A Skeleton or Spinner where the result goes, or `pending` on the button |
+| Longer, measurable | A ProgressBar with words ("Uploading 3 of 8 statements") |
+| Minutes, or work that continues if people leave | Say it's started, let them carry on, and notify when it finishes |
+
+These thresholds are our rule of thumb, not a standard.
+
+## Refreshing and loading more
+
+- **Keep what's on screen** while it refreshes. Don't swap a populated table
+  for skeletons; mark it as updating instead.
+- **Load more in place.** New rows join the end without moving focus;
+  [InfiniteList](?path=/docs/functional-infinitelist--docs) handles this for feeds.
+- **Don't move focus** when data arrives.
+
+## When it fails or takes too long
+
+- Replace the indicator with what happened and a way forward: "We couldn't load
+  your sightings. Try again." See
+  [Empty and error states](?path=/docs/patterns-empty-and-error-states--docs).
+- If a wait runs much longer than usual, say so and offer to keep waiting or
+  cancel.
+- After a failed save, keep what people entered.
+
+## Accessibility
+
+- Spinner and ProgressBar announce their `label`; make it say what's happening,
+  not "Loading".
+- Skeletons are hidden from assistive technology. Mark the region that's
+  loading with `aria-busy`, and announce when the content is ready if people
+  are waiting for it.
+- Animations respect the motion level: indicators keep working without motion.
+
+## Pitfalls
+
+- **Invented progress.** Never show a percentage for work you can't measure.
+- **A full-page spinner** for something that affects one card.
+- **Blocking the page** with a modal while something loads.
+- **A toast as the only sign** that long work finished: keep the result in the
+  page too.
+
+## Related
+
+- [Toasts, alerts and dialogs](?path=/docs/patterns-toasts-alerts-and-dialogs--docs)
+- [Empty and error states](?path=/docs/patterns-empty-and-error-states--docs)
+- [Tables and grids](?path=/docs/patterns-tables-and-grids--docs)

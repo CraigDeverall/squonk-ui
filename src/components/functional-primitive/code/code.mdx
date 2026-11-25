@@ -1,0 +1,80 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as CodeStories from "./code.stories.tsx";
+import meta from "./code.stories.tsx";
+import { Code } from "./code.tsx";
+import { Text } from "../text/text.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Code
+
+<ResizableCanvas of={CodeStories.Inline} defaultRecipe="inline" />
+
+`Code` renders monospace text — inline by default for command names, file paths, and identifiers; or as a horizontally-scrolling block with `block` for code samples. Pair with `Kbd` when you want to show keyboard input rather than code.
+
+<Controls />
+
+## Inline
+
+The default — a tinted background-and-border pill that sits inside prose without disrupting the line height.
+
+<InlineCodeExample>
+  <Text>
+    Install with <Code>npm install @squonkstack/ui</Code>, then import a component:
+    {" "}
+    <Code>{`import { Button } from "@squonkstack/ui"`}</Code>.
+  </Text>
+</InlineCodeExample>
+
+## Block
+
+`block` swaps the element to `<pre>` (with a nested `<code>` for semantics), enables horizontal scrolling for long lines, and preserves whitespace.
+
+<InlineCodeExample>
+  <Code block>{`import { Button } from "@squonkstack/ui";
+
+export default function App() {
+  return <Button variant="primary">Save changes</Button>;
+}`}</Code>
+</InlineCodeExample>
+
+## In a file path
+
+A common inline use — referring to a file or import path inside a paragraph.
+
+<InlineCodeExample>
+  <Text>
+    Edit <Code>src/theme/theme.ts</Code> and re-run the snapshot tests with{" "}
+    <Code>npm run test</Code>.
+  </Text>
+</InlineCodeExample>
+
+## Polymorphic
+
+`Code` defaults to `<code>` (or `<pre>` when `block`). Override with `as` if you need a different element — e.g. a `<samp>` for sample output.
+
+<InlineCodeExample>
+  <Code as="samp">{`error: ENOENT — no such file or directory`}</Code>
+</InlineCodeExample>
+
+## Accessibility
+
+- Inline renders as native `<code>`, block as `<pre><code>` — both are announced as code by screen readers.
+- Block content preserves whitespace and scrolls horizontally rather than wrapping, so indentation stays readable.
+- The contrast between text and the subtle background tint meets WCAG AA on both light and dark themes.
+
+## Common pitfalls
+
+- **Don't put long code in inline `Code`.** It won't wrap and will blow out the line height. Switch to `block`.
+- **Don't use Code for keyboard shortcuts.** A keystroke is a `Kbd`, not a `Code` — visually distinct, semantically correct.
+- **Don't nest Code inside Code.** The styling stacks (double border, double padding). Pick one level.
+- **Don't rely on syntax highlighting.** `Code` is unstyled — for highlighted samples, wrap a syntax highlighter inside.
+
+## Containment
+
+Block code includes padding and borders within the available width and has no outer margin. Long lines scroll inside the block; use the parent layout’s gap for spacing between code and adjacent content. No global CSS reset is required.

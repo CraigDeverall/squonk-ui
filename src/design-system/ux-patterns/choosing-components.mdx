@@ -1,0 +1,228 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../documentation-imports/index.ts";
+import { Example } from "./pattern-blocks.tsx";
+import { StatusKindsExample } from "./screen-examples.tsx";
+
+<Meta title="Patterns/Choosing components" />
+
+<HideSbBar />
+
+# Choosing components
+
+Which component should you use? Start from the job the screen has to do, not
+from the component that looks closest. Find the job below, pick the row that
+matches, then read the pattern page it links to for the details. If nothing
+fits, compose existing components before asking for a new one.
+
+| The job | Start here |
+| --- | --- |
+| [Do something](#do-something) | Button, IconButton, Link, DropdownMenu |
+| [Ask for input](#ask-for-input) | TextField, Select, RadioGroup, CheckboxGroup, Switch, Form |
+| [Show a status or a label](#show-a-status-or-a-label) | Badge, Tag, Alert, Meter, Avatar |
+| [Give feedback](#give-feedback) | Toast, Alert, field errors, ConfirmModal |
+| [Wait for something](#wait-for-something) | Skeleton, Spinner, ProgressBar, Button `pending` |
+| [Nothing to show, or it failed](#nothing-to-show-or-it-failed) | EmptyState, Alert |
+| [Show more without leaving](#show-more-without-leaving-the-page) | Accordion, Tabs, Popover, Tooltip, Drawer, Modal |
+| [Navigate](#navigate) | NavList, Breadcrumb, Tabs, Link, Pagination |
+| [Show a collection](#show-a-collection) | Table, a list, Card grid, InfiniteList |
+| [Show figures and trends](#show-figures-and-trends) | Stat, Sparkline, charts, Meter |
+| [Lay out a page](#lay-out-a-page) | Page, Header, Sidebar, Section, Container, Grid, Split, ResizablePanels |
+| [Set the size and voice of a region](#set-the-size-and-voice-of-a-region) | Presentation, Section `register`, ThemeStyleBlock |
+| [Words, pictures and icons](#words-pictures-and-icons) | Heading, Text, Icon, Illustration |
+
+## Do something
+
+| You need | Use | Not |
+| --- | --- | --- |
+| The main action of a form or page | [Button](?path=/docs/functional-button--docs) `variant="primary"`, one per area | Several primary buttons competing |
+| Other actions beside it | Button `secondary` or `ghost` | A link styled as a button |
+| An action shown only as an icon (toolbars, table rows) | [IconButton](?path=/docs/functional-iconbutton--docs); its label shows as a tooltip | A bare icon with an `onClick` |
+| Going to another page | [Link](?path=/docs/functional-link--docs), or Button `as="a"` when it must look like an action | A button that changes the URL in code |
+| Several actions on one item | [DropdownMenu](?path=/docs/functional-dropdown-menu--docs) behind an IconButton | A menu for navigation, or for choosing a value |
+| An action that destroys or can't be undone | Button `danger` and a [ConfirmModal](?path=/docs/functional-modal--docs) | Confirming everything; offer undo where you can |
+
+Details: [Menus and commands](?path=/docs/patterns-menus-and-commands--docs),
+[Destructive actions](?path=/docs/patterns-destructive-actions--docs).
+
+## Ask for input
+
+| You need | Use | Not |
+| --- | --- | --- |
+| Short text: a name, an email, a search | [TextField](?path=/docs/functional-text-field--docs) | A placeholder as the label |
+| Long text | [Textarea](?path=/docs/functional-textarea--docs) | A TextField that scrolls sideways |
+| Money | [CurrencyField](?path=/docs/components-inputs-currency-field--docs) | A TextField and your own formatting |
+| One choice from a few, worth comparing | [RadioGroup](?path=/docs/functional-radio-group--docs) | A Select that hides two options |
+| One choice from many, or where space is tight | [Select](?path=/docs/functional-select--docs); `searchable` for long lists | A RadioGroup of twenty |
+| Several choices | [CheckboxGroup](?path=/docs/functional-checkboxgroup--docs) | A multi-select that hides what's chosen |
+| One yes or no, submitted with a form | [Checkbox](?path=/docs/functional-checkbox--docs) | A Switch inside a form |
+| A setting that applies at once | [Switch](?path=/docs/functional-switch--docs) | A Checkbox that saves on click |
+| Related fields under one question | [Fieldset](?path=/docs/functional-fieldset--docs) | A heading that isn't tied to the fields |
+| Values, validation and submitting | [Form](?path=/docs/functional-form--docs) (`useAppForm`) | Hand-rolled state for each field |
+
+Details: [Choosing a selection control](?path=/docs/patterns-choosing-a-selection-control--docs),
+[Forms](?path=/docs/patterns-forms-overview--docs),
+[Labels, help and validation](?path=/docs/patterns-labels-help-and-validation--docs),
+[Switches, checkboxes and saving](?path=/docs/patterns-switches-checkboxes-and-saving--docs).
+
+## Show a status or a label
+
+| The status belongs to… | Use |
+| --- | --- |
+| One item: a row, a card, a return ("Overdue", "3 new") | [Badge](?path=/docs/functional-badge--docs), with the words in it |
+| A category or keyword people may remove or filter by | [Tag](?path=/docs/functional-tag--docs) |
+| A person or organisation | [Avatar](?path=/docs/functional-avatar--docs) with the name beside it, in a [MediaObject](?path=/docs/layout-media-object--docs) |
+| The whole page or form ("Your annual dues are due in 3 days") | An inline [Alert](?path=/docs/functional-alert--docs) |
+| A level against a known limit (storage, a credit limit) | [Meter](?path=/docs/functional-meter--docs) |
+| Work in progress you can measure | [ProgressBar](?path=/docs/functional-progress-bar--docs) |
+
+<Example caption="The page's status is an Alert, an item's status is a Badge, and a level against a limit is a Meter.">
+  <StatusKindsExample />
+</Example>
+
+Never use colour alone: every status says its meaning in words. Details:
+[Labels: Badge or Tag](?path=/docs/patterns-labels-badge-or-tag--docs).
+
+## Give feedback
+
+| The message… | Use |
+| --- | --- |
+| Confirms what someone just did and needs nothing more ("Invite sent") | A toast, from [`useToast`](?path=/docs/functional-toast--docs) |
+| Describes this page or form, and stays until it changes | An inline [Alert](?path=/docs/functional-alert--docs) |
+| Says what's wrong with one field | The field's `error` |
+| Lists everything wrong after a failed submit | The form's error summary |
+| Needs an answer before anyone can go on | [ConfirmModal](?path=/docs/functional-modal--docs) |
+
+Details: [Toasts, alerts and dialogs](?path=/docs/patterns-toasts-alerts-and-dialogs--docs).
+
+## Wait for something
+
+| You know… | Use |
+| --- | --- |
+| The shape of what's coming | [Skeleton](?path=/docs/functional-skeleton--docs) in that shape |
+| Nothing, and it should be short | [Spinner](?path=/docs/functional-spinner--docs) that names the work |
+| How far along it is | [ProgressBar](?path=/docs/functional-progress-bar--docs) |
+| It started from a button | Button `pending` |
+
+Details: [Loading and progress](?path=/docs/patterns-loading-and-progress--docs).
+
+## Nothing to show, or it failed
+
+Use [EmptyState](?path=/docs/layout-empty-state--docs) for first use, no matches
+and no access, each with its own words and next step. A failed load is never
+"nothing here": say it failed and offer to try again. Details:
+[Empty and error states](?path=/docs/patterns-empty-and-error-states--docs),
+[Onboarding and first run](?path=/docs/patterns-onboarding-and-first-run--docs).
+
+## Show more without leaving the page
+
+Pick the lightest surface that works. Each step down this table interrupts more.
+
+| You need | Use |
+| --- | --- |
+| A section people can open in place (FAQ, advanced options) | [Accordion](?path=/docs/functional-accordion--docs) |
+| Different views of one thing on the same page | [Tabs](?path=/docs/functional-tabs--docs) |
+| A name for an icon, or a few words about a term | [Tooltip](?path=/docs/functional-tooltip--docs), never anything people need |
+| A little content or a few fields beside a control, page still usable | [Popover](?path=/docs/functional-popover--docs) |
+| A longer side task while the page stays in view (details, filters, an edit) | [Drawer](?path=/docs/functional-drawer--docs) |
+| A short task or decision that must finish first | [Modal](?path=/docs/functional-modal--docs) |
+| A long or multi-step task | A page of its own, not an overlay |
+
+**Modal or drawer?** Both block the page. Use a Modal for a short, focused
+question or task that needs an answer ("Change bank account", "Delete this
+draft?"). Use a Drawer when the task is longer or people need to see the page
+behind it for context (a case's details, a filter panel, an edit to one row).
+Use neither when the task is long enough to need its own URL.
+
+Details: [Overlays and disclosures](?path=/docs/patterns-overlays-and-disclosures--docs),
+[Focus management](?path=/docs/patterns-focus-management--docs).
+
+## Navigate
+
+| You need | Use |
+| --- | --- |
+| Moving between the main pages of an app or section | [NavList](?path=/docs/components-navigation-navlist--docs) in a [Sidebar](?path=/docs/layout-sidebar--docs), or horizontal under a [Header](?path=/docs/layout-header--docs) |
+| Showing where a page sits in a hierarchy | [Breadcrumb](?path=/docs/functional-breadcrumb--docs) |
+| Switching views of one thing, same URL | [Tabs](?path=/docs/functional-tabs--docs) |
+| A link in a sentence, or to another site | [Link](?path=/docs/functional-link--docs) |
+| Moving through pages of records | [Pagination](?path=/docs/functional-pagination--docs), or Table `pageSize` |
+| The app's menu on a phone | NavList in a [Drawer](?path=/docs/functional-drawer--docs) `placement="start"` |
+
+Details: [App navigation](?path=/docs/patterns-app-navigation--docs).
+
+## Show a collection
+
+| People will… | Use |
+| --- | --- |
+| Compare values across items, sort, select rows | [Table](?path=/docs/functional-table--docs) |
+| Read items one after another (messages, activity) | A list: `VStack as="ul"` of [MediaObject](?path=/docs/layout-media-object--docs) rows |
+| Choose between a few items, each a place to go | A [Grid](?path=/docs/layout-primitives-grid--docs) of [InteractiveCard](?path=/docs/layout-interactive-card--docs)s |
+| Skim a long feed once, newest first | [InfiniteList](?path=/docs/functional-infinitelist--docs) |
+| Find items by name or narrow them down | Add search and filters above any of these |
+
+Details: [Lists, tables and cards](?path=/docs/patterns-lists-tables-and-cards--docs),
+[Tables and grids](?path=/docs/patterns-tables-and-grids--docs),
+[Search, filtering and sorting](?path=/docs/patterns-search-filtering-and-sorting--docs).
+
+## Show figures and trends
+
+| The question | Use |
+| --- | --- |
+| How much, right now? | [Stat](?path=/docs/functional-stat--docs) |
+| Which way is it heading? | [Sparkline](?path=/docs/functional-sparkline--docs), or Stat `trend` |
+| How did it change over time? | [LineChart](?path=/docs/functional-line-chart--docs) or [AreaChart](?path=/docs/functional-area-chart--docs) |
+| How do categories compare? | [BarChart](?path=/docs/functional-bar-chart--docs) |
+| What is the whole made of? | [DonutChart](?path=/docs/functional-donut-chart--docs) for two to five parts |
+| Do two measures move together? | [ScatterChart](?path=/docs/functional-scatter-chart--docs) |
+| What exactly is the value? | [Table](?path=/docs/functional-table--docs) |
+
+Details: [Data visualization](?path=/docs/patterns-data-visualization--docs),
+[Dashboards and summaries](?path=/docs/patterns-dashboards-and-summaries--docs).
+
+## Lay out a page
+
+| You need | Use |
+| --- | --- |
+| The root of a full-screen app | [Page](?path=/docs/layout-page--docs), once per screen |
+| A bar across the top: brand, search, account | [Header](?path=/docs/layout-header--docs), or `StickyHeader` |
+| Side navigation or a fixed panel | [Sidebar](?path=/docs/layout-sidebar--docs) |
+| Panels people resize: list and detail, editor and preview | [ResizablePanels](?path=/docs/components-layout-page-structure-resizable-panels--docs) |
+| A band of a landing or content page | [Section](?path=/docs/layout-section--docs) with a [SectionHeading](?path=/docs/layout-section-heading--docs) |
+| A readable width for content | [Container](?path=/docs/layout-primitives-container--docs) |
+| A title on one side, actions on the other | [Split](?path=/docs/layout-split--docs) |
+| Cards or figures in columns | [Grid](?path=/docs/layout-primitives-grid--docs) |
+| Things in a column, or a row that wraps | [VStack](?path=/docs/layout-primitives-vstack--docs), [Cluster](?path=/docs/layout-cluster--docs) |
+| A surface around one thing | [Card](?path=/docs/layout-card--docs) |
+| A bounded area that scrolls | [ScrollBox](?path=/docs/layout-primitives-scrollbox--docs) |
+
+Details: [Page layouts and app shells](?path=/docs/patterns-page-layouts-and-app-shells--docs),
+[Space and layout](?path=/docs/foundations-space-and-layout--docs).
+
+## Set the size and voice of a region
+
+Use [Presentation](?path=/docs/style-presentation--docs) (or a Section's or
+Header's `register`) to size a region's controls for its job: `compact` for dense
+work screens, `default` for most of an app, `large` and `hero` for landing pages.
+Never size components one by one. Details:
+[Density and registers](?path=/docs/patterns-density-and-registers--docs).
+
+## Words, pictures and icons
+
+| You need | Use |
+| --- | --- |
+| A page or section title | [Heading](?path=/docs/functional-primitives-heading--docs) at the right level |
+| Body text, secondary text | [Text](?path=/docs/functional-primitives-text--docs) with `tone` |
+| A symbol inside a control or a line of text | An [Icon](?path=/docs/functional-primitives-icon--docs) |
+| A picture beside a message: an empty state, a finished step | An [Illustration](?path=/docs/components-text-and-icons-illustration--docs) |
+| A keyboard shortcut, or code | [Kbd](?path=/docs/functional-primitives-kbd--docs), [Code](?path=/docs/functional-primitives-code--docs) |
+| A formatted amount of money | [Currency](?path=/docs/components-data-display-currency--docs) |
+
+Details: [Illustrations, icons and images](?path=/docs/patterns-illustrations-icons-and-images--docs),
+[Writing for the interface](?path=/docs/patterns-writing-for-the-interface--docs).
+
+## When nothing fits
+
+Compose before you build. Most "missing components" are a layout primitive
+around existing components, a scoped theme change, or a register. If you still
+need something new, describe the job, when to use it and when not to, its states
+and its keyboard behaviour, and ask for it to join the library rather than
+building a private copy.

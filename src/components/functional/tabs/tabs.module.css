@@ -1,0 +1,169 @@
+@layer dt.components {
+  .root {
+    --tabs-height: var(--squonk-presentation-control-height-default);
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    font-family: var(--squonk-roles-type-font);
+    color: var(--squonk-roles-color-text);
+  }
+
+  .root[data-register="compact"] { --tabs-height: var(--squonk-presentation-control-height-compact); }
+  .root[data-register="large"] { --tabs-height: var(--squonk-presentation-control-height-large); }
+  .root[data-register="hero"] { --tabs-height: var(--squonk-presentation-control-height-hero); }
+
+  /* Scrolls sideways when the tabs don't fit, rather than wrapping. */
+  .list {
+    position: relative;
+    display: flex;
+    gap: var(--squonk-roles-space-control-group-gap);
+    overflow-x: auto;
+    scrollbar-width: thin;
+    isolation: isolate;
+  }
+
+  /* stickyTop: the list stays in view as the panels scroll under it, over
+     the page's or a surface's own colour so nothing shows through. */
+  .list[data-sticky] {
+    position: sticky;
+    top: var(--tabs-sticky-top, 0);
+    z-index: 1;
+  }
+
+  /* On the page, the colour runs the window's full width, so nothing shows
+     past the ends of the list. A shadow spreads it, and clip-path keeps it
+     to the list's own height. A shadow adds no scrolling. */
+  .root .list[data-sticky="page"] {
+    background-color: var(--squonk-components-page-background);
+    box-shadow: 0 0 0 100vmax var(--squonk-components-page-background);
+    clip-path: inset(0 -100vmax);
+  }
+
+  /* The line variant's rule is a shadow too, so the two go together. */
+  .root[data-variant="line"] .list[data-sticky="page"] {
+    box-shadow:
+      inset 0 calc(var(--squonk-roles-border-width) * -1) 0 var(--squonk-roles-color-divider),
+      0 0 0 100vmax var(--squonk-components-page-background);
+  }
+  .list[data-sticky="surface"] { background-color: var(--squonk-roles-color-surface); }
+
+  .trigger {
+    position: relative;
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--squonk-roles-space-icon-gap);
+    flex-shrink: 0;
+    box-sizing: border-box;
+    height: var(--tabs-height);
+    padding: 0 var(--squonk-components-tabs-padding-inline);
+    border: none;
+    background: transparent;
+    color: var(--squonk-roles-color-text-supporting);
+    font: inherit;
+    font-size: var(--squonk-components-tabs-font-size-default);
+    font-weight: var(--squonk-roles-type-strong);
+    white-space: nowrap;
+    cursor: pointer;
+    --motion-property: color;
+  }
+
+  .root[data-register="large"] .trigger,
+  .root[data-register="compact"] .trigger { font-size: var(--squonk-components-tabs-font-size-compact); }
+  .root[data-register="large"] .trigger { font-size: var(--squonk-components-tabs-font-size-large); }
+  .root[data-register="hero"] .trigger { font-size: var(--squonk-components-tabs-font-size-hero); }
+
+  .trigger[data-hovered]:not([data-disabled]) { color: var(--squonk-roles-color-text); }
+
+  .trigger[data-selected] { color: var(--squonk-roles-color-text); }
+
+  .trigger[data-focus-visible] {
+    outline: var(--squonk-roles-border-focus-width) solid var(--squonk-roles-color-focus-ring);
+    outline-offset: calc(var(--squonk-roles-border-focus-width) * -1);
+    border-radius: var(--squonk-roles-radius-item);
+  }
+
+  .trigger[data-disabled] {
+    cursor: not-allowed;
+    opacity: var(--squonk-roles-state-disabled-opacity);
+  }
+
+  .adornment { display: inline-flex; }
+
+  .fitted .trigger { flex: 1 0 auto; }
+
+  /* React Aria renders one indicator in the selected tab and slides it
+     (translate and width) from the previous one. */
+  .indicator {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    z-index: -1;
+    pointer-events: none;
+    --motion-property: translate, width;
+    --motion-duration: var(--squonk-components-tabs-indicator-duration);
+  }
+
+  /* line: a rule under the list, and a thick primary bar under the tab. */
+  .root[data-variant="line"] .list {
+    box-shadow: inset 0 calc(var(--squonk-roles-border-width) * -1) 0 var(--squonk-roles-color-divider);
+  }
+
+  .root[data-variant="line"] .indicator {
+    bottom: 0;
+    height: 3px;
+    border-radius: 3px 3px 0 0;
+    background-color: var(--squonk-roles-color-accent);
+    z-index: 1;
+  }
+
+  /* enclosed: a tray, with the selected tab raised on a card. */
+  .root[data-variant="enclosed"] .list {
+    width: fit-content;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: var(--squonk-roles-space-segment-gap);
+    gap: 0;
+    border-radius: var(--squonk-roles-radius-control);
+    background-color: var(--squonk-roles-color-well);
+    background-image: var(--squonk-roles-relief-well-fill);
+    background-blend-mode: var(--squonk-roles-relief-blend);
+    box-shadow: var(--squonk-roles-relief-well-edge);
+  }
+
+  .root[data-variant="enclosed"].fitted .list { width: 100%; }
+
+  .root[data-variant="enclosed"] .trigger {
+    height: calc(var(--tabs-height) - 2 * var(--squonk-roles-space-segment-gap));
+    border-radius: calc(var(--squonk-roles-radius-control) - var(--squonk-roles-space-segment-gap));
+    color: var(--squonk-roles-color-on-well-supporting);
+  }
+
+  .root[data-variant="enclosed"] .trigger[data-selected],
+  .root[data-variant="enclosed"] .trigger[data-hovered]:not([data-disabled]) {
+    color: var(--squonk-roles-color-on-surface);
+  }
+
+  .root[data-variant="enclosed"] .indicator {
+    top: 0;
+    height: 100%;
+    border-radius: calc(var(--squonk-roles-radius-control) - var(--squonk-roles-space-segment-gap));
+    background-color: var(--squonk-roles-color-surface);
+    background-image: var(--squonk-roles-relief-control-fill);
+    background-blend-mode: var(--squonk-roles-relief-blend);
+    box-shadow: var(--squonk-roles-relief-control-edge), var(--squonk-roles-elevation-raised);
+  }
+
+  .content[data-inert] { display: none; }
+
+  .content {
+    padding-top: var(--squonk-roles-space-panel-gap);
+    border-radius: var(--squonk-roles-radius-item);
+  }
+
+  .content[data-focus-visible] {
+    outline: var(--squonk-roles-border-focus-width) solid var(--squonk-roles-color-focus-ring);
+    outline-offset: var(--squonk-roles-border-focus-offset);
+  }
+}

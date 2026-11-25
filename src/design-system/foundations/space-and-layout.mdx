@@ -1,0 +1,135 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../documentation-imports/index.ts";
+import { Badge, Button, Card, Grid, Heading, HStack, Presentation, Split, Text, TextField, VStack } from "../../components";
+import { GapSample, SampleGrid, SpaceScale, Specimen } from "./foundation-blocks.tsx";
+
+<Meta title="Foundations/Space and layout" />
+
+<HideSbBar />
+
+# Space and layout
+
+Space comes from one scale built on an 8px step (the `spacingPx` primitive).
+Components don't pick steps directly; they use space purposes, so every field,
+dialog and list spaces itself the same way.
+
+## The scale
+
+<SpaceScale />
+
+## Space by purpose
+
+<SampleGrid>
+  <GapSample token="--squonk-roles-space-field-gap" name="space.fieldGap" use="A field's label, input and hint." />
+  <GapSample token="--squonk-roles-space-question-gap" name="space.questionGap" use="One question and the next." />
+  <GapSample token="--squonk-roles-space-choice-gap" name="space.choiceGap" use="A checkbox or radio and its label." />
+  <GapSample token="--squonk-roles-space-action-gap" name="space.actionGap" use="Buttons side by side." />
+  <GapSample token="--squonk-roles-space-surface-inset" name="space.surfaceInset" use="Padding inside a panel or popover." />
+  <GapSample token="--squonk-roles-space-overlay-inset" name="space.overlayInset" use="Padding inside a dialog or drawer." />
+</SampleGrid>
+
+<Specimen label="questionGap between questions, fieldGap inside each one, actionGap between the buttons.">
+  <VStack gap="lg">
+    <TextField label="Household name" helperText="As it should appear on your membership card." />
+    <TextField label="Email" type="email" />
+    <HStack gap="sm" wrap>
+      <Button variant="primary">Continue</Button>
+      <Button variant="ghost">Back</Button>
+    </HStack>
+  </VStack>
+</Specimen>
+
+The full list, with every purpose's reason, is on
+[Purpose tokens](?path=/docs/foundations-purpose-tokens--docs).
+
+## Registers
+
+`Presentation` sets the size of a region's controls for its job: `compact` for
+dense admin screens, `default` for most of an app, `large` and `hero` for landing
+and marketing pages. Control heights, padding and text all step together, so a row
+of mixed controls always lines up. When to use each is on
+[Density and registers](?path=/docs/patterns-density-and-registers--docs).
+
+<SampleGrid narrow>
+  {["compact", "default", "large", "hero"].map((register) => (
+    <Specimen key={register} label={register}>
+      <Presentation register={register}>
+        <VStack gap="sm">
+          <TextField label="Search" placeholder="Name or ID" />
+          <HStack gap="sm" wrap>
+            <Button variant="primary">Search</Button>
+            <Badge tone="info">12 results</Badge>
+          </HStack>
+        </VStack>
+      </Presentation>
+    </Specimen>
+  ))}
+</SampleGrid>
+
+## Breakpoints
+
+Layouts are mobile first: they start as one column and add columns as space allows.
+
+| Name | From | Typical change |
+| --- | --- | --- |
+| `mobile` | 480px | Larger phones: side-by-side buttons |
+| `tablet` | 768px | Sidebars appear; two-column forms |
+| `desktop` | 1024px | Full app layouts |
+| `wide` | 1280px | Extra columns, wider tables |
+
+Test real narrow containers, not only the window width: a card in a sidebar is
+narrow on any screen.
+
+## Arranging components
+
+The parent owns placement and spacing; children size themselves. Reach for a
+layout primitive before writing layout CSS.
+
+<SampleGrid narrow>
+  <Specimen label="VStack: vertical flow">
+    <VStack gap="sm">
+      <Card variant="filled"><Text>Annual dues</Text></Card>
+      <Card variant="filled"><Text>Swamp Fund levy</Text></Card>
+    </VStack>
+  </Specimen>
+  <Specimen label="HStack: a row that can wrap">
+    <HStack gap="sm" wrap>
+      <Badge>Night watches</Badge>
+      <Badge>Tear pools</Badge>
+      <Badge>Archive</Badge>
+    </HStack>
+  </Specimen>
+  <Specimen label="Split: content and actions apart">
+    <Split align="center">
+      <Heading level={5} as="h3">Aroha Ngata</Heading>
+      <Button variant="secondary">Open</Button>
+    </Split>
+  </Specimen>
+  <Specimen label="Grid: a responsive collection">
+    <Grid minColumnWidth="5rem" gap="sm">
+      <Card variant="filled"><Text>Q1</Text></Card>
+      <Card variant="filled"><Text>Q2</Text></Card>
+      <Card variant="filled"><Text>Q3</Text></Card>
+    </Grid>
+  </Specimen>
+</SampleGrid>
+
+| Need | Use |
+| --- | --- |
+| Stack things vertically | [VStack](?path=/docs/layout-primitives-vstack--docs) |
+| A row, wrapping if needed | [HStack](?path=/docs/layout-primitives-hstack--docs) or [Cluster](?path=/docs/layout-cluster--docs) |
+| Content on one side, actions on the other | [Split](?path=/docs/layout-split--docs) |
+| A collection of cards | [Grid](?path=/docs/layout-primitives-grid--docs) |
+| Limit reading width | [Container](?path=/docs/layout-primitives-container--docs) |
+| A padded, painted region | [Block](?path=/docs/layout-primitives-block--docs) |
+| A bounded scrolling area | [ScrollBox](?path=/docs/layout-primitives-scrollbox--docs) |
+| Keep media in proportion | [AspectRatio](?path=/docs/layout-primitives-aspectratio--docs) |
+| A full screen with header and sidebar | [Page](?path=/docs/layout-page--docs) |
+
+Avoid nested scroll areas unless the task needs them; a wide table may scroll
+sideways while the page stays put. Use `gap` on the parent rather than margins on
+repeated children.
+
+For whole screens (app shells, reading pages, landing pages, resizable
+workspaces) and how they change across breakpoints, see
+[Page layouts and app shells](?path=/docs/patterns-page-layouts-and-app-shells--docs).

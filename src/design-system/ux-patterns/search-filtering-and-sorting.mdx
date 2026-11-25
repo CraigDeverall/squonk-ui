@@ -1,0 +1,101 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../documentation-imports/index.ts";
+import { Example } from "./pattern-blocks.tsx";
+import { SearchAndFilterExample } from "./screen-examples.tsx";
+
+<Meta title="Patterns/Search, filtering and sorting" />
+
+<HideSbBar />
+
+# Search, filtering and sorting
+
+People find things in three ways: they type what they know (search), they narrow
+a list by what it is (filter), or they put it in an order (sort). Most
+collections need one or two of these, rarely all three at once. Compose them
+from [TextField](?path=/docs/functional-text-field--docs),
+[Popover](?path=/docs/functional-popover--docs) or
+[Drawer](?path=/docs/functional-drawer--docs),
+[CheckboxGroup](?path=/docs/functional-checkboxgroup--docs),
+[Tag](?path=/docs/functional-tag--docs) and
+[Table](?path=/docs/functional-table--docs).
+
+## Which one
+
+| People… | Give them | In `@squonkstack/ui` |
+| --- | --- | --- |
+| Know the name or number of what they want | A search field above the results | `TextField type="search"` with a visible label |
+| Pick one value from a long list inside a form | A searchable select, not a page search | [Select](?path=/docs/functional-select--docs) `searchable` |
+| Want only items of a kind (status, interest, owner) | Filters | One to three: [Select](?path=/docs/functional-select--docs)s in a row. More: [CheckboxGroup](?path=/docs/functional-checkboxgroup--docs)s in a [Popover](?path=/docs/functional-popover--docs), or a [Drawer](?path=/docs/functional-drawer--docs) on phones |
+| Switch between a few fixed sets ("Open", "Closed", "All") | Views | [Tabs](?path=/docs/functional-tabs--docs), each with its count |
+| Want the newest, the biggest, A to Z | Sorting | Table `sortable` columns; a "Sort by" [Select](?path=/docs/functional-select--docs) for lists and cards |
+
+<Example caption="Search by name, filter by interest in a popover, and see what's applied as removable tags with a count. Sort by any column. Search for something that isn't there to see the empty state.">
+  <SearchAndFilterExample />
+</Example>
+
+## Search
+
+- **Label it** ("Search members"), and say what it searches in the placeholder or
+  help text ("Name, case number or reason"). A magnifier icon alone isn't a label.
+- **Put it above what it searches**, and keep the results in the same place.
+- **Search as people type** for lists already in the browser (Table `filter`
+  does this). For server searches, wait until they pause or press Enter, and
+  show the results' state in words.
+- **Keep the query** in the field and, for whole pages, in the URL, so Back and
+  sharing work.
+
+## Filters
+
+- **Show what's applied.** Each active filter is a removable
+  [Tag](?path=/docs/functional-tag--docs) in a `TagGroup`, with "Clear all"
+  beside them. A count on the Filters button ("Filters 2") says some are on even
+  when the panel is closed.
+- **Say how many match**: "3 of 12 members". Table announces its new row count
+  when its `filter` changes; announce your own count for other lists.
+- **Apply at once** in a popover or panel beside the results. Use an "Apply"
+  button only when each change is slow (a server query that takes seconds), and
+  then say that nothing changes until it's pressed.
+- **Filters combine predictably**: values within one filter widen the results
+  (Night watches *or* Folklore archive); different filters narrow them (Night watches *and* overdue).
+- **Never hide all results without saying why.** The empty state names the
+  filters and offers to clear them.
+
+## Sorting
+
+- **Sort tables by their headers.** Mark sortable columns with `sortable`, give
+  derived values a `sortValue`, and start with a sensible `defaultSort` (usually
+  the newest or the most urgent first).
+- **One sort at a time** is enough for almost every screen.
+- **Lists and card grids** have no headers, so sort them with a "Sort by"
+  Select above the list, labelled with the order it gives ("Newest first").
+
+## Accessibility
+
+- Search and filter controls sit **before** the results in the reading order.
+- Changing a filter doesn't move focus. Announce the new count politely (a
+  `role="status"` element), as Table does.
+- Removing a Tag returns focus to a sensible place in the group; don't rebuild
+  the group in a way that drops focus.
+- Sortable headers are buttons and announce the current direction; don't add
+  your own sort icons to a header that isn't sortable.
+
+## Pitfalls
+
+- **Filters with no visible state.** If people can't see what's applied, they
+  think records are missing.
+- **"No results" for a failed search.** A server error is an error, not an empty
+  result; say so and offer to try again.
+- **A searchable Select as a page search.** It chooses one value for a form; it
+  doesn't filter a list on the page.
+- **Too many filters up front.** Show the two or three people use most; put the
+  rest in the panel.
+
+The [Society secretary](?path=/story/examples-society-secretary--work-queue) example
+puts it together: a search, filters in a popover, active filters as tags, bulk
+actions on selected rows and an empty state that clears everything.
+
+## Related
+
+- [Tables and grids](?path=/docs/patterns-tables-and-grids--docs)
+- [Lists, tables and cards](?path=/docs/patterns-lists-tables-and-cards--docs)
+- [Empty and error states](?path=/docs/patterns-empty-and-error-states--docs)

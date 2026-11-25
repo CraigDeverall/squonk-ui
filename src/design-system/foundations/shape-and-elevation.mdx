@@ -1,0 +1,168 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../documentation-imports/index.ts";
+import { Avatar, Badge, Button, Card, Checkbox, Grid, HStack, Tag, Text, TextField, VStack } from "../../components";
+import { ElevationSample, RadiusSample, SampleGrid, Specimen } from "./foundation-blocks.tsx";
+import { ReliefCards, ReliefGrid, ReliefSpecimen } from "./relief-blocks.tsx";
+
+<Meta title="Foundations/Shape and elevation" />
+
+<HideSbBar />
+
+# Shape and elevation
+
+Corners and shadows are named by role, so every control shares one shape and
+every floating panel one depth. A theme changes a role once, for example
+`roles.radius.control` to make every control a pill, and it reaches all of them.
+
+## Corners
+
+<SampleGrid>
+  <RadiusSample token="--squonk-roles-radius-control" name="radius.control" use="Buttons, fields, selects, pagination." />
+  <RadiusSample token="--squonk-roles-radius-surface" name="radius.surface" use="Cards, popovers, alerts." />
+  <RadiusSample token="--squonk-roles-radius-overlay" name="radius.overlay" use="Dialogs and drawers." />
+  <RadiusSample token="--squonk-roles-radius-list" name="radius.list" use="Menus and listboxes: panels of rows." />
+  <RadiusSample token="--squonk-roles-radius-list-item" name="radius.listItem" use="Menu items and options." />
+  <RadiusSample token="--squonk-roles-radius-item" name="radius.item" use="Small buttons and rows inside a panel." />
+  <RadiusSample token="--squonk-roles-radius-chip" name="radius.chip" use="Tags." />
+  <RadiusSample token="--squonk-roles-radius-pill" name="radius.pill" use="Switches, avatars, badges, counts." />
+  <RadiusSample token="--squonk-roles-radius-mark" name="radius.mark" use="Checkbox boxes, keys, inline code." />
+</SampleGrid>
+
+<Specimen label="Each component takes the radius of its role.">
+  <VStack gap="md">
+    <HStack gap="sm" wrap align="center">
+      <Button variant="primary" shape="rounded">Save</Button>
+      <Button variant="secondary" shape="rounded">Cancel</Button>
+      <Checkbox label="Remember me" defaultChecked />
+    </HStack>
+    <TextField label="Reference" defaultValue="DUES-0042" />
+    <HStack gap="sm" wrap align="center">
+      <Tag>Night watches</Tag>
+      <Badge tone="success">Paid</Badge>
+      <Avatar name="Aroha Ngata" />
+    </HStack>
+  </VStack>
+</Specimen>
+
+Buttons default to the `pill` shape; use `shape="rounded"` to match fields in
+dense forms. Keep one button shape within a task.
+
+### Nested corners
+
+When a rounded shape sits inside another, their curves run parallel: the inner
+radius is the outer radius less the gap between them. The library does this
+for segments in enclosed tabs and small buttons inside a field or tag, so a
+round theme gets round buttons and a square theme square ones. It never goes
+below the inner shape's own radius. Do the same in your own nested surfaces:
+
+```css
+border-radius: max(var(--squonk-roles-radius-item), calc(var(--squonk-roles-radius-surface) - var(--squonk-roles-space-surface-inset)));
+```
+
+Menus and listboxes have the pair worked out already. `radius.listItem` is
+`radius.list` less the panel's inset and border. A row can't be rounder than
+half its height, so `radius.list` is the surface radius limited to half a row
+plus that inset and border: however round the theme, the first and last rows
+follow the panel's curve instead of being cut by it. Both follow the surface
+radius, the list's spacing and its text size when a theme re-points them. Use
+the pair for your own panel of rows:
+
+```css
+.menu { padding: var(--squonk-roles-space-list-inset); border-radius: var(--squonk-roles-radius-list); }
+.row {
+  padding: var(--squonk-roles-space-list-item-inset-block) var(--squonk-roles-space-list-item-inset-inline);
+  font-size: var(--squonk-roles-type-list-item);
+  line-height: var(--squonk-roles-type-tight-line-height);
+  border-radius: var(--squonk-roles-radius-list-item);
+}
+```
+
+## Elevation
+
+Shadows say how far something sits above the page. Most content sits flat on the
+page or in an outlined card; shadows are for things that float.
+
+<SampleGrid>
+  <ElevationSample token="--squonk-roles-elevation-raised" name="elevation.raised" use="Tooltips." />
+  <ElevationSample token="--squonk-roles-elevation-floating" name="elevation.floating" use="Menus, listboxes, popovers." />
+  <ElevationSample token="--squonk-roles-elevation-overlay" name="elevation.overlay" use="Dialogs and drawers." />
+  <ElevationSample token="--squonk-roles-elevation-soft" name="elevation.soft" use="Raised content at rest." />
+  <ElevationSample token="--squonk-roles-elevation-lift" name="elevation.lift" use="A control lifted under the pointer." />
+</SampleGrid>
+
+<Specimen>
+  <Grid minColumnWidth="12rem" gap="md">
+    <Card variant="outlined"><Text>Outlined: the usual way to group content.</Text></Card>
+    <Card variant="elevated"><Text>Elevated: content that should stand forward.</Text></Card>
+    <Card variant="filled"><Text>Filled: a quiet, recessed group.</Text></Card>
+  </Grid>
+</Specimen>
+
+Don't stack a border, a shadow and a bright background on every group: pick one
+way to separate it.
+
+## Light and relief
+
+A theme can give surfaces a little relief: a subtle gradient across each one and
+a highlight and shade along its edges, so controls look raised off the page and
+fields sit slightly into it. It is off by default, and most themes should leave
+it off or keep it gentle.
+
+Everything follows one light source. `lightAngle` says where the light comes
+from, in degrees clockwise from above, and turns every relief gradient, every
+edge and every computed shadow above with it, so the whole interface agrees.
+Shadows you write yourself in a role binding (such as a hard `3px 3px 0`) are
+used as written, so draw them to match your angle.
+
+| Primitive | Range | What it does |
+| --- | --- | --- |
+| `reliefDepth` | 0–1 (default 0) | How far a surface's tone shifts across its face, lit side to far side. |
+| `reliefSheen` | 0–1 (default 0) | The strength of the highlight and shade strokes along its edges. |
+| `reliefProfile` | `soft`, `bevel`, `glass`, `pillow`, `print` | How the light falls: a smooth gradient, crisp edges, a glossy band, a cushion, or hard embossed edges. |
+| `reliefBlend` | `normal`, `soft-light`, `overlay` | How the relief combines with the colour beneath. `soft-light` keeps saturated buttons cleaner. |
+| `lightAngle` | 0–359 (default 0) | Where the light comes from. Also turns the drop shadows. |
+
+<ReliefGrid>
+  <ReliefSpecimen label="Flat: the default, depth and sheen 0." />
+  <ReliefSpecimen primitives={{ reliefDepth: 0.45, reliefSheen: 0.35 }} label="soft · depth 0.45 · sheen 0.35" />
+  <ReliefSpecimen primitives={{ reliefDepth: 0.4, reliefSheen: 0.6, reliefProfile: "bevel" }} label="bevel · depth 0.4 · sheen 0.6" />
+  <ReliefSpecimen primitives={{ reliefDepth: 0.55, reliefSheen: 0.8, reliefProfile: "glass" }} label="glass · depth 0.55 · sheen 0.8" />
+  <ReliefSpecimen primitives={{ reliefDepth: 0.8, reliefSheen: 0.5, reliefProfile: "pillow", reliefBlend: "soft-light" }} label="pillow · depth 0.8 · sheen 0.5 · soft-light" />
+  <ReliefSpecimen primitives={{ reliefDepth: 0.8, reliefSheen: 0.35, reliefProfile: "print", lightAngle: 315 }} label="print · depth 0.8 · lit from 315°" />
+</ReliefGrid>
+
+### Postures
+
+Components don't read the relief directly. Each takes the purpose tokens for its
+posture, `roles.relief.<posture>.fill` (a `background-image` over its own colour)
+and `.edge` (inset shadows), so a theme can change one posture without the others.
+
+| Posture | Components | Default |
+| --- | --- | --- |
+| `control` | Buttons (not ghost), select triggers, switch thumbs, the selected segment of enclosed tabs | `relief.raised` |
+| `surface` | Elevated, outlined and featured cards | `relief.raisedSubtle`, half the strength |
+| `chrome` | The header | `relief.raisedSubtle` |
+| `well` | Text fields, text areas, searchable selects, currency fields, switch and segmented tracks, filled cards | `relief.recessed` |
+| `pressed` | A button while pressed, a select while pressed or open | `relief.recessed` |
+
+Disabled controls and ghost buttons stay flat. Re-point a posture at a
+per-profile token to give it a profile of its own: here controls are cushions
+and fields have crisp bevels, under one light from the upper left.
+
+<ReliefSpecimen
+  primitives={{ reliefDepth: 0.7, reliefSheen: 0.6, lightAngle: 330 }}
+  roleBindings={{
+    "roles.relief.control.fill": "relief.pillow.raised.fill",
+    "roles.relief.control.edge": "relief.pillow.raised.edge",
+    "roles.relief.well.fill": "relief.bevel.recessed.fill",
+    "roles.relief.well.edge": "relief.bevel.recessed.edge",
+  }}
+  label="Soft surfaces, pillow controls and bevelled wells, lit from 330°."
+/>
+
+<ReliefCards primitives={{ reliefDepth: 0.6, reliefSheen: 0.4 }} />
+
+Relief is decoration: it never carries meaning, and text must stay readable at
+the darkest and lightest points of a gradient. Keep depth low on large surfaces,
+check dark mode (highlights are toned down there automatically) and keep the
+light above the horizon: light from below reads as wrong.

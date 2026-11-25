@@ -1,0 +1,132 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as TableStories from "./table.stories.tsx";
+import meta from "./table.stories.tsx";
+import { Table } from "./table.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Table
+
+<ResizableCanvas of={TableStories.Default} />
+
+`Table` renders typed column definitions over an array of rows — the
+workhorse for admin lists, reports, and any grid of records. The outermost
+element is a horizontally-scrolling wrapper, so a wide table scrolls inside
+its container instead of stretching the page.
+
+Sorting, filtering, pagination and selection are built in (TanStack Table runs
+the data logic; React Aria supplies the sort buttons and the interactive grid)
+and every one is optional. Leave them off
+and the table renders `rows` exactly as given, so a consumer that sorts or
+pages on the server can keep doing so.
+
+<Controls />
+
+## Columns
+
+Each `TableColumn` names a `key` and `header`. By default a cell renders
+`row[key]`; pass `render` for anything richer — badges, menus, formatted
+values. `align` and `width` shape the column.
+
+<InlineCodeExample>
+  <Table
+    columns={[
+      { key: "name", header: "Name", width: "40%" },
+      { key: "email", header: "Email" },
+      { key: "seats", header: "Seats", align: "right" },
+    ]}
+    rows={[
+      { name: "Acme Corp", email: "ops@acme.test", seats: 12 },
+      { name: "Globex", email: "it@globex.test", seats: 3 },
+    ]}
+    rowKey={(row) => row.email}
+  />
+</InlineCodeExample>
+
+## Empty state
+
+When `rows` is empty the body collapses to a single centered cell. Pass
+`empty` to replace the default "No data" copy — a short instruction works
+best, or compose an `EmptyState` for something richer.
+
+<ResizableCanvas of={TableStories.Empty} />
+
+## Striped and compact
+
+`striped` zebra-stripes the body. Wrap in
+`<Presentation register="compact">` for denser padding — useful when the
+table is the page's main content and vertical space matters.
+
+<ResizableCanvas of={TableStories.Compact} />
+
+## Sorting, filtering and paging
+
+Mark columns `sortable` (rendered columns also need `sortValue`). The header
+becomes a button that cycles ascending → descending → original order, and the
+sorted header carries `aria-sort`. Use `sort`/`onSortChange` to control it or
+`defaultSort` to start sorted. `filter` keeps rows with a cell containing the
+text. `pageSize` splits rows into pages with a compact `Pagination` under the
+table, shown only when there is more than one page; `pageIndex`/`onPageIndexChange`
+control the page.
+
+<ResizableCanvas of={TableStories.SortableAndPaged} />
+
+## Selection and the interactive grid
+
+`selectable` adds a checkbox column (with select-all) and renders the table
+through React Aria's `Table` as an interactive grid; `selectedKeys`/
+`onSelectionChange` control the selection by `rowKey`. `interactive` gives the
+same keyboard model without selection, for tables whose cells hold controls.
+
+<ResizableCanvas of={TableStories.Selectable} />
+
+## Accessibility
+
+- Renders a real `<table>` with `<thead>` / `<th scope="col">` semantics, so
+  screen readers announce column context per cell.
+- `caption` renders a visually-hidden `<caption>` naming the table — set it
+  whenever the surrounding page doesn't already title the data.
+- A visually hidden live region announces the row count after filtering and,
+  in a reading table, sort changes ("Sorted by Age, descending"). In a grid,
+  React Aria announces sort and selection changes itself.
+- In a reading table with `pageSize`, the table sets `aria-rowcount` to the
+  full filtered count and each row its `aria-rowindex`, so position is
+  announced across pages.
+- As an interactive grid (`role="grid"`, React Aria's `Table`), the grid is a
+  single tab stop, so `Tab` moves past it. Focus starts on a row; `↑`/`↓`
+  move between rows, `←`/`→` move into and between the row's cells and up to
+  the column headers, `Home`/`End` and `Ctrl+Home`/`Ctrl+End` jump, `Space`
+  selects the row, and `Enter` on a sortable column header sorts it. Selected
+  rows carry `aria-selected`. If the focused row is filtered out or deleted,
+  focus moves to a remaining row. On Android, React Aria describes the sort
+  order instead of setting `aria-sort`, which TalkBack ignores.
+
+## Pitfalls
+
+- Keys in `rows` objects are looked up by `column.key` only when `render` is
+  absent; non-primitive values should always go through `render`.
+- Provide `rowKey` whenever rows can reorder — the index fallback breaks
+  React reconciliation for dynamic data.
+
+## Migration: typed columns and stable rows
+
+Automatic columns now require an actual scalar field of the row type. Strings, numbers, bigints, booleans, null and undefined can render directly. Date, object, array and derived columns require `render`; for example, `{ key: "created", header: "Created", render: row => row.created.toLocaleDateString() }`. Use `satisfies TableColumn<MyRow>[]` when defining a reusable column array so keys keep their precise types. Unknown keys without a renderer are rejected instead of silently rendering blank cells.
+
+`rowKey="id"` now reads a stable string, number or bigint field directly. The existing callback form still works, including numeric return values. The index fallback remains for static, presentational rows; provide a stable key whenever records can move, be inserted/removed, or contain controls with local state. This stricter column type replaces the earlier interface; consumers extending it should compose an intersection with `TableColumn<Row>` instead.
+
+
+## Reading and responsive contract
+
+By default this is a semantic reading table, not an ARIA grid: embedded links and buttons stay in the normal tab sequence. Opt into the grid only when rows are selectable or cells hold controls that would otherwise make Tab tedious; see the [WAI table](https://www.w3.org/WAI/ARIA/apg/patterns/table/) and [grid](https://www.w3.org/WAI/ARIA/apg/patterns/grid/) patterns, and the [Tables and grids](?path=/docs/patterns-tables-and-grids--docs) guidance.
+
+At narrow widths, preserve header-to-cell relationships and allow the existing wrapper to scroll. Check that keyboard users can reach overflowing content, and place filters or pagination outside that horizontal scroller. Compose [Skeleton](?path=/docs/functional-skeleton--docs) for loading, [Alert](?path=/docs/functional-alert--docs) for load failure, and [EmptyState](?path=/docs/layout-empty-state--docs) for a successful query with no records; an empty `rows` array cannot distinguish these states itself.
+
+## UX guidance
+
+- [Tables and grids](?path=/docs/patterns-tables-and-grids--docs)
+- [Focus management](?path=/docs/patterns-focus-management--docs)

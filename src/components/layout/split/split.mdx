@@ -1,0 +1,110 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as SplitStories from "./split.stories.tsx";
+import meta from "./split.stories.tsx";
+import { Split } from "./split.tsx";
+import { Heading } from "../../functional-primitive/heading/heading.tsx";
+import { Text } from "../../functional-primitive/text/text.tsx";
+import { Button } from "../../functional/button/button.tsx";
+import { Badge } from "../../functional/badge/badge.tsx";
+import { Block } from "../../layout-primitive/block/block.tsx";
+import { VStack } from "../../layout-primitive/vstack/vstack.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Split
+
+<ResizableCanvas of={SplitStories.TitleAndAction} />
+
+`Split` is a horizontal row whose children are pushed to opposite ends — the canonical "leading group | trailing group" pattern: a title with a trailing action, a card header with a status badge, a list-item with a value on the right. Reach for `Split` whenever the *intent* is "these things are at opposite ends of the row". For a wrapping flow of items, use `Cluster`; for a strict row with a custom layout, use `HStack` directly.
+
+<Controls />
+
+## Title and action
+
+The classic — section heading on the left, primary action on the right.
+
+<InlineCodeExample>
+  <Split>
+    <Heading level={3}>Active sessions</Heading>
+    <Button variant="primary">New session</Button>
+  </Split>
+</InlineCodeExample>
+
+## Title and status
+
+A heading paired with a status badge at the right edge — the standard "card header" shape.
+
+<InlineCodeExample>
+  <Split>
+    <Heading level={4}>checkout-flow</Heading>
+    <Badge tone="success" variant="subtle" caps>Live</Badge>
+  </Split>
+</InlineCodeExample>
+
+## Two text values
+
+For a list-item layout where a label and a value sit at opposite ends — money, timestamps, metadata.
+
+<InlineCodeExample>
+  <Block width="320px">
+    <VStack gap="sm">
+      <Split>
+        <Text>Subtotal</Text>
+        <Text>$48.00</Text>
+      </Split>
+      <Split>
+        <Text>Levy</Text>
+        <Text>$3.84</Text>
+      </Split>
+      <Split>
+        <Text weight="bold">Total</Text>
+        <Text weight="bold">$51.84</Text>
+      </Split>
+    </VStack>
+  </Block>
+</InlineCodeExample>
+
+## Wrap on narrow screens
+
+`wrap` lets the trailing group drop below when the parent narrows. Off by default — Splits hold their row on purpose, but enable it when the row is fragile on mobile.
+
+<InlineCodeExample>
+  <Block width="280px" padding="sm" bordered>
+    <Split wrap>
+      <Heading level={4}>A heading that's pretty long</Heading>
+      <Button variant="primary">Action</Button>
+    </Split>
+  </Block>
+</InlineCodeExample>
+
+## Top-aligned
+
+Default `align` is `center`, which is right for short text. For a multi-line leading group paired with a single button, use `align="start"` so the button doesn't drift to the vertical middle of the heading block.
+
+<InlineCodeExample>
+  <Split align="start">
+    <VStack gap="xs">
+      <Heading level={3}>Active sessions</Heading>
+      <Text tone="secondary">3 logged in across this workspace.</Text>
+    </VStack>
+    <Button variant="primary">New session</Button>
+  </Split>
+</InlineCodeExample>
+
+## Accessibility
+
+- Renders a plain `<div>` row — semantics come from what you put inside.
+- The visual "opposite ends" arrangement is purely flex-driven; DOM order is preserved, so screen readers and keyboard users see the leading group first.
+- For headings + actions, give the action a verb-led label (`New session`, not just `New`) so screen-reader users get the same context sighted users get from proximity.
+
+## Common pitfalls
+
+- **Don't use Split for more than two groups.** It's two-ended — third items end up jammed in the middle. For 3+ groups, use `HStack` with explicit `justify="between"` and group children.
+- **Don't shove a long string straight into Split.** Without a max-width or `min-width: 0`, a long unbreakable string blows the row out. Wrap text in a parent that constrains it.
+- **Don't enable `wrap` by default.** Splits visually communicate "these are paired at opposite ends" — wrapping breaks that intent. Enable it only when you've actually got narrow-screen breakage.
+- **Don't reach for Split when nothing should split.** A row of evenly-spaced items is a `Cluster`, not a Split with `justify="between"`.

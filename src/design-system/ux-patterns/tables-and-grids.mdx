@@ -1,0 +1,94 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../documentation-imports/index.ts";
+import { Example } from "./pattern-blocks.tsx";
+import { EmptyTableExample, ReadingTableExample, SelectableGridExample } from "./pattern-examples.tsx";
+
+<Meta title="Patterns/Tables and grids" />
+
+<HideSbBar />
+
+# Tables and grids
+
+[Table](?path=/docs/functional-table--docs) has two modes. Choose by what people do
+with the rows, not by how many there are.
+
+## Static table (the default)
+
+For reading and comparing. Screen readers navigate it with their own table
+commands, links and buttons in cells stay in the normal tab order, and sortable
+headers are buttons. Give it a `caption`.
+
+<Example caption="A reading table with a sortable column and statuses as badges.">
+  <ReadingTableExample />
+</Example>
+
+Give each column explicit cells: object and derived fields need a `render`, and a
+`sortValue` if the column sorts. Use a stable `rowKey` when rows change, align
+numbers the same way down a column, and put real buttons or links in cells for
+actions.
+
+## Interactive grid
+
+Turn it on with `selectable`, or `interactive` when cells hold controls. The
+table becomes a grid with **one** tab stop: focus starts on a row, `↑`/`↓` move
+between rows, `←`/`→` move into and between cells, `Space` selects a row, and
+`Enter` on a sortable header sorts it. Use it when:
+
+- people select rows to act on them, or
+- most rows contain controls, so tabbing through every one would be tedious.
+
+A grid changes how screen readers present the content, so don't use it just to
+make a read-only table feel interactive. Never set `role="grid"` yourself; the
+grid mode implements the whole interaction.
+
+<Example caption="Tab into the grid, move with the arrows, press Space to select a row.">
+  <SelectableGridExample />
+</Example>
+
+## Paging or loading more
+
+**Our guidance** (the sources compare neither):
+
+- **Pages** (`pageSize`, or [Pagination](?path=/docs/functional-pagination--docs)
+  for other lists) suit records people return to and refer to ("page 3"),
+  and keep the footer reachable. The table announces each row's position across
+  pages.
+- **Loading as people scroll** ([InfiniteList](?path=/docs/functional-infinitelist--docs))
+  suits feeds people skim once, newest first. It follows the WAI-ARIA feed pattern
+  so keyboard users can jump past it.
+- **Virtualising** is for very large client-side lists; the library doesn't
+  provide it yet.
+
+Filtering (`filter`) announces the new row count; keep the filter field outside
+the table and above it.
+
+## Empty and loading
+
+Say which empty it is: no records yet ("Log your first sighting"), no matches
+("No sightings match 'hemlock' — clear the filter") or no access. Pass that as
+`empty`, often an [EmptyState](?path=/docs/layout-empty-state--docs). While
+loading, show [Skeleton](?path=/docs/functional-skeleton--docs) rows in the
+table's shape and keep existing rows visible during a refresh. Don't move focus
+when data arrives.
+
+<Example caption="The empty slot says which empty it is, and how to get out of it.">
+  <EmptyTableExample />
+</Example>
+
+Table sorts, filters and pages rows in the browser. Your app owns fetching, and
+server-side sorting or paging by passing `rows` in the order to show. It isn't an
+editable data grid.
+
+## Related
+
+- [Focus management](?path=/docs/patterns-focus-management--docs)
+- [Empty and error states](?path=/docs/patterns-empty-and-error-states--docs)
+
+---
+
+Sources, paraphrased: [WAI-ARIA Authoring Practices: table](https://www.w3.org/WAI/ARIA/apg/patterns/table/)
+and [grid](https://www.w3.org/WAI/ARIA/apg/patterns/grid/), © W3C, under the
+[W3C Software and Document License](https://www.w3.org/copyright/software-license/);
+[React Aria Table](https://react-aria.adobe.com/Table), [React Spectrum TableView](https://react-spectrum.adobe.com/v3/TableView.html)
+and [Skeleton](https://react-spectrum.adobe.com/Skeleton), © Adobe;
+[Chakra UI v3 Table](https://chakra-ui.com/docs/components/table) (MIT).

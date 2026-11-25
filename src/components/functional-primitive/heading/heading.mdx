@@ -1,0 +1,124 @@
+import { Canvas, Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as HeadingStories from "./heading.stories.tsx";
+import meta from "./heading.stories.tsx";
+import { Heading } from "./heading.tsx";
+import { Presentation } from "../../style/presentation/presentation.tsx";
+import { VStack } from "../../layout-primitive/vstack/vstack.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Heading
+
+<ResizableCanvas of={HeadingStories.Default} />
+
+`Heading` renders semantic `h1`–`h6` elements with consistent visual sizing. By default `level` drives both the rendered tag *and* the visual scale; use `as` to detach them when the document outline needs a different tag than the visual rank (e.g. an SEO `h1` that looks like an `h4`). The actual font size for a given level depends on the surrounding `Presentation` register.
+
+<Controls />
+
+## Scale
+
+Six levels, scaled by the current register. The default register sets the standard application headline scale; `hero` blows headings out for marketing surfaces; `compact` shrinks them for dense panels.
+
+<InlineCodeExample>
+  <VStack gap="sm">
+    <Heading level={1}>Ship products, not platforms</Heading>
+    <Heading level={2}>Your membership summary</Heading>
+    <Heading level={3}>Faster snapshot diffs</Heading>
+    <Heading level={4}>Configuration</Heading>
+    <Heading level={5}>Environment variables</Heading>
+    <Heading level={6}>SQUONK_API_URL</Heading>
+  </VStack>
+</InlineCodeExample>
+
+## Tone
+
+`tone="secondary"` is a quieter heading — useful for subheads, captions, and labels above body copy.
+
+<InlineCodeExample>
+  <VStack gap="xs">
+    <Heading level={4} tone="secondary" weight="regular">A small library of polished primitives</Heading>
+    <Heading level={1}>SquonkUI</Heading>
+  </VStack>
+</InlineCodeExample>
+
+## Weight
+
+With no `weight`, a heading takes its level's default weight from the theme, which is bold unless the theme changes it. `regular` reads as a "display" lightness; `bold` is the theme's strong weight; `heavy` (900) is for marketing display type. A `weight` prop always wins over the level's default.
+
+<InlineCodeExample>
+  <VStack gap="sm">
+    <Heading level={2} weight="regular">Regular weight</Heading>
+    <Heading level={2} weight="bold">Bold weight</Heading>
+    <Heading level={2} weight="heavy">Heavy weight</Heading>
+  </VStack>
+</InlineCodeExample>
+
+### Default weight per level
+
+A theme sets the weight a level has when it gets no `weight` prop, through `components.heading.weight.level1` to `level6`. Each defaults to the strong weight (`roles.type.strong`, 700), so nothing changes until a theme re-points one. Set it in the theme instead of passing `weight` to every heading of a level.
+
+<Canvas of={HeadingStories.LevelWeights} />
+
+```tsx
+// Heavier page and section titles; levels 3 to 6 stay bold.
+<SquonkThemeProvider
+  roleBindings={{
+    "components.heading.weight.level1": "900",
+    "components.heading.weight.level2": "800",
+  }}
+>
+```
+
+The value is a CSS font weight, a token path or, for a weight per colour mode, a `{ light, dark }` pair. The heading typeface must have the weight; the default variable font does.
+
+## Em accent
+
+Inside any `Heading`, an `<em>` is rendered as a non-italic primary-color accent — the canonical "Ship products, *not platforms*" pattern. This lets you splash the brand color into a headline without writing custom styles.
+
+<InlineCodeExample>
+  <Heading level={1}>
+    Ship products, <em>not platforms</em>.
+  </Heading>
+</InlineCodeExample>
+
+## Detached semantics
+
+Use `as` to split the visual scale from the rendered tag. Render an SEO `h1` that looks like a small subhead, or visually demote a section heading that's still semantically `h2`.
+
+<InlineCodeExample>
+  <VStack gap="sm">
+    <Heading as="h1" level={4}>Page title (semantic h1, visual h4)</Heading>
+    <Heading as="h2" level={1}>Visual hero (semantic h2)</Heading>
+  </VStack>
+</InlineCodeExample>
+
+## In a hero register
+
+Wrap a heading in `Presentation register="hero"` to opt the typography into the marketing scale — `h1` becomes a fluid clamp up to ~4.5rem.
+
+<InlineCodeExample>
+  <Presentation register="hero">
+    <Heading level={1}>
+      Design systems that <em>ship</em>.
+    </Heading>
+  </Presentation>
+</InlineCodeExample>
+
+## Accessibility
+
+- The rendered tag is always `h1`–`h6` (or whatever you pass to `as`) — never a `<div>` masquerading as a heading.
+- Heading levels are landmarks for screen-reader navigation. Don't skip levels (`h1` then `h3`) — it confuses outline traversal.
+- Every page should have exactly one `h1`; the page's title or hero usually owns it.
+- The `<em>` accent is purely visual; screen readers still announce it as emphasized text, which is normally what you want.
+
+## Common pitfalls
+
+- **Don't pick a heading level for its size.** Use `level` for semantics; use `as` + `level` if you need to detach visual from outline. Skipping levels for visual reasons breaks screen-reader navigation.
+- **Don't ship more than one `h1` per page.** Use `as="h2"` (or a smaller level) for repeated section headings.
+- **Don't override `<em>` color.** It's tied to `theme.colors.primary` for the brand accent pattern — restyling it locally fights the system.
+- **Don't put body copy inside a Heading.** Headings are short, scannable labels. Run-on headings hurt outline navigation.

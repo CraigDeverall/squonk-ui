@@ -1,0 +1,643 @@
+/*
+ * Styles for the ResizableCanvas Storybook docs helper.
+ *
+ * Intentionally NOT wrapped in @layer: this helper renders inside
+ * Storybook's docs page next to Storybook's own unlayered CSS, and keeping
+ * these rules unlayered preserves the precedence they had as
+ * styled-components classes.
+ *
+ * Each block below corresponds to one former styled component and keeps
+ * that component's specificity and source order. Prop-driven variants are
+ * single-class modifiers declared after their base rule, so they win by
+ * source order exactly as the interpolated values did.
+ *
+ * Geometry (previously TS constants):
+ *   HIT = 5px, CORNER_HIT = 10px, BRACKET_SIZE = 14px,
+ *   BRACKET_THICKNESS = 2px, warning colour = #ef4444.
+ */
+
+@keyframes march {
+  from {
+    background-position:
+      0 0,
+      0 100%,
+      0 0,
+      100% 0;
+  }
+  to {
+    background-position:
+      10px 0,
+      -10px 100%,
+      0 -10px,
+      100% 10px;
+  }
+}
+
+@keyframes bracketPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@keyframes edgePulse {
+  0%,
+  100% {
+    opacity: 0.75;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+/* Outer (rendered with the global `sb-unstyled` class alongside) */
+.outer {
+  margin: 16px 0;
+}
+
+/* Wrapper */
+.wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* Frame */
+.frame {
+  position: relative;
+  box-sizing: border-box;
+  background: var(--sb-docs-bg-raised);
+  display: flex;
+  flex-direction: column;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Edges — $warning → .edgesWarning, $active → .edgesActive */
+.edges {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  --edge-color: var(--sb-docs-fg-muted);
+  background:
+    linear-gradient(90deg, var(--edge-color) 50%, transparent 50%) 0 0 / 10px
+      1px repeat-x,
+    linear-gradient(90deg, var(--edge-color) 50%, transparent 50%) 0 100% / 10px
+      1px repeat-x,
+    linear-gradient(0deg, var(--edge-color) 50%, transparent 50%) 0 0 / 1px 10px
+      repeat-y,
+    linear-gradient(0deg, var(--edge-color) 50%, transparent 50%) 100% 0 / 1px
+      10px repeat-y;
+  opacity: 0.25;
+  transition: opacity 250ms ease;
+  animation: march 1500ms linear infinite;
+}
+
+.edgesWarning {
+  --edge-color: #ef4444;
+  opacity: 0.85;
+}
+
+.edgesActive {
+  animation:
+    march 1500ms linear infinite,
+    edgePulse 1400ms ease-in-out infinite;
+}
+
+/*
+ * Bracket — $visible → .bracketVisible, $highlighted → .bracketHighlighted,
+ * $warning → .bracketWarning. Declared in increasing priority so the
+ * original ternary precedence (warning > highlighted > visible) holds.
+ */
+.bracket {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 0;
+  pointer-events: none;
+  z-index: 3;
+  transition:
+    opacity 250ms ease,
+    border-color 250ms ease;
+  opacity: 0;
+  border-color: var(--sb-docs-fg-muted);
+}
+
+.bracketVisible {
+  opacity: 0.55;
+}
+
+.bracketHighlighted {
+  opacity: 1;
+  border-color: var(--sb-docs-fg);
+  animation: bracketPulse 1400ms ease-in-out infinite;
+}
+
+.bracketWarning {
+  opacity: 1;
+  border-color: #ef4444;
+  /* the pulse only ran when highlighted && !warning */
+  animation: none;
+}
+
+.bracket[data-corner="tl"] {
+  top: 0;
+  left: 0;
+  border-top: 2px solid;
+  border-left: 2px solid;
+}
+.bracket[data-corner="tr"] {
+  top: 0;
+  right: 0;
+  border-top: 2px solid;
+  border-right: 2px solid;
+}
+.bracket[data-corner="bl"] {
+  bottom: 0;
+  left: 0;
+  border-bottom: 2px solid;
+  border-left: 2px solid;
+}
+.bracket[data-corner="br"] {
+  bottom: 0;
+  right: 0;
+  border-bottom: 2px solid;
+  border-right: 2px solid;
+}
+
+/* Handle */
+.handle {
+  position: absolute;
+  z-index: 3;
+}
+
+.handle[data-handle="top"] {
+  top: -5px;
+  left: 10px;
+  right: 10px;
+  height: 10px;
+  cursor: ns-resize;
+}
+.handle[data-handle="bottom"] {
+  bottom: -5px;
+  left: 10px;
+  right: 10px;
+  height: 10px;
+  cursor: ns-resize;
+}
+.handle[data-handle="left"] {
+  left: -5px;
+  top: 10px;
+  bottom: 10px;
+  width: 10px;
+  cursor: ew-resize;
+}
+.handle[data-handle="right"] {
+  right: -5px;
+  top: 10px;
+  bottom: 10px;
+  width: 10px;
+  cursor: ew-resize;
+}
+
+.handle[data-handle="tl"] {
+  top: -5px;
+  left: -5px;
+  width: 10px;
+  height: 10px;
+  cursor: nwse-resize;
+  z-index: 4;
+}
+.handle[data-handle="tr"] {
+  top: -5px;
+  right: -5px;
+  width: 10px;
+  height: 10px;
+  cursor: nesw-resize;
+  z-index: 4;
+}
+.handle[data-handle="bl"] {
+  bottom: -5px;
+  left: -5px;
+  width: 10px;
+  height: 10px;
+  cursor: nesw-resize;
+  z-index: 4;
+}
+.handle[data-handle="br"] {
+  bottom: -5px;
+  right: -5px;
+  width: 10px;
+  height: 10px;
+  cursor: nwse-resize;
+  z-index: 4;
+}
+
+/* Stage */
+.stage {
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  z-index: 0;
+}
+
+/*
+ * The actual rendered component sits 4 wrappers deep inside <Story>:
+ *
+ *   Stage
+ *     > .sb-story[data-story-block]          (Storybook outer)
+ *       > [data-name]                        (Storybook inner)
+ *         > div                              (StoryWrapper decorator)
+ *           > div                            (ModeBackground decorator — inline styles)
+ *             > [actual component]
+ *
+ * Flatten exactly these 4 levels with display: contents so the rendered
+ * component becomes a direct layout child of Stage. !important is required
+ * because the ModeBackground sets display:flex via inline style. Depth is
+ * capped at 4 so the component itself (which may be a <div>) keeps its
+ * intrinsic display rules.
+ */
+.stage > :global(.sb-story),
+.stage > :global(.sb-story) > [data-name],
+.stage > :global(.sb-story) > [data-name] > div,
+.stage > :global(.sb-story) > [data-name] > div > div {
+  display: contents !important;
+}
+
+/* Controls — $gutter → inline `--gutter` */
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  padding: 0 var(--gutter) 20px;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+/*
+ * RecipeBar — $gutter → inline `--gutter`.
+ *
+ * Labelled groups (layout, overflow, padding) laid out left to right. Each
+ * group's label sits in flow above its buttons, so when the bar wraps at a
+ * narrow width every group keeps its label and nothing overlaps the row above.
+ * Groups wrap as whole units first; a group wider than the bar wraps its own
+ * buttons. Rows share a bottom edge so the buttons line up.
+ */
+.recipeBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: flex-start;
+  gap: 12px 24px;
+  padding: 14px var(--gutter) 20px;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.recipeGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.recipeGroupLabel {
+  color: var(--sb-docs-fg-muted);
+  font-family: ui-monospace, Menlo, Monaco, "Roboto Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+  white-space: nowrap;
+}
+
+.recipeGroupButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+/*
+ * Raw + Reset pair: wraps with the groups, and margin-left: auto pushes it to
+ * the far right of whichever row it lands on (Reset rightmost).
+ */
+.rawResetGroup {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+}
+
+/* RecipeBtn — $selected → .recipeBtnSelected */
+.recipeBtn {
+  background: transparent;
+  color: var(--sb-docs-fg-muted);
+  border: 1px solid var(--sb-docs-border);
+  border-radius: 3px;
+  padding: 3px 8px;
+  font-size: 11px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  cursor: pointer;
+  transition:
+    background 150ms ease,
+    border-color 150ms ease;
+}
+
+.recipeBtnSelected {
+  background: var(--sb-docs-bg-subtle);
+  color: var(--sb-docs-fg);
+  border: 1px solid var(--sb-docs-fg-muted);
+}
+
+/* Hover only signals via background + border — text colour stays
+   tied to selection so the reader can still tell which recipe is
+   active while moving the cursor across the row. */
+.recipeBtn:hover {
+  background: var(--sb-docs-bg-subtle);
+  border-color: var(--sb-docs-fg-muted);
+}
+
+.recipeBtn:focus-visible {
+  outline: 2px solid var(--sb-docs-fg-muted);
+  outline-offset: 1px;
+}
+
+.inlineProse {
+  color: var(--sb-docs-fg-muted);
+  font-style: italic;
+}
+
+/* Pill (<select>) */
+.pill {
+  appearance: none;
+  -webkit-appearance: none;
+  background: var(--sb-docs-bg-raised);
+  color: var(--sb-docs-fg-muted);
+  border: 1px solid transparent;
+  border-radius: 3px;
+  font-size: 10px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  padding: 2px 18px 2px 6px;
+  cursor: pointer;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--sb-docs-fg-muted) 50%),
+    linear-gradient(135deg, var(--sb-docs-fg-muted) 50%, transparent 50%);
+  background-position:
+    calc(100% - 9px) 50%,
+    calc(100% - 5px) 50%;
+  background-size:
+    4px 4px,
+    4px 4px;
+  background-repeat: no-repeat;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease;
+}
+
+/* Number field: no select arrow, room for three digits and the spinner. */
+.pillNumber {
+  background-image: none;
+  padding-right: 2px;
+  width: 64px;
+}
+
+.pill:hover,
+.pill:focus {
+  background-color: var(--sb-docs-bg-subtle);
+  border-color: var(--sb-docs-border);
+  color: var(--sb-docs-fg);
+  outline: none;
+}
+
+.toolbarRow {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.toggleBtn {
+  background: var(--sb-docs-bg-subtle);
+  color: var(--sb-docs-fg);
+  border: 1px solid var(--sb-docs-border);
+  border-radius: 4px;
+  padding: 6px 18px;
+  font-size: 12px;
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  transition:
+    background 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease;
+}
+
+.toggleBtn:hover {
+  background: var(--sb-docs-bg-raised);
+  border-color: var(--sb-docs-fg-muted);
+}
+
+/*
+ * Segmented Button Toggle Group — full-width container with shared
+ * borders between each tab. Acts as a single control: one rounded
+ * outer frame, hairline dividers between buttons, the active tab
+ * carries the raised background. The Hide Code button is intentionally
+ * *outside* the group — it's a discrete action (close the panel), not
+ * a panel selection, so it lives as a separate toggle button on the right.
+ */
+.tabGroup {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--sb-docs-border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* TabBtn — $active → .tabBtnActive */
+.tabBtn {
+  flex: 1;
+  position: relative;
+  background: transparent;
+  color: var(--sb-docs-fg-muted);
+  border: 0;
+  border-right: 1px solid var(--sb-docs-border);
+  padding: 8px 14px;
+  font-size: 12px;
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  transition:
+    background 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.tabBtnActive {
+  background: var(--sb-docs-bg-subtle);
+  color: var(--sb-docs-fg);
+}
+
+.tabBtn:last-child {
+  border-right: 0;
+}
+/* The selected tab carries bright text + raised bg. To differentiate
+   hover from selected, hover keeps the muted text colour and uses a
+   subtle underline accent (inset bottom shadow) instead — so the
+   mouseover signal can't be mistaken for the active state. */
+.tabBtn:hover:not(:disabled) {
+  background: transparent;
+  box-shadow: inset 0 -2px 0 0 var(--sb-docs-fg-muted);
+}
+.tabBtnActive:hover:not(:disabled) {
+  background: var(--sb-docs-bg-subtle);
+  box-shadow: none;
+}
+.tabBtn:focus-visible {
+  outline: 2px solid var(--sb-docs-fg-muted);
+  outline-offset: -2px;
+}
+
+/* CodePanel (rendered with the global `sb-unstyled` class alongside) */
+.codePanel {
+  margin-top: 12px;
+  border: 1px solid var(--sb-docs-border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.codePanel + .codePanel {
+  margin-top: 12px;
+}
+
+/*
+ * Storybook's <Source> renders a <div class="docblock-source"> that
+ * wraps a <pre class="prismjs">. Both ship with their own borders,
+ * shadows and margins so the block visually "lifts" off the page.
+ * Inside the docs we already have the code panel doing the containment,
+ * so flatten both: drop the inner wrapper's shadow / border /
+ * margin / bg, drop the pre's shadow / border / radius / margin,
+ * and cap height at 70vh so very long sources don't push the rest
+ * of the docs page off screen.
+ */
+.codePanel :global(.docblock-source) {
+  box-shadow: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+}
+.codePanel :global(pre.prismjs) {
+  box-shadow: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
+  max-height: 70vh !important;
+  overflow: auto !important;
+}
+
+/*
+ * Storybook's <Source> renders a Copy button at the bottom-right
+ * with a bright white background and a single rounded corner —
+ * which clashes with the dark code panel and looks like a tab fragment.
+ * Inset it from the corner and restyle to match the rest of the docs
+ * chrome: dark muted surface, full rounded, hover-clarifies. The
+ * wrapper div itself also ships with a white background that pokes
+ * through the button's rounded corners — flatten that too.
+ */
+.codePanel :global(.docblock-source) > div:has(> button) {
+  inset: auto 8px 8px auto !important;
+  background: transparent !important;
+}
+.codePanel :global(.docblock-source) button {
+  background: var(--sb-docs-bg-subtle) !important;
+  color: var(--sb-docs-fg-muted) !important;
+  border: 1px solid var(--sb-docs-border) !important;
+  border-radius: 4px !important;
+  padding: 3px 10px !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.02em !important;
+  box-shadow: none !important;
+  transition:
+    background 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease !important;
+}
+.codePanel :global(.docblock-source) button:hover {
+  background: var(--sb-docs-bg-raised) !important;
+  color: var(--sb-docs-fg) !important;
+  border-color: var(--sb-docs-fg-muted) !important;
+}
+
+/*
+ * The Rendered-tab panel contains HTML and (when matching) CSS in two
+ * stacked monospaced sections. Each section has its own subtle header
+ * so the reader can tell where the DOM ends and the styles begin. The
+ * code itself is rendered via Storybook's <Source code={...} /> so it
+ * picks up the same prism token palette as the Source tab.
+ */
+.sectionLabel {
+  padding: 8px 22px;
+  background: var(--sb-docs-bg-subtle);
+  color: var(--sb-docs-fg-muted);
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-top: 1px solid var(--sb-docs-border);
+}
+
+.sectionLabel:first-child {
+  border-top: none;
+}
+
+/*
+ * The Accessibility Tree panel is rendered as a <pre class="prismjs">
+ * with token spans matching Storybook's prism markup (.token.tag,
+ * .token.string, .token.attr-name, .token.attr-equals,
+ * .token.attr-value, .token.punctuation). That lets it inherit the
+ * One Light / One Dark palette defined in .storybook/preview.tsx for
+ * free — no custom Prism grammar required, and a future theme tweak
+ * applies here without changing this file.
+ */
+.a11yPre {
+  margin: 0;
+  padding: 20px 22px;
+  background: var(--code-bg);
+  color: var(--code-fg);
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12.5px;
+  line-height: 1.65;
+  max-height: 70vh;
+  overflow: auto;
+  white-space: pre;
+  border: 0;
+}
+
+.a11yEmpty {
+  padding: 20px 22px;
+  background: var(--code-bg);
+  color: var(--sb-docs-fg-muted);
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12px;
+}

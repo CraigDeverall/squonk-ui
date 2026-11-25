@@ -1,0 +1,41 @@
+@layer dt.components {
+  .root {
+    width: 100%;
+    box-sizing: border-box;
+    padding-block: var(--header-padding-block);
+    padding-inline: var(--squonk-roles-space-page-gutter);
+    background-color: var(--squonk-components-header-background);
+    border-bottom: var(--squonk-roles-border-width) solid var(--squonk-roles-color-divider);
+    color: var(--squonk-components-header-text);
+    background-image: var(--squonk-roles-relief-chrome-fill);
+    background-blend-mode: var(--squonk-roles-relief-blend);
+    box-shadow: var(--squonk-roles-relief-chrome-edge);
+  }
+
+  /* Frosted glass: a 14px backdrop blur is component geometry, not a token. */
+  .root[data-tone="translucent"] {
+    background-color: var(--squonk-components-header-translucent-background);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+
+  .fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: var(--squonk-roles-layer-fixed);
+  }
+
+  .sticky {
+    position: sticky;
+    top: 0;
+    z-index: var(--squonk-roles-layer-sticky);
+  }
+
+  /* A pinned header would cover content on every page; print it once, in place. */
+  @media print {
+    .fixed,
+    .sticky { position: static; }
+  }
+}

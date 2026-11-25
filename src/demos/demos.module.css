@@ -1,0 +1,405 @@
+/* Layout helpers shared by the demo screens. */
+
+.formActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--squonk-spacing-sm);
+}
+
+.figure { font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.filterBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--squonk-spacing-md);
+}
+
+.plainList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--squonk-spacing-xs);
+}
+
+.lineItem {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--squonk-spacing-md);
+}
+
+.feedBox {
+  border: var(--squonk-borders-width) solid var(--squonk-colors-border-default);
+  border-radius: var(--squonk-roles-radius-surface);
+  padding-inline: var(--squonk-spacing-md);
+}
+
+.feedRow {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--squonk-spacing-md);
+  padding: var(--squonk-spacing-sm) 0;
+  border-bottom: var(--squonk-borders-width) solid var(--squonk-colors-border-default);
+}
+
+.feedTitle {
+  margin: 0;
+  font-size: var(--squonk-typography-sizes-base);
+}
+
+.twoColumn {
+  display: grid;
+  gap: var(--squonk-spacing-lg);
+  align-items: start;
+}
+
+@media (min-width: 1024px) {
+  .twoColumn { grid-template-columns: minmax(0, 1fr) 320px; }
+  .sticky { position: sticky; top: calc(var(--squonk-presentation-control-height-hero) + var(--squonk-spacing-lg)); }
+}
+
+/* Full page: a brand panel and the sign-in pane side by side from the
+   desktop breakpoint; stacked, brand first, below it. */
+.signInPage {
+  min-height: 100vh;
+  display: grid;
+  background-color: var(--squonk-colors-background-surface);
+  font-family: var(--squonk-typography-fonts-base);
+}
+
+@media (min-width: 1024px) {
+  .signInPage { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+}
+
+.signInBrand {
+  display: grid;
+  align-content: center;
+  gap: var(--squonk-spacing-lg);
+  padding: var(--squonk-spacing-xl) var(--squonk-spacing-lg);
+}
+
+@media (min-width: 1024px) {
+  .signInBrand { padding: var(--squonk-spacing-xxl); }
+}
+
+.signInPoints {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--squonk-spacing-sm);
+}
+
+.signInPoints li,
+.signInSecure {
+  display: flex;
+  align-items: center;
+  gap: var(--squonk-spacing-sm);
+}
+
+.signInPoints svg { color: var(--squonk-roles-color-accent); }
+
+.signInMain {
+  display: grid;
+  place-items: center;
+  padding: var(--squonk-spacing-xl) var(--squonk-spacing-md);
+}
+
+/* A form column: sign-in fields read best at this measure. */
+.signInColumn {
+  display: grid;
+  gap: var(--squonk-spacing-lg);
+  width: min(480px, 100%);
+}
+
+.signInMark {
+  display: inline-grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--squonk-roles-radius-control);
+  background-color: var(--squonk-roles-color-accent);
+  color: var(--squonk-roles-color-on-accent);
+  font-size: var(--squonk-typography-sizes-xl);
+  font-weight: var(--squonk-typography-weights-bold);
+}
+
+/* A field with a help button beside its input. */
+.labelWithHelp {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--squonk-spacing-xs);
+}
+
+.labelWithHelp > :last-child { margin-top: calc(var(--squonk-typography-sizes-sm) * 1.25 + var(--squonk-spacing-xs)); }
+
+
+.summaryList {
+  margin: 0;
+  display: grid;
+  gap: var(--squonk-spacing-xs);
+}
+
+.summaryRow {
+  display: grid;
+  grid-template-columns: 10rem minmax(0, 1fr);
+  gap: var(--squonk-spacing-md);
+}
+
+.summaryRow dt { color: var(--squonk-colors-text-secondary); }
+.summaryRow dd { margin: 0; }
+
+.formSection {
+  display: grid;
+  gap: var(--squonk-spacing-lg);
+  padding-top: var(--squonk-spacing-lg);
+  border-top: var(--squonk-borders-width) solid var(--squonk-colors-border-default);
+}
+
+.formSection:first-of-type { padding-top: 0; border-top: none; }
+
+.formSectionHeader {
+  display: grid;
+  gap: var(--squonk-spacing-xxs);
+  align-content: start;
+}
+
+.formSectionFields {
+  display: grid;
+  gap: var(--squonk-spacing-lg);
+}
+
+/* Wide screens: the section's title beside its questions, so a long form
+   uses the width without stretching inputs past what an answer needs. */
+@media (min-width: 1280px) {
+  .formSection { grid-template-columns: minmax(12rem, 1fr) minmax(0, 2.5fr); column-gap: var(--squonk-spacing-xl); }
+  .formSectionFields { max-width: 44rem; }
+}
+
+.term {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--squonk-spacing-xxs);
+}
+
+.total {
+  padding-top: var(--squonk-spacing-xs);
+  border-top: var(--squonk-borders-width) solid var(--squonk-colors-border-default);
+  font-weight: var(--squonk-typography-weights-bold);
+  font-size: var(--squonk-typography-sizes-lg);
+}
+
+.total dd, .lineItem dd { margin: 0; }
+
+.adjustments {
+  display: grid;
+  gap: var(--squonk-spacing-sm);
+}
+
+.groupTitle {
+  margin: 0;
+  font-size: var(--squonk-typography-sizes-base);
+}
+
+.pair {
+  display: grid;
+  gap: var(--squonk-spacing-md);
+}
+
+@media (min-width: 768px) {
+  .pair { grid-template-columns: 1fr 1fr; }
+}
+
+/* Follow-up questions that join a form together under one Motion.Presence:
+   spaced as the form spaces its questions, so they sit as they would
+   without the wrapper. */
+.questions {
+  display: grid;
+  gap: var(--squonk-roles-space-question-gap);
+}
+
+.debtSummary {
+  display: grid;
+  gap: var(--squonk-spacing-md);
+  align-items: start;
+}
+
+@media (min-width: 768px) {
+  .debtSummary { grid-template-columns: 220px minmax(0, 1fr); }
+}
+
+.search {
+  position: relative;
+  flex: 1 1 18rem;
+  max-width: 28rem;
+}
+
+/* Sits inside the search field, which pads its start for it. */
+.searchIcon {
+  position: absolute;
+  left: var(--squonk-spacing-sm);
+  bottom: calc((var(--squonk-presentation-control-height-default) - 1em) / 2);
+  color: var(--squonk-colors-text-secondary);
+  pointer-events: none;
+}
+
+.search input { padding-left: calc(var(--squonk-spacing-sm) * 2 + 1em); }
+
+.bulkBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--squonk-spacing-sm);
+  padding: var(--squonk-spacing-sm) var(--squonk-spacing-md);
+  border-radius: var(--squonk-roles-radius-surface);
+  background-color: var(--squonk-colors-background-subtle);
+}
+
+.menuTrigger {
+  display: inline-flex;
+  align-items: center;
+  height: var(--squonk-presentation-control-height-default);
+  padding: 0 var(--squonk-spacing-md);
+  border: var(--squonk-borders-width) solid var(--squonk-colors-border-default);
+  border-radius: var(--squonk-roles-radius-control);
+  background-color: var(--squonk-colors-background-default);
+  font-weight: var(--squonk-typography-weights-bold);
+}
+
+/* A customer name that opens the case: a link-styled button. */
+.rowLink {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-weight: var(--squonk-typography-weights-bold);
+  text-align: start;
+  cursor: pointer;
+}
+
+/* Money boxes are as wide as an amount needs, not the whole card. */
+.amounts [data-form-field]:has(input[inputmode]) { max-width: 24rem; }
+
+@media (min-width: 640px) {
+  .amounts .pair { grid-template-columns: repeat(2, minmax(0, 24rem)); }
+}
+.amounts .labelWithHelp { grid-template-columns: minmax(0, 24rem) auto; }
+
+/* Sighting insights: a wide chart beside a narrow one from the desktop
+   breakpoint; stacked below it. */
+.wideAndNarrow {
+  display: grid;
+  gap: var(--squonk-spacing-md);
+  align-items: stretch;
+}
+
+@media (min-width: 1024px) {
+  .wideAndNarrow { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
+}
+
+.sectionGap { margin-top: var(--squonk-spacing-lg); }
+
+/* Account settings */
+
+/* Two short fields side by side once there is room: town and postcode. */
+.fieldPair {
+  display: grid;
+  gap: var(--squonk-roles-space-question-gap);
+}
+
+@media (min-width: 768px) {
+  .fieldPair { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
+}
+
+/* A setting that saves as it changes, with its saved status beside it. */
+.settingRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--squonk-roles-space-item-gap);
+  padding-bottom: var(--squonk-roles-space-surface-gap);
+  border-bottom: var(--squonk-roles-border-width) solid var(--squonk-roles-color-divider);
+}
+
+.settingStatus { font-size: var(--squonk-roles-type-meta); }
+
+.qrSetup {
+  display: grid;
+  gap: var(--squonk-roles-space-overlay-gap);
+  align-items: start;
+}
+
+/* The code fills its box, so give it a size a phone camera reads easily;
+   the instructions sit under it, as the form column is narrow. */
+.qrSetup > :first-child { width: min(220px, 100%); }
+
+.copyRow {
+  display: flex;
+  align-items: center;
+  gap: var(--squonk-roles-space-icon-gap);
+}
+
+.sessionList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sessionRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--squonk-roles-space-item-gap);
+  padding-block: var(--squonk-roles-space-surface-gap);
+  border-bottom: var(--squonk-roles-border-width) solid var(--squonk-roles-color-divider);
+}
+
+.sessionIcon {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--squonk-roles-radius-pill);
+  background-color: var(--squonk-roles-color-well);
+  color: var(--squonk-roles-color-on-well);
+}
+
+.shortcutList {
+  margin: 0;
+  display: grid;
+}
+
+.shortcutRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--squonk-roles-space-item-gap);
+  padding-block: var(--squonk-roles-space-surface-gap);
+  border-bottom: var(--squonk-roles-border-width) solid var(--squonk-roles-color-divider);
+}
+
+.shortcutRow dd {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--squonk-roles-space-text-gap);
+}
+
+.guideCard {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}

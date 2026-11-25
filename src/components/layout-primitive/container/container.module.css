@@ -1,0 +1,15 @@
+@layer dt.components {
+  /* Gutter padding must live inside the 100% width, or the container
+     overflows any viewport narrower than its max-width. */
+  .root {
+    width: 100%;
+    box-sizing: border-box;
+    max-width: var(--container-max-width);
+    margin-inline: auto;
+    min-width: 0;
+  }
+
+  .gutters {
+    padding-inline: var(--squonk-roles-space-page-gutter);
+  }
+}

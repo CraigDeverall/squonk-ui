@@ -1,0 +1,19 @@
+@layer dt.components {
+  .root {
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    padding: var(--section-padding);
+    background-color: transparent;
+  }
+
+  .root[data-tone="surface"] {
+    background-color: var(--squonk-roles-color-page);
+    color: var(--squonk-roles-color-on-page);
+  }
+
+  .root[data-tone="subtle"] {
+    background-color: var(--squonk-roles-color-well);
+    color: var(--squonk-roles-color-on-well);
+  }
+}

@@ -1,0 +1,94 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../documentation-imports/index.ts";
+import { Example } from "./pattern-blocks.tsx";
+import { ReadingTableExample } from "./pattern-examples.tsx";
+import { CardGridExample, SimpleListExample } from "./screen-examples.tsx";
+
+<Meta title="Patterns/Lists, tables and cards" />
+
+<HideSbBar />
+
+# Lists, tables and cards
+
+The same records can be shown as a table, a list or a grid of cards. Choose by
+what people do with them: compare, read in order, or pick one to open. How many
+there are matters less.
+
+## Choosing a form
+
+| People will… | Use | Why |
+| --- | --- | --- |
+| Compare values across items, sort, or select rows to act on | [Table](?path=/docs/functional-table--docs) | Columns line values up; headers sort; rows select |
+| Read items one after another: messages, activity, results | A list: `VStack as="ul"` with a [MediaObject](?path=/docs/layout-media-object--docs) per item | One line per item, easy to scan top to bottom |
+| Choose one of a few items, each with its own page | A [Grid](?path=/docs/layout-primitives-grid--docs) of [InteractiveCard](?path=/docs/layout-interactive-card--docs)s | Each card is one big target with room for a summary |
+| See a few items, each with several actions | A Grid of [Card](?path=/docs/layout-card--docs)s with real buttons | A whole-card link can't hold other controls |
+| Skim a feed once, newest first, that keeps growing | [InfiniteList](?path=/docs/functional-infinitelist--docs) | Loads more as people scroll; the feed pattern lets keyboards skip it |
+| Read a short set of label and value pairs about one thing | A two-column list, or a Table without sorting | Labels and values line up |
+
+## Tables compare
+
+<Example caption="A table: values in columns, a sortable header, statuses as badges.">
+  <ReadingTableExample />
+</Example>
+
+Use a table when the columns mean the same thing on every row and people read
+across them. Keep a column to one kind of value, align numbers on the right, and
+give the table a `caption`. On phones a table scrolls sideways inside its own
+area; if most columns don't matter on a phone, show fewer or switch to a list.
+See [Tables and grids](?path=/docs/patterns-tables-and-grids--docs).
+
+## Lists read in order
+
+<Example caption="A list: one line per item, the title as the link, details in secondary text.">
+  <SimpleListExample />
+</Example>
+
+Use a list when each item is mostly one line of text: a title, who and when.
+Render real list markup (`as="ul"`) so screen readers say how many items there
+are. Make the title the link, and keep any other action at the end of the row.
+Divide items with space or a [Divider](?path=/docs/layout-primitives-divider--docs),
+not boxes.
+
+## Cards choose
+
+<Example caption="Cards: a few items with one destination each. The whole card is the link.">
+  <CardGridExample />
+</Example>
+
+Use cards for a handful of items people pick between, each with a short summary
+or a status. Put the same information in the same order in every card. Use
+`Grid minColumnWidth` so cards wrap to fit the space. A grid of forty cards is a
+table or a list in disguise. See
+[Cards and landing sections](?path=/docs/patterns-cards-and-landing-sections--docs).
+
+## More than one page of items
+
+- **Pages** (Table `pageSize`, or [Pagination](?path=/docs/functional-pagination--docs)
+  for lists and cards) for records people come back to and refer to.
+- **Load more as people scroll** ([InfiniteList](?path=/docs/functional-infinitelist--docs))
+  for feeds read once.
+- **Search and filters** above any of them once there are more items than fit
+  on a screen. See [Search, filtering and sorting](?path=/docs/patterns-search-filtering-and-sorting--docs).
+
+## Accessibility
+
+- Tables need a `caption` and real column headers; lists need list markup.
+- An InteractiveCard's heading names it; never nest buttons or links inside one.
+- Keep one tab stop per item where you can: the item's link. Selecting rows is
+  the Table's grid mode, not checkboxes in a list.
+- Statuses in any form say their meaning in words, not colour alone.
+
+## Pitfalls
+
+- **Cards for data.** If people compare figures across cards, they want a table.
+- **A table for prose.** Rows of long sentences read better as a list.
+- **Mixed forms for the same records** on different screens. Pick one per kind
+  of record and keep it.
+- **Each item a different shape.** Whatever the form, every item shows the same
+  fields in the same place.
+
+## Related
+
+- [Tables and grids](?path=/docs/patterns-tables-and-grids--docs)
+- [Empty and error states](?path=/docs/patterns-empty-and-error-states--docs)
+- [Choosing components](?path=/docs/patterns-choosing-components--docs)

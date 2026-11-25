@@ -1,0 +1,88 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as SidebarStories from "./sidebar.stories.tsx";
+import meta from "./sidebar.stories.tsx";
+import { Sidebar } from "./sidebar.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Sidebar
+
+<ResizableCanvas of={SidebarStories.Left} />
+
+`Sidebar` renders a vertical, fixed-width column with a surface background and a border on its inside edge — the canonical side-nav shape. It's a semantic `<aside>` by default; render as `<nav>` via `as="nav"` when the contents are exclusively navigation. `Sidebar` is a *flex item* — drop it inside a flex row (the `Page` component or any `HStack`) next to a `<main>` element that takes `flex: 1`.
+
+<Controls />
+
+## Left side (default)
+
+The typical "app-shell nav rail" — sidebar on the left, main content fills the rest.
+
+<InlineCodeExample>
+  {`<Page>
+  <Sidebar>
+    <nav>
+      <Link href="/dashboard">Dashboard</Link>
+      <Link href="/projects">Projects</Link>
+      <Link href="/reports">Reports</Link>
+    </nav>
+  </Sidebar>
+  <main style={{ flex: 1 }}>{content}</main>
+</Page>`}
+</InlineCodeExample>
+
+## Right side
+
+`side="right"` swaps the divider to the inside edge of the right-rail sidebar — useful for a table-of-contents column or a chat sidebar.
+
+<InlineCodeExample>
+  {`<Page>
+  <main style={{ flex: 1 }}>{content}</main>
+  <Sidebar side="right">
+    <TableOfContents />
+  </Sidebar>
+</Page>`}
+</InlineCodeExample>
+
+## Custom width
+
+Default is 240px; pass any CSS length for narrower (icon-only) or wider (multi-column) rails.
+
+<InlineCodeExample>
+  {`<Sidebar width="320px">{wideContent}</Sidebar>`}
+</InlineCodeExample>
+
+## Render as nav
+
+When the sidebar's contents are purely navigation, render as `<nav>` so it becomes a navigation landmark rather than the generic `complementary`.
+
+<InlineCodeExample>
+  {`<Sidebar as="nav" aria-label="Primary navigation">
+  <ul>
+    <li><Link href="/dashboard">Dashboard</Link></li>
+    <li><Link href="/projects">Projects</Link></li>
+  </ul>
+</Sidebar>`}
+</InlineCodeExample>
+
+## Accessibility
+
+- Renders `<aside>` by default — announced as a complementary landmark by screen readers.
+- For nav-only sidebars, render as `<nav>` (`as="nav" aria-label="Primary"`) so it becomes a navigation landmark with a single skip target.
+- Sidebar content is scrollable on overflow (the surface itself owns the scroll), keeping the main content area's scroll independent.
+- Keyboard: nothing special — focus traversal is whatever the inner links / buttons supply.
+
+## Common pitfalls
+
+- **Don't forget the flex parent.** Without `display: flex` on the surrounding container, the sidebar's `flex: 0 0 <width>` does nothing and the layout collapses.
+- **`side` only swaps the divider edge.** Where the sidebar appears visually is set by its DOM order — put it before `<main>` for a left rail, after for right.
+- **Don't make the sidebar collapse into a hamburger here.** This component is the desktop rail. For a mobile drawer, build a `Drawer` (out of scope for this library) that *uses* `Sidebar` as the desktop fallback.
+- **Don't hardcode width inside.** The sidebar's `width` prop already sets its size. Children should fill the available width with `width: 100%`, not match a hardcoded number.
+
+## Width contract
+
+The default 240px width includes padding and the divider. A custom `width` has the same border-box behavior. The sidebar intentionally does not shrink; use a responsive app layout that hides or relocates navigation when the available width cannot accommodate it. Remove any previous padding/border compensation from surrounding layouts.

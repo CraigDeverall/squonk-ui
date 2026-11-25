@@ -1,0 +1,88 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../documentation-imports/index.ts";
+import { Example } from "./pattern-blocks.tsx";
+import { IconOrIllustrationExample } from "./screen-examples.tsx";
+
+<Meta title="Patterns/Illustrations, icons and images" />
+
+<HideSbBar />
+
+# Illustrations, icons and images
+
+Icons, illustrations and photographs do different jobs. An icon is a symbol that
+sits inside a control or a line of text. An illustration is a small picture that
+sits beside a message to set its tone. A photograph or a chart is content in its
+own right. Choose by the job, and never let a picture carry the only meaning.
+
+<Example caption="An icon inside a button; an illustration beside an empty-state message.">
+  <IconOrIllustrationExample />
+</Example>
+
+## Which one
+
+| You need | Use | Size |
+| --- | --- | --- |
+| A symbol in a button, field, menu item or line of text | An [Icon](?path=/docs/functional-primitives-icon--docs) from the library set | `size="control"` in controls; `inherit` in text |
+| An action shown only as a symbol | [IconButton](?path=/docs/functional-iconbutton--docs), which names it | Set by the register |
+| A picture for an empty state, a finished step, a landing feature | An [Illustration](?path=/docs/components-text-and-icons-illustration--docs) | `sm` in cards and tables, `md` or `lg` on a page, `xl` on landing pages |
+| A person or organisation | [Avatar](?path=/docs/functional-avatar--docs), with a photo `src` or initials | Set by the register |
+| A photograph, screenshot or video | An `<img>` or `<video>` in an [AspectRatio](?path=/docs/layout-primitives-aspectratio--docs) | Fills its container |
+| A brand's logo (GitHub, a bank) | The brand icon from the library set, or the brand's own artwork | As an icon |
+| Data | A chart, never a decorative picture of one | See [Data visualization](?path=/docs/patterns-data-visualization--docs) |
+
+## Icons
+
+- **Only from the library set.** Each icon has a semantic name (`DeleteIcon`,
+  `FilterIcon`). If one is missing, ask for it to be added rather than importing
+  another icon pack.
+- **Beside a word, not instead of it**, except for well-known actions in tight
+  spaces (close, search, more), and then through IconButton so it has a name.
+- **One meaning per icon** across the app: the same icon never means "delete" in
+  one place and "remove from list" in another.
+
+See [Icons](?path=/docs/foundations-icons--docs) for the set and sizes.
+
+## Illustrations
+
+- **Beside a message, not inside a control.** An illustration repeats or warms
+  what the heading says; the heading still says it.
+- **One per screen**, at most. Several illustrations compete with each other and
+  with the content.
+- **Drop it when space is tight**: in a small card, a table's empty slot or a
+  phone-width panel, the text and the action are enough.
+- **Pick by meaning**: `InboxIllustration` for an empty inbox or list,
+  `SearchIllustration` for no results, `SuccessIllustration` for a finished task,
+  `OfflineIllustration` for a lost connection, `LockIllustration` for no access.
+- **Don't recolour them with CSS.** They take their colours from the theme, so
+  they follow the brand and dark mode.
+
+## Images
+
+- Give a meaningful image `alt` text that says what it shows in context; give a
+  decorative one `alt=""`.
+- Keep images in proportion with AspectRatio so the layout doesn't jump while
+  they load.
+- Check the contrast of any text you place over an image yourself; the library
+  can't.
+
+## Accessibility
+
+- Icons next to text are hidden from assistive technology; an icon on its own
+  needs a `label` (IconButton requires one).
+- Illustrations are hidden unless you give them a `label`. Give one only when
+  the picture says something the text beside it doesn't.
+- Never put an instruction or a status only in a picture.
+
+## Pitfalls
+
+- **Illustrations as icons**, or icons blown up as illustrations. They're drawn
+  for different sizes and jobs.
+- **Decoration that pushes the task down.** On a work screen, the content comes
+  first; save large pictures for landing pages and empty states.
+- **Importing every illustration** (`ILLUSTRATIONS`) to show one.
+
+## Related
+
+- [Icons](?path=/docs/foundations-icons--docs)
+- [Empty and error states](?path=/docs/patterns-empty-and-error-states--docs)
+- [Onboarding and first run](?path=/docs/patterns-onboarding-and-first-run--docs)

@@ -1,0 +1,217 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as Stories from "./resizable-panels.stories.tsx";
+import meta from "./resizable-panels.stories.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# ResizablePanels
+
+<ResizableCanvas of={Stories.SidebarAndContent} defaultHeight={360} />
+
+`ResizablePanels` splits an area into panels the user can resize: a sidebar
+beside the content, an editor over a terminal, a list beside its detail. Each
+`ResizablePanel` sets its own default, smallest and largest size, and a
+`ResizableHandle` between each pair is what people drag, or focus and move with
+the keyboard.
+
+```tsx
+import { ResizableHandle, ResizablePanel, ResizablePanels } from "@squonkstack/ui/resizable-panels";
+
+<ResizablePanels onLayout={save}>
+  <ResizablePanel id="sidebar" defaultSize={25} minSize="200px" maxSize={40}>
+    <AccountList />
+  </ResizablePanel>
+  <ResizableHandle label="Resize sidebar" />
+  <ResizablePanel id="content">
+    <SightingDetail />
+  </ResizablePanel>
+</ResizablePanels>
+```
+
+Use it when people genuinely need to trade space between regions for their own
+task: reading a long return beside a narrow list, or widening a terminal while a
+build runs. For a fixed layout use `Sidebar`, `Grid` or a stack; for a panel
+that comes and goes, a `Drawer`. Resizable panels are a desktop pattern: on a
+phone, show one region at a time instead.
+
+The group fills its container (`inline-size` and `block-size` of 100%), so give
+the container a size: a page region, a fixed-height card or a flex child that
+stretches.
+
+<Controls />
+
+## Sizes in percent or pixels
+
+A number is a percentage of the group; a string with `px` is pixels, converted
+with the group's measured size. Mix them: `minSize="200px" maxSize={40}` keeps a
+sidebar readable on a small screen without letting it take over a wide one.
+Pixel limits are recalculated whenever the group changes size, so they hold as
+the window narrows.
+
+| Prop | On | Meaning |
+| --- | --- | --- |
+| `defaultSize` | `ResizablePanel` | Starting size. Panels without one share what the others leave. |
+| `minSize` / `maxSize` | `ResizablePanel` | The smallest and largest the panel can be. Defaults 0 and 100. |
+| `collapsible`, `collapsedSize` | `ResizablePanel` | Let the panel snap to a smaller size (0 hides it, `"56px"` leaves a rail). |
+| `defaultLayout` | `ResizablePanels` | Starting sizes for every panel, in order: a saved layout. |
+| `onLayout` | `ResizablePanels` | Every panel's size, in percent, whenever the layout changes. |
+
+Moving a handle trades size between the two panels beside it only; the others
+stay where they are. If the limits can't all hold (three 40% minimums), the last
+panel gives way so the panels still fill the group.
+
+## Stacked panels
+
+`orientation="vertical"` stacks the panels, with horizontal handles moved by the
+Up and Down arrows.
+
+<ResizableCanvas of={Stories.Vertical} defaultHeight={360} />
+
+## Nested groups
+
+Put a group inside a panel for a layout like an editor: files beside an editor
+over a terminal. Each group lays out its own panels.
+
+<ResizableCanvas of={Stories.Nested} defaultHeight={360} />
+
+## Collapsible panels
+
+A `collapsible` panel snaps to its `collapsedSize` when it's dragged past
+halfway below its `minSize`, and Enter on its handle collapses or expands it,
+restoring the size it had. `onCollapsedChange` tells you when, so the panel can
+switch to a rail of icons. A collapsed panel carries `data-collapsed`.
+
+<ResizableCanvas of={Stories.CollapsibleSidebar} defaultHeight={360} />
+
+## Handle appearances
+
+`appearance` sets how the handle looks at rest. Every appearance thickens and
+colours its line when it's pointed at or dragged.
+
+- `line` (default): a hairline like a divider. Use it where the layout should
+  read calm and the panels are clearly separate.
+- `bar`: adds a short pill in the middle, a stronger hint that the edge moves.
+- `grip`: a chip of dots, for handles people might not otherwise find, such as
+  between two panels with the same background.
+
+<ResizableCanvas of={Stories.Appearances} defaultHeight={360} />
+
+A `disabled` handle fixes the panels at their sizes; it can't be focused or
+moved, and its bar or grip fades.
+
+<ResizableCanvas of={Stories.DisabledHandle} defaultHeight={360} />
+
+## Saving the layout
+
+The library doesn't store anything. Save the sizes `onLayout` gives you and pass
+them back as `defaultLayout` (read once, on first layout). Wrap storage access in
+`try`/`catch`: it can be unavailable in a private window. Give panels an `id`
+when they can come and go, so each keeps its size.
+
+<ResizableCanvas of={Stories.PersistedLayout} defaultHeight={360} />
+
+```tsx
+const [saved] = useState(() => {
+  try { return JSON.parse(localStorage.getItem("sightings-layout") ?? "null") ?? undefined; }
+  catch { return undefined; }
+});
+
+<ResizablePanels
+  defaultLayout={saved}
+  onLayout={(sizes) => { try { localStorage.setItem("sightings-layout", JSON.stringify(sizes)); } catch {} }}
+>
+```
+
+## Keyboard
+
+Each handle is in the tab order.
+
+| Key | Does |
+| --- | --- |
+| Left / Right arrow | Moves a handle between side-by-side panels by `step` (1% by default). |
+| Up / Down arrow | Moves a handle between stacked panels by `step`. |
+| Shift + arrow | Moves by `largeStep` (10% by default). |
+| Home / End | Gives the panel before the handle its smallest or largest size. |
+| Enter | Collapses or expands the panel before the handle if it's collapsible, else the one after it. |
+
+From a collapsed panel the first arrow step opens it to its minimum. In a
+right-to-left page Left and Right follow the panels. Double-clicking a handle
+returns the two panels beside it to their default sizes (`resetOnDoubleClick`).
+
+## Accessibility
+
+- Each handle follows the WAI-ARIA window splitter pattern: `role="separator"`,
+  focusable, with `aria-valuenow`, `aria-valuemin` and `aria-valuemax` giving the
+  size of the panel before it in percent, and `aria-controls` pointing at that
+  panel. `aria-orientation` is the line's direction: `vertical` between
+  side-by-side panels.
+- Name every handle with `label`, saying what it resizes ("Resize sidebar",
+  "Resize terminal"). The default, "Resize", is ambiguous when there are two.
+- The grab target is 24px across (`components.resizable.hitArea`) even though the
+  line is a hairline, meeting the WCAG 2.5.8 target size. It overhangs the
+  panels' edges, so keep interactive content a few pixels in from the edge.
+- Keyboard focus draws the line in the focus-ring colour. Pointer focus doesn't.
+- Panels are plain `div`s. If a panel is a landmark or region, give it the
+  `role` and `aria-label` it needs.
+- The hover transition is turned off with reduced motion.
+
+## Theming
+
+The handle's look comes from component tokens, each bound to a role by default.
+Re-point them with `SquonkThemeProvider`'s `roleBindings` (or `ThemeModifier` for one
+subtree), or add a `className` to restyle in your own CSS.
+
+<ResizableCanvas of={Stories.ThemedHandle} defaultHeight={360} />
+
+```tsx
+<SquonkThemeProvider
+  roleBindings={{
+    "components.resizable.gutter": "8px",
+    "components.resizable.lineWidth": "8px",
+    "components.resizable.lineColorHover": "roles.color.accent",
+    "components.resizable.glow": "0 0 12px 2px color-mix(in srgb, var(--squonk-roles-color-accent) 60%, transparent)",
+    "components.resizable.hoverDelay": "120ms",
+  }}
+>
+```
+
+| Token (`components.resizable.*`) | Default | What it sets |
+| --- | --- | --- |
+| `gutter` | `roles.border.width` | Space the handle takes between panels. |
+| `hitArea` | `24px` | Width of the invisible grab target. |
+| `hitLayer` | `1` | Lifts the grab target over the panels' edges. |
+| `transition` | `roles.motion.quick` | How long the handle takes to change state. |
+| `hoverDelay` | `0ms` | Wait before the handle lights up under a resting pointer. |
+| `lineWidth`, `lineWidthHover`, `lineWidthActive` | `roles.border.width`, `3px`, `3px` | Line thickness at rest, pointed at and dragged. |
+| `lineColor`, `lineColorHover`, `lineColorActive` | `roles.color.divider`, `roles.color.edgeStrong`, `roles.color.accent` | Line colour (and bar and grip edge) at rest, pointed at and dragged. |
+| `glow` | none | A box-shadow around the line when pointed at or dragged. |
+| `focusColor`, `focusWidth` | `roles.color.focusRing`, `roles.border.focusWidth` | The line under keyboard focus. |
+| `barLength`, `barThickness`, `barColor`, `barRadius` | `32px`, `4px`, `roles.color.edgeStrong`, `roles.radius.pill` | The `bar` appearance's pill. |
+| `gripBackground`, `gripBorder`, `gripRadius`, `gripPadding` | `roles.color.surface`, `roles.color.edge`, `roles.radius.pill`, `spacing.xxs` | The `grip` appearance's chip. |
+| `gripDotColor`, `gripDotSize`, `gripDotGap` | `roles.color.textSupporting`, `3px`, `2px` | The grip's dots. |
+
+For your own CSS, the handle carries `data-orientation` (the group's),
+`data-appearance`, `data-hovered`, `data-dragging`, `data-focus-visible` and
+`data-disabled`; the group carries `data-dragging` while any handle is dragged.
+
+## Common pitfalls
+
+- **The group has no height.** It fills its container, and a container with no
+  height gives it none. Size the container, or make it a stretching flex child.
+- **Long content pushes nothing, it's clipped.** Panels use `overflow: hidden`
+  so their content can't fight the layout while it's resized. Put a scrolling
+  region (`ScrollBox`, or a child with `overflow: auto` and `block-size: 100%`)
+  inside a panel with long content.
+- **Padding on the panel itself.** Panel sizes are shares of the space after
+  handles; padding on the panel adds to that. Pad a child instead.
+- **Wrapping panels or handles.** Panels and handles must be direct children of
+  their `ResizablePanels` (fragments are fine), so the group finds them in order.
+- **Pixel defaults on the server.** Pixel sizes need the group's measured size,
+  so with server rendering a panel sized in pixels settles after hydration. Use
+  percentages for defaults when the first paint matters.
+- **Iframes in panels.** While a handle is dragged the group stops panels from
+  taking pointer events, so an embedded frame doesn't swallow the drag.

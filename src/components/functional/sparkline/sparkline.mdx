@@ -1,0 +1,136 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as SparklineStories from "./sparkline.stories.tsx";
+import meta from "./sparkline.stories.tsx";
+import { Sparkline } from "./sparkline.tsx";
+import { Text } from "../../functional-primitive/text/text.tsx";
+import { Card } from "../../layout/card/card.tsx";
+import { Block } from "../../layout-primitive/block/block.tsx";
+import { HStack } from "../../layout-primitive/hstack/hstack.tsx";
+import { VStack } from "../../layout-primitive/vstack/vstack.tsx";
+import { Presentation } from "../../style/presentation/presentation.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Sparkline
+
+<ResizableCanvas of={SparklineStories.Default} defaultRecipe="inline" />
+
+`Sparkline` is a word-sized trend line with no axes, gridlines or tooltip. Put it beside a figure or in a table cell to show which way something has been heading: up, down, flat or spiky. It shows shape, not values, so always put the exact figure next to it. When people need to read individual points or compare series, use a [LineChart](?path=/docs/functional-line-chart--docs) instead.
+
+<Controls />
+
+## Beside a figure
+
+The most common use: the number says where things are, the line says how they got there. The end dot marks the latest value, so it lines up visually with the figure you print beside it.
+
+<InlineCodeExample>
+  <HStack gap="sm" align="center">
+    <Text>Dues owing $1,500</Text>
+    <Sparkline
+      data={[4200, 3900, 4100, 3600, 3300, 3450, 2900, 2600, 2750, 2200, 1900, 1500]}
+      label="Dues owing, last 12 months"
+      formatValue={(v) => `$${v.toLocaleString("en-NZ")}`}
+    />
+  </HStack>
+</InlineCodeExample>
+
+For a headline figure with its change and trend, use [Stat](?path=/docs/functional-stat--docs) with `trend`; it draws the sparkline for you.
+
+## Filled
+
+`filled` adds a light wash under the line. Use it for volumes and totals (sightings logged, dues collected), where the area reads as "how much"; leave it off for rates and percentages, where the space under the line means nothing.
+
+<InlineCodeExample>
+  <HStack gap="sm" align="center">
+    <Text>Sightings logged this week 230</Text>
+    <Sparkline
+      data={[120, 132, 128, 151, 149, 170, 168, 182, 195, 191, 214, 230]}
+      label="Sightings logged, last 12 weeks"
+      filled
+    />
+  </HStack>
+</InlineCodeExample>
+
+## Matching a series elsewhere
+
+`slot` picks the palette colour (1–8). Use it when the same measure is charted elsewhere on the page, so the sparkline and the chart series read as the same thing. If nothing else on the page uses the palette, leave it at the default.
+
+<InlineCodeExample>
+  <VStack gap="sm">
+    <HStack gap="sm" align="center">
+      <Text>Dues invoiced</Text>
+      <Sparkline data={[182, 205, 194, 231]} label="Dues invoiced, 2026 by quarter" slot={1} />
+    </HStack>
+    <HStack gap="sm" align="center">
+      <Text>Dues collected</Text>
+      <Sparkline data={[164, 171, 188, 202]} label="Dues collected, 2026 by quarter" slot={2} />
+    </HStack>
+  </VStack>
+</InlineCodeExample>
+
+## In a list or table
+
+A sparkline is `inline-block` and vertically centred, so it sits in a table cell or a row of text without breaking the line. Give each one the same `data` length so their shapes compare fairly. Each line is scaled to its own minimum and maximum, so two sparklines side by side show shape, never relative size.
+
+<InlineCodeExample>
+  <Block width="360px">
+    <Card>
+      <VStack gap="sm">
+        <HStack gap="md" align="center" justify="between">
+          <Text>Auckland</Text>
+          <Sparkline data={[3900, 4100, 4300, 4550, 4820]} label="Auckland sightings, last 5 weeks" />
+        </HStack>
+        <HStack gap="md" align="center" justify="between">
+          <Text>Wellington</Text>
+          <Sparkline data={[2300, 2250, 2180, 2210, 2194]} label="Wellington returns, last 5 weeks" />
+        </HStack>
+        <HStack gap="md" align="center" justify="between">
+          <Text>Canterbury</Text>
+          <Sparkline data={[1700, 1820, 1760, 1910, 1987]} label="Canterbury returns, last 5 weeks" />
+        </HStack>
+      </VStack>
+    </Card>
+  </Block>
+</InlineCodeExample>
+
+## Sizing
+
+The height follows the [Presentation](?path=/docs/style-presentation--docs) register: 20px in `compact`, 28px in `default`, 36px in `large` and 44px in `hero`. The width is four times the height unless the parent or `style` sets one; it never grows past its container (`max-width: 100%`). To stretch it across a card, set `style={{ width: "100%" }}`.
+
+<InlineCodeExample>
+  <VStack gap="md">
+    <Presentation register="compact"><Sparkline data={[120, 132, 128, 151, 149, 170]} label="Sightings logged (compact)" /></Presentation>
+    <Presentation register="default"><Sparkline data={[120, 132, 128, 151, 149, 170]} label="Sightings logged (default)" /></Presentation>
+    <Presentation register="large"><Sparkline data={[120, 132, 128, 151, 149, 170]} label="Sightings logged (large)" /></Presentation>
+    <Presentation register="hero"><Sparkline data={[120, 132, 128, 151, 149, 170]} label="Sightings logged (hero)" /></Presentation>
+  </VStack>
+</InlineCodeExample>
+
+## CSS variables
+
+| Variable | Controls | Default |
+| --- | --- | --- |
+| `--sparkline-color` | Line, fill wash and end dot | The `slot` colour, `--squonk-roles-color-data-series1`…`8` |
+| `--squonk-components-sparkline-height-compact` / `-default` / `-large` / `-hero` | Height in each register | 20px / 28px / 36px / 44px |
+
+`--sparkline-color` is set inline from `slot`, so override it through `style`, not a stylesheet. Prefer `slot`: a palette colour stays consistent with the charts and works in dark mode.
+
+## Accessibility
+
+- The sparkline is one image (`role="img"`). Screen readers hear its `label` with the first and last values, for example "Sightings logged, last 12 weeks: 120 to 230". Write `label` as what the line shows and over what period.
+- Use `formatValue` so those values are read with their unit ("$4,200 to $1,500"), not as bare numbers.
+- It isn't focusable and has no tooltip, so nothing in it is only reachable by mouse. Anything people must read exactly belongs in the text next to it.
+- Colour carries no meaning here: a falling line is drawn in the same colour as a rising one. If falling is bad news, say so in words, or use a Stat with `increaseIs`.
+
+## Common pitfalls
+
+- **Sparkline on its own.** Without a figure or label next to it, people can see a shape but not what it means or where it ended. Pair it with the number.
+- **Comparing sizes between sparklines.** Each is scaled to its own range, so a line that fills its box may be far smaller than one that barely moves. Use a [BarChart](?path=/docs/functional-bar-chart--docs) or a LineChart with shared axes to compare amounts.
+- **A vague `label`.** "Trend" tells a screen reader user nothing. Say the measure and the period.
+- **Painting it red or green to mean good or bad.** Status colours are for text and icons that say good or bad in words; keep the sparkline in a palette slot.
+- **Too few points.** Two or three values make a straight line or a single bend; show the numbers instead.

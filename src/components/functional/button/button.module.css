@@ -1,0 +1,184 @@
+@layer dt.components {
+  .root {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--squonk-roles-space-icon-gap);
+    box-sizing: border-box;
+    height: var(--squonk-presentation-control-height-default);
+    padding: 0 var(--squonk-components-button-padding-inline-default);
+    font-family: var(--squonk-roles-type-font);
+    font-size: var(--squonk-components-button-font-size-default);
+    font-weight: var(--squonk-roles-type-strong);
+    line-height: var(--squonk-roles-type-tight-line-height);
+    border-radius: var(--squonk-roles-radius-control);
+    border: var(--squonk-roles-border-width) solid transparent;
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+    width: fit-content;
+    max-width: 100%;
+    text-transform: var(--squonk-roles-type-button-case);
+    letter-spacing: var(--squonk-roles-type-button-tracking);
+    /* Relief: the theme's raised control, pushed in while pressed. */
+    --button-relief-fill: var(--squonk-roles-relief-control-fill);
+    --button-relief-edge: var(--squonk-roles-relief-control-edge);
+    background-image: var(--button-relief-fill);
+    background-blend-mode: var(--squonk-roles-relief-blend);
+    box-shadow: var(--button-relief-edge), var(--button-shadow, 0 0 #0000);
+  }
+
+  /* The theme may add a glow beside the ring; the variant's own shadow stays. */
+  .root:is([data-focus-visible], :not([data-rac]):focus-visible) {
+    outline: var(--squonk-roles-border-focus-width) solid var(--squonk-roles-color-focus-ring);
+    outline-offset: var(--squonk-roles-border-focus-offset);
+    box-shadow: var(--squonk-roles-interaction-focus-glow), var(--button-relief-edge), var(--button-shadow, 0 0 #0000);
+  }
+
+  /* Pressing squeezes a button as much as the theme says (by default, not at all). */
+  .root:is([data-pressed], :not([data-rac]):active):not([data-disabled]) {
+    transform: scale(var(--squonk-roles-interaction-press-scale));
+    --button-relief-fill: var(--squonk-roles-relief-pressed-fill);
+    --button-relief-edge: var(--squonk-roles-relief-pressed-edge);
+  }
+
+  .root:is([data-disabled], :disabled) {
+    cursor: not-allowed;
+    opacity: var(--squonk-roles-state-disabled-opacity);
+    --button-relief-fill: none;
+    --button-relief-edge: 0 0 #0000;
+  }
+
+  /* Register (from <Presentation>) */
+  .root[data-register="compact"] {
+    height: var(--squonk-presentation-control-height-compact);
+    padding: 0 var(--squonk-components-button-padding-inline-compact);
+    font-size: var(--squonk-components-button-font-size-compact);
+  }
+  .root[data-register="large"] {
+    height: var(--squonk-presentation-control-height-large);
+    padding: 0 var(--squonk-components-button-padding-inline-large);
+    font-size: var(--squonk-components-button-font-size-large);
+  }
+  .root[data-register="hero"] {
+    height: var(--squonk-presentation-control-height-hero);
+    padding: 0 var(--squonk-components-button-padding-inline-hero);
+    font-size: var(--squonk-components-button-font-size-hero);
+  }
+
+  /* IconButton: a square as tall as the register's control height. */
+  .root[data-icon-only] {
+    aspect-ratio: 1;
+    padding: 0;
+  }
+
+  /* An explicit pill, for a marketing call to action. Otherwise the
+     theme's control radius sets the shape of every control. */
+  .root[data-shape="pill"] {
+    border-radius: var(--squonk-roles-radius-pill);
+  }
+
+  .root[data-pending] { cursor: progress; }
+
+  .fullWidth {
+    width: 100%;
+  }
+
+  /* Variants */
+  .root[data-variant="primary"] {
+    background-color: var(--squonk-components-button-primary-background);
+    color: var(--squonk-components-button-primary-text);
+    --button-shadow: var(--squonk-components-button-primary-shadow);
+    --button-image: var(--squonk-components-button-primary-image);
+    /* The relief sits over the theme's primary gradient (none unless primaryGradient is on), which sits over the colour. */
+    background-image: var(--button-relief-fill), var(--button-image);
+    background-blend-mode: var(--squonk-roles-relief-blend), normal;
+  }
+  .root[data-variant="primary"]:is([data-hovered], :not([data-rac]):hover):not([data-disabled]) {
+    background-color: var(--squonk-components-button-primary-hover-background);
+    color: var(--squonk-components-button-primary-hover-text);
+    --button-image: var(--squonk-components-button-primary-hover-image);
+  }
+  .root[data-variant="primary"]:is([data-pressed], :not([data-rac]):active):not([data-disabled]) {
+    background-color: var(--squonk-components-button-primary-pressed-background);
+    color: var(--squonk-components-button-primary-pressed-text);
+    --button-image: var(--squonk-components-button-primary-pressed-image);
+  }
+
+  .root[data-variant="secondary"] {
+    background-color: var(--squonk-components-button-secondary-background);
+    color: var(--squonk-components-button-secondary-text);
+    border-color: var(--squonk-components-button-secondary-border);
+    --button-shadow: var(--squonk-components-button-secondary-shadow);
+  }
+  .root[data-variant="secondary"]:is([data-hovered], :not([data-rac]):hover):not([data-disabled]) {
+    background-color: var(--squonk-components-button-secondary-hover-background);
+    color: var(--squonk-components-button-secondary-hover-text);
+    border-color: var(--squonk-components-button-secondary-hover-border);
+  }
+  .root[data-variant="secondary"]:is([data-pressed], :not([data-rac]):active):not([data-disabled]) {
+    background-color: var(--squonk-components-button-secondary-pressed-background);
+    color: var(--squonk-components-button-secondary-pressed-text);
+  }
+
+  .root[data-variant="solid"] {
+    background-color: var(--squonk-components-button-solid-background);
+    color: var(--squonk-components-button-solid-text);
+  }
+  .root[data-variant="solid"]:is([data-hovered], :not([data-rac]):hover):not([data-disabled]) {
+    background-color: var(--squonk-components-button-solid-hover-background);
+    color: var(--squonk-components-button-solid-hover-text);
+  }
+  .root[data-variant="solid"]:is([data-pressed], :not([data-rac]):active):not([data-disabled]) {
+    background-color: var(--squonk-components-button-solid-pressed-background);
+    color: var(--squonk-components-button-solid-pressed-text);
+  }
+
+  /* A ghost button has no surface of its own, so no relief, pressed or not. */
+  .root[data-variant="ghost"],
+  .root[data-variant="ghost"]:is([data-pressed], :not([data-rac]):active) {
+    --button-relief-fill: none;
+    --button-relief-edge: 0 0 #0000;
+  }
+  .root[data-variant="ghost"] {
+    background-color: transparent;
+    color: var(--squonk-components-button-ghost-text);
+  }
+  .root[data-variant="ghost"]:is([data-hovered], :not([data-rac]):hover):not([data-disabled]) {
+    background-color: var(--squonk-components-button-ghost-hover-background);
+    color: var(--squonk-components-button-ghost-hover-text);
+  }
+  .root[data-variant="ghost"]:is([data-pressed], :not([data-rac]):active):not([data-disabled]) {
+    background-color: var(--squonk-components-button-ghost-pressed-background);
+    color: var(--squonk-components-button-ghost-pressed-text);
+  }
+
+  .root[data-variant="danger"] {
+    background-color: var(--squonk-components-button-danger-background);
+    color: var(--squonk-components-button-danger-text);
+  }
+  .root[data-variant="danger"]:is([data-hovered], :not([data-rac]):hover):not([data-disabled]) {
+    background-color: var(--squonk-components-button-danger-hover-background);
+    color: var(--squonk-components-button-danger-hover-text);
+  }
+  .root[data-variant="danger"]:is([data-pressed], :not([data-rac]):active):not([data-disabled]) {
+    background-color: var(--squonk-components-button-danger-pressed-background);
+    color: var(--squonk-components-button-danger-pressed-text);
+  }
+
+  /* Lift: rise on hover; secondary also gains the pop shadow. */
+  .lift:is([data-hovered], :not([data-rac]):hover):not([data-disabled]) {
+    transform: translateY(var(--squonk-roles-interaction-hover-lift));
+  }
+  .lift:is([data-hovered], :not([data-rac]):hover):is([data-pressed], :not([data-rac]):active):not([data-disabled]) {
+    transform: translateY(var(--squonk-roles-interaction-hover-lift)) scale(var(--squonk-roles-interaction-press-scale));
+  }
+  .root[data-variant="secondary"].lift:is([data-hovered], :not([data-rac]):hover):not([data-disabled]) {
+    box-shadow: var(--button-relief-edge), var(--squonk-roles-elevation-lift);
+  }
+
+  /* Buttons act; paper can't. Leave them off the printout (IconButton too). */
+  @media print {
+    .root { display: none; }
+  }
+}

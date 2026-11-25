@@ -1,0 +1,30 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", ":semanticCommits", ":semanticCommitTypeAll(chore)"],
+  "labels": ["dependencies"],
+  "rangeStrategy": "bump",
+  "packageRules": [
+    {
+      "description": "React ecosystem + styled-components move together, by hand",
+      "matchPackageNames": ["react", "react-dom", "styled-components", "@types/react", "@types/react-dom"],
+      "enabled": false
+    },
+    {
+      "description": "Group Mantine packages",
+      "matchPackageNames": ["@mantine/**"],
+      "groupName": "mantine"
+    },
+    {
+      "description": "Group Storybook packages",
+      "matchPackageNames": ["storybook", "@storybook/**"],
+      "groupName": "storybook"
+    },
+    {
+      "description": "Playwright version is pinned to the CT docker image tag — bump together, by hand",
+      "matchPackageNames": ["playwright", "@playwright/**"],
+      "enabled": false
+    }
+  ],
+  "prConcurrentLimit": 3,
+  "schedule": ["before 6am on monday"]
+}

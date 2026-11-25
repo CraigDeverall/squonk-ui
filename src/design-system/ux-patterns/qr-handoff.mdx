@@ -1,0 +1,30 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../documentation-imports/index.ts";
+import { Example } from "./pattern-blocks.tsx";
+import { QrHandoffExample } from "./pattern-examples.tsx";
+
+<Meta title="Patterns/QR handoff" />
+
+<HideSbBar />
+
+# QR handoff
+
+Use [QrCode](?path=/docs/functional-qrcode--docs) to move someone from a screen
+to their phone. Say where it goes, and always offer another way in.
+
+<Example caption="The code's purpose is stated, and people who can't scan get a link.">
+  <QrHandoffExample />
+</Example>
+
+## The rules
+
+- **Say what happens when they scan** before they reach for their phone.
+- **Offer another route**: a link to send, or a short code to type. Scanning
+  isn't possible for everyone.
+- **Never make scanning the only way** to complete a form or read essential text.
+- **Keep the contrast and the quiet border** around the code, and test the real
+  encoded value at the real size on a phone; a screenshot doesn't prove it scans.
+
+Your app owns the link: that it's valid, that it expires, that it carries no
+secrets, and what happens after the scan. A scanned code doesn't mean the task
+is done or the destination is safe.

@@ -1,0 +1,49 @@
+import { Meta, Source } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../documentation-imports/index.ts";
+import { ResizableCanvas } from "../utils/resizable-canvas.tsx";
+import * as Examples from "./forms.stories.tsx";
+import crossField from "./examples/bank-account.tsx?raw";
+import asyncCheck from "./examples/member-lookup.tsx?raw";
+
+<Meta title="Patterns/Forms/Validation" />
+
+<HideSbBar />
+
+# Validation
+
+## Rules that compare fields
+
+A confirmation that must match, or an end date after a start date, is a rule on
+the whole object. Put it in `.refine` with a `path`, so the message lands on the
+field it is about.
+
+Add `when: () => true`. By default Zod skips object-level rules while any field
+has an error, so someone who fixes one problem would discover the next only
+after resubmitting. With it, every problem shows at once.
+
+<ResizableCanvas of={Examples.CrossFieldRules} defaultHeight={720} />
+
+<Source code={crossField} language="tsx" />
+
+## Checks against the server
+
+Some answers only the server knows: does this member exist, is this username
+free? Put the check on the field with `onChangeAsync`:
+
+- **Check the format first** and only call the server when it passes.
+- **Debounce** with `onChangeAsyncDebounceMs`, so the check runs once typing stops.
+- **Say it's checking.** `field.state.meta.isValidating` is true while the check
+  runs; show it in the help text.
+
+<ResizableCanvas of={Examples.AsyncCheck} defaultHeight={360} />
+
+<Source code={asyncCheck} language="tsx" />
+
+## Choosing where a rule goes
+
+| Rule | Put it in |
+| --- | --- |
+| About one field's own value | The schema, on that field |
+| Comparing fields | `.refine` on the object, with `path` and `when: () => true` |
+| Needs the server, worth checking as they type | `onChangeAsync` on the field |
+| Needs the server, only on submit | `onSubmitAsync` on the form. See [Server errors](?path=/docs/patterns-forms-server-errors--docs) |

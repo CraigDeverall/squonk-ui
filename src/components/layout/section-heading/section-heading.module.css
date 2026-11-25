@@ -1,0 +1,15 @@
+@layer dt.components {
+  .root {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: start;
+    gap: var(--squonk-components-section-heading-gap);
+    max-width: var(--section-heading-max-width);
+  }
+
+  .root[data-align="center"] {
+    align-items: center;
+    text-align: center;
+  }
+}

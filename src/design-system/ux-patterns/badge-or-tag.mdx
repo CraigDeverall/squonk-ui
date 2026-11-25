@@ -1,0 +1,78 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../documentation-imports/index.ts";
+import { Do, DoDont, Dont, Example } from "./pattern-blocks.tsx";
+import { IdentityExample } from "./pattern-examples.tsx";
+import { Badge, Tag, TagGroup } from "../../components";
+
+<Meta title="Patterns/Labels: Badge or Tag" />
+
+<HideSbBar />
+
+# Labels: Badge or Tag
+
+Both are small labels, so they are easy to confuse. They answer different
+questions, and people learn to read them differently, so keep them apart.
+
+**A Badge reports. A Tag names.**
+
+<div style={{ display: "flex", gap: 24, flexWrap: "wrap", alignItems: "center", margin: "16px 0" }}>
+  <span>Status: <Badge tone="error">Overdue</Badge> <Badge tone="success">Paid</Badge> <Badge tone="primary">3</Badge></span>
+  <TagGroup aria-label="Filters"><Tag tone="primary" onRemove={() => {}}>Night watches</Tag><Tag tone="primary" onRemove={() => {}}>Waikato Chapter</Tag></TagGroup>
+</div>
+
+| | Badge | Tag |
+| --- | --- | --- |
+| What it is | The state or count of the thing beside it | A value: a category, keyword, chosen filter or entered item |
+| Who sets it | The system. It changes on its own (Overdue → Paid) | The person: added, chosen or removed. Or it names what something is |
+| Interactive? | Never | Can be removed; in a `TagGroup` it is one tab stop with arrow keys between tags |
+| Colour means | Meaning: success, warning, error, info | Grouping only (`neutral`, `primary`, `info`), never status |
+| Shape | Pill, read as a marker | Chip with squarer corners, read as an object you hold |
+
+## The test
+
+- Is it something the person picked, or a name for what it is? Use a **Tag**.
+- Is it reporting how something stands, or how many? Use a **Badge**.
+
+| Example | Use |
+| --- | --- |
+| "Overdue", "In progress", "Paid", "Beta" | Badge |
+| "3" new notifications, a count on a Filters button | Badge |
+| An applied filter "Night watches ×", email recipients in a field | Tag |
+| A read-only category on a record ("Night watches", "Waikato Chapter") | Tag: it names what the record is and doesn't change on its own |
+| A sentence such as "Includes about $4 late fee" | Neither: that is supporting text |
+
+## Common mistakes
+
+- **A red Tag.** Colour on a label reads as status. Tags have no success,
+  warning or error tones for this reason; if it is a status, it is a Badge.
+- **A Badge with a remove button.** People can't remove a status. If they can
+  remove it, it is a value: a Tag.
+- **A sentence in a Badge.** Badges are one or two words or a number. Longer
+  notes are text beside the content.
+- **Making either one the only signal.** Colour supports the words; the text
+  must say the status or value on its own.
+
+<DoDont>
+  <Do caption="One or two words that report a state.">
+    <span><Badge tone="error">Overdue</Badge> <Badge tone="success">Paid</Badge></span>
+  </Do>
+  <Dont caption="A sentence in a badge. Longer notes are text beside the content.">
+    <span><Badge tone="info">Includes about $4 late fee added to what's left</Badge></span>
+  </Dont>
+</DoDont>
+
+## People and identity
+
+Compose [Avatar](?path=/docs/functional-avatar--docs),
+[MediaObject](?path=/docs/layout-media-object--docs), Text and a Badge for a
+person or a resource. Initials stand in when there's no image; they identify
+someone visually but say nothing about who is signed in or online. Give an
+informative image a text alternative, and hide it when the name beside it
+already says who it is. Long names and missing images must keep the row's
+layout.
+
+<Example caption="An image or initials, a name, a role, and availability in words that survive without colour.">
+  <IdentityExample />
+</Example>
+
+See [Badge](?path=/docs/functional-badge--docs) and [Tag](?path=/docs/functional-tag--docs).

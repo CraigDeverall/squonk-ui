@@ -1,0 +1,220 @@
+@layer dt.components {
+  .root {
+    --combobox-actions: calc(var(--squonk-components-select-actions-inset) + 2 * var(--squonk-presentation-control-height-compact));
+    display: inline-flex;
+    flex-direction: column;
+    gap: var(--squonk-roles-space-field-gap);
+    width: 100%;
+    font-family: var(--squonk-roles-type-font);
+    color: var(--squonk-roles-color-text);
+  }
+
+  .fit { width: fit-content; }
+
+  .label {
+    font-size: var(--squonk-roles-type-label);
+    font-weight: var(--squonk-roles-type-strong);
+    color: var(--squonk-roles-color-label);
+  }
+
+  .control {
+    position: relative;
+    display: block;
+    width: 100%;
+  }
+
+  /* Matches TextField's box, with room on the right for the buttons. */
+  .input {
+    --field-accent: var(--squonk-roles-color-field-border-focus);
+    width: 100%;
+    box-sizing: border-box;
+    height: var(--squonk-presentation-control-height-default);
+    padding: 0 var(--combobox-actions) 0 var(--squonk-roles-control-padding-inline-default);
+    font-size: var(--squonk-roles-control-font-size-default);
+    font-family: var(--squonk-roles-type-font);
+    line-height: var(--squonk-roles-type-tight-line-height);
+    color: var(--squonk-roles-color-field-text);
+    background-color: var(--squonk-roles-color-field-background);
+    border: var(--squonk-roles-border-width) solid var(--squonk-roles-color-field-border);
+    border-width: var(--squonk-roles-control-field-border);
+    background-image: var(--squonk-roles-relief-well-fill);
+    background-blend-mode: var(--squonk-roles-relief-blend);
+    box-shadow: var(--squonk-roles-relief-well-edge), var(--squonk-roles-elevation-field);
+    border-radius: var(--squonk-roles-radius-control);
+    outline: none;
+  }
+
+  .input[data-register="compact"] {
+    height: var(--squonk-presentation-control-height-compact);
+    padding-left: var(--squonk-roles-control-padding-inline-compact);
+    font-size: var(--squonk-roles-control-font-size-compact);
+  }
+  .input[data-register="large"] {
+    height: var(--squonk-presentation-control-height-large);
+    font-size: var(--squonk-roles-control-font-size-large);
+  }
+  .input[data-register="hero"] {
+    height: var(--squonk-presentation-control-height-hero);
+    padding-left: var(--squonk-roles-control-padding-inline-hero);
+    font-size: var(--squonk-roles-control-font-size-hero);
+  }
+
+  .input::placeholder { color: var(--squonk-roles-color-placeholder); }
+
+  .input:hover:not(:disabled) { border-color: var(--squonk-roles-color-field-border-hover); }
+
+  /* Focus: accent border plus the theme's field halo (by default, 2px of the accent at 20%). */
+  .input[data-focus-visible],
+  .root[data-open] .input {
+    border-color: var(--field-accent);
+    box-shadow:
+      0 0 0 var(--squonk-roles-interaction-field-focus-halo) color-mix(in srgb, var(--field-accent) var(--squonk-roles-interaction-field-focus-strength), transparent),
+      inset 0 var(--squonk-roles-interaction-field-focus-underline) 0 var(--field-accent),
+      var(--squonk-roles-relief-well-edge),
+      var(--squonk-roles-elevation-field);
+  }
+
+  .root[data-invalid] .input,
+  .root[data-invalid] .input:hover:not(:disabled) {
+    --field-accent: var(--squonk-roles-color-invalid);
+    border-color: var(--squonk-roles-color-invalid);
+  }
+
+  .input:disabled {
+    opacity: var(--squonk-roles-state-disabled-opacity);
+    cursor: not-allowed;
+    background-color: var(--squonk-roles-color-field-background-disabled);
+    background-image: none;
+  }
+
+  .actions {
+    position: absolute;
+    inset-block: 0;
+    right: var(--squonk-components-select-actions-inset);
+    display: flex;
+    align-items: center;
+  }
+
+  .action {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--squonk-presentation-control-height-compact);
+    height: var(--squonk-presentation-control-height-compact);
+    padding: 0;
+    border: none;
+    /* Concentric with the field's end: round inside a round field. */
+    border-radius: max(var(--squonk-roles-radius-item), calc(var(--squonk-roles-radius-control) - var(--squonk-components-select-actions-inset)));
+    background: transparent;
+    color: var(--squonk-roles-color-field-icon);
+    cursor: pointer;
+  }
+
+  .action:hover:not(:disabled) {
+    background-color: var(--squonk-roles-color-hover);
+    color: var(--squonk-roles-color-on-hover);
+  }
+
+  .action[data-focus-visible] {
+    outline: var(--squonk-roles-border-focus-width) solid var(--squonk-roles-color-focus-ring);
+    outline-offset: 0;
+  }
+
+  .action:disabled { cursor: not-allowed; }
+
+  .content {
+    min-width: var(--trigger-width);
+    overflow-y: auto;
+    box-sizing: border-box;
+    padding: var(--squonk-roles-space-list-inset);
+    display: flex;
+    flex-direction: column;
+    gap: var(--squonk-roles-space-list-gap);
+    background-color: var(--squonk-roles-color-surface);
+    border: var(--squonk-roles-border-width) solid var(--squonk-roles-color-floating-border);
+    border-radius: var(--squonk-roles-radius-list);
+    box-shadow: var(--squonk-roles-elevation-floating);
+    z-index: calc(var(--squonk-roles-layer-menu) + var(--layer-index, 0));
+    font-family: var(--squonk-roles-type-font);
+    outline: none;
+    transform-origin: var(--trigger-anchor-point);
+  }
+
+  .list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--squonk-roles-space-list-gap);
+    outline: none;
+  }
+
+  .item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--squonk-roles-space-item-gap);
+    padding: var(--squonk-roles-space-list-item-inset-block) var(--squonk-roles-space-list-item-inset-inline);
+    /* Concentric with the panel's corners. The line height is fixed because
+       the panel's radius is limited by the height of a row. */
+    border-radius: var(--squonk-roles-radius-list-item);
+    line-height: var(--squonk-roles-type-tight-line-height);
+    font-size: var(--squonk-roles-type-list-item);
+    color: var(--squonk-roles-color-on-surface);
+    cursor: pointer;
+    outline: none;
+  }
+
+  .item[data-focused] {
+    background-color: var(--squonk-roles-color-hover);
+    color: var(--squonk-roles-color-on-hover);
+  }
+
+  .item[data-selected] {
+    background-color: var(--squonk-roles-color-selected);
+    color: var(--squonk-roles-color-on-selected);
+    font-weight: var(--squonk-roles-type-selected);
+  }
+
+  .item[data-selected][data-focused] {
+    background-color: var(--squonk-roles-color-hover);
+    color: var(--squonk-roles-color-on-hover);
+  }
+
+  .item[data-disabled] {
+    cursor: not-allowed;
+    opacity: var(--squonk-roles-state-disabled-opacity);
+  }
+
+  .itemText {
+    display: flex;
+    flex-direction: column;
+    gap: var(--squonk-roles-space-text-gap);
+    min-width: 0;
+  }
+
+  .itemDescription {
+    font-size: var(--squonk-roles-type-supporting);
+    font-weight: var(--squonk-roles-type-regular);
+    color: var(--squonk-roles-color-on-surface-supporting);
+  }
+
+  .item[data-focused] .itemDescription { color: var(--squonk-roles-color-on-hover-supporting); }
+
+  .itemIndicator {
+    display: inline-flex;
+    color: var(--squonk-roles-color-selected-mark);
+  }
+
+  .empty {
+    padding: var(--squonk-roles-space-list-item-inset-block) var(--squonk-roles-space-list-item-inset-inline);
+    font-size: var(--squonk-roles-type-list-item);
+    color: var(--squonk-roles-color-on-surface-supporting);
+  }
+
+  .message {
+    font-size: var(--squonk-roles-type-hint);
+    color: var(--squonk-roles-color-hint);
+  }
+
+  .message[slot="errorMessage"] { color: var(--squonk-roles-color-invalid); }
+}

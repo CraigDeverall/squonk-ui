@@ -1,0 +1,83 @@
+@layer dt.components {
+  /* The region sits at the chosen corner, above modals. Toasts arrive
+     newest first; at the bottom the newest sits nearest the edge. 368px
+     (a 400px column less its padding) is component geometry. */
+  .group {
+    position: fixed;
+    z-index: var(--squonk-roles-layer-toast);
+    display: flex;
+    flex-direction: column;
+    gap: var(--squonk-components-toast-gap);
+    max-width: calc(100% - 2 * var(--squonk-roles-space-viewport-margin));
+    outline: none;
+  }
+
+  .group[data-focus-visible] {
+    outline: var(--squonk-roles-border-focus-width) solid var(--squonk-roles-color-focus-ring);
+    outline-offset: var(--squonk-roles-border-focus-offset);
+  }
+
+  .top-right,
+  .top-center { top: var(--squonk-roles-space-viewport-margin); }
+
+  .bottom-right,
+  .bottom-center {
+    bottom: var(--squonk-roles-space-viewport-margin);
+    flex-direction: column-reverse;
+  }
+
+  .top-right,
+  .bottom-right { right: var(--squonk-roles-space-viewport-margin); }
+
+  .top-center,
+  .bottom-center {
+    left: 50%;
+    translate: -50% 0;
+    align-items: center;
+  }
+
+  .root {
+    width: min(var(--squonk-components-toast-width), calc(100vw - 2 * var(--squonk-roles-space-viewport-margin)));
+    border-radius: var(--squonk-roles-radius-surface);
+    box-shadow: var(--squonk-roles-elevation-overlay);
+  }
+
+  .root[data-focus-visible] {
+    outline: var(--squonk-roles-border-focus-width) solid var(--squonk-roles-color-focus-ring);
+    outline-offset: var(--squonk-roles-border-focus-offset);
+  }
+
+  /* A toast with an action: the message, then the button under it. */
+  .content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--squonk-components-toast-action-gap);
+  }
+
+  /* Outlined in the toast's own text colour, so it reads on every tone's
+     wash in light and dark. */
+  .action {
+    appearance: none;
+    padding: var(--squonk-components-toast-action-inset-block) var(--squonk-components-toast-action-inset-inline);
+    border: var(--squonk-roles-border-width) solid currentColor;
+    border-radius: var(--squonk-roles-radius-control);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-weight: var(--squonk-roles-type-strong);
+    cursor: pointer;
+  }
+
+  .action:hover { background-color: color-mix(in srgb, currentColor 14%, transparent); }
+
+  .action:focus-visible {
+    outline: var(--squonk-roles-border-focus-width) solid var(--squonk-roles-color-focus-ring);
+    outline-offset: var(--squonk-roles-border-focus-offset);
+  }
+
+  /* Notifications are for the moment, not the record. */
+  @media print {
+    .group { display: none; }
+  }
+}

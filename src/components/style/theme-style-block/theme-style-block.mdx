@@ -1,0 +1,138 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import meta from "./theme-style-block.stories.tsx";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import {
+  CompositionShowcase,
+  InverseShowcase,
+  RegisterShowcase,
+} from "./theme-style-block.showcase.tsx";
+
+<Meta of={meta} />
+<HideSbBar />
+
+# ThemeStyleBlock
+
+One style component that retunes the active theme for a subtree on two orthogonal axes:
+
+- **`register`** — switch the size scale: `compact` (denser), `normal` (root), or `display` (hero).
+- **`invertMode`** — flip the inherited color mode (light ↔ dark). Independent from `register`, so they combine.
+
+`ThemeStyleBlock` is a **style component** — no visual output of its own. Descendants pick up the new theme automatically through `SquonkThemeContext` and the `--squonk-*` variables.
+
+> Tune the multipliers live under **Theme Controls → ThemeStyleBlock Modifier Ratios** (right panel) and every example below updates in place.
+
+## Size register
+
+Identical content rendered inside each register. Watch heading size, gap between buttons, button radius, and padding.
+
+<RegisterShowcase />
+
+<InlineCodeExample>
+  {`<ThemeStyleBlock register="compact">
+  <Block padding="md">
+    <VStack gap="sm">
+      <Heading level={4}>Compact</Heading>
+      <Text>Toolbar, sidebar, settings.</Text>
+      <Cluster gap="xs">
+        <Button variant="primary">Save</Button>
+        <Button variant="ghost">Cancel</Button>
+      </Cluster>
+    </VStack>
+  </Block>
+</ThemeStyleBlock>`}
+</InlineCodeExample>
+
+## Mode flip
+
+`invertMode` flips the inherited color mode for the subtree only. Use it for high-emphasis callouts (banners, footers, marketing strips) that should read against the opposite mode without flipping the rest of the page.
+
+<InverseShowcase />
+
+<InlineCodeExample>
+  {`<ThemeStyleBlock invertMode>
+  <Block padding="md" background="default">
+    {/* every nested @squonkstack/ui component reads the flipped mode */}
+    <Heading level={4}>Inverse</Heading>
+    <Button variant="primary">Continue</Button>
+  </Block>
+</ThemeStyleBlock>`}
+</InlineCodeExample>
+
+## Composition
+
+The two axes are orthogonal — combine them on the same element.
+
+<CompositionShowcase />
+
+<InlineCodeExample>
+  {`{/* Dense and dark in one wrapper */}
+<ThemeStyleBlock register="compact" invertMode>
+  …
+</ThemeStyleBlock>
+
+{/* Escape a hero region back to root sizing */}
+<ThemeStyleBlock register="display">
+  <Hero />
+  <ThemeStyleBlock register="normal">
+    <ReplyComposer />
+  </ThemeStyleBlock>
+</ThemeStyleBlock>`}
+</InlineCodeExample>
+
+The size registers don't compound when nested — they always re-derive from the `SquonkThemeProvider` root primitives. So `register="normal"` reliably restores the original sizing regardless of nesting depth.
+
+## When to use which
+
+- **`register="compact"`** — dense surfaces: command palettes, table rows, settings forms, side rails.
+- **`register="display"`** — splash surfaces: empty-state hero illustrations, landing/pricing cards, success confirmations.
+- **`register="normal"`** — an embedded region inside a Compact / Display tree that should opt back to root sizing (e.g. a comment composer inside a hero card).
+- **`invertMode`** — high-emphasis call-out blocks (announcement banner, footer, command surface) that should read against the opposite mode without flipping the rest of the page.
+
+## How it works
+
+`ThemeStyleBlock` derives a new theme from `ThemeMetaContext`, then publishes both the new resolved theme (`SquonkThemeContext`) and the new meta to descendants.
+
+- `register` transforms spacing / font / border-radius primitives by reading the inherited `rootPrimitives` (set by the closest `SquonkThemeProvider`) and applying the relevant `compact*Ratio` / `display*Ratio`.
+- `invertMode` flips `mode` only — rebound colors and added primitives carry through unchanged, so brand recoloring still applies in inverted regions.
+
+## Tuning the ratios
+
+The multipliers live in `primitives` and can be tuned per-app via `SquonkThemeProvider`:
+
+<InlineCodeExample>
+  {`<SquonkThemeProvider
+  primitives={{
+    compactSpacingRatio: 0.6,
+    compactFontRatio: 0.85,
+    compactBorderRadiusRatio: 0.6,
+    displaySpacingRatio: 2,
+    displayFontRatio: 1.4,
+    displayBorderRadiusRatio: 2,
+  }}
+>
+  {children}
+</SquonkThemeProvider>`}
+</InlineCodeExample>
+
+The defaults (0.75 / 0.875 / 0.75 for Compact, 1.5 / 1.25 / 1.5 for Display) target a generic UI library register. Within Storybook, the **Theme Controls → ThemeStyleBlock Modifier Ratios** section pipes the same values via the override channel so you can dial them in without a rebuild.
+
+
+## Composition and scaling contract
+
+Primitive changes are rebuilt first, then inherited resolved modifiers and semantic surface boundaries are reapplied in nesting order. This preserves brand overrides and readable text inside an already-painted Card or Alert. An explicit resolved token override wins over the derived value. `register="normal"` restores root-derived sizing, while preserving those explicit overrides.
+
+Spacing-driven layout gaps, card/header/section padding, theme-based body text and Heading sizes scale from their primitives. The layout/heading register values are exposed under `theme.presentation`. Unitless line heights, em tracking, fluid viewport slopes and intentionally fixed control geometry retain their component-specific behavior. See the Theme page's scalability table for the boundaries; this is not a uniform CSS zoom of every pixel.
+
+
+
+## Accessibility and responsive checks
+
+This provider adds no DOM landmark, label, focus behavior or breakpoint. Keep those responsibilities on its child components and page layout. A compact register changes some dimensions; it does not establish that every control still has an adequate pointer target or readable text. Check the smallest register with keyboard focus, long translated labels, browser zoom and a narrow viewport.
+
+An inverted subtree needs a matching painted surface, such as `Block background="default"`; changing context alone does not paint the background. Verify text, borders and focus indicators against that actual surface. Prefer [Presentation](?path=/docs/style-presentation--docs) for a component's supported density register and [ThemeModifier](?path=/docs/style-theme-modifier--docs) for a deliberately scoped token override.
+
+## Common pitfalls
+
+- Do not use a compact register to hide content that fails to fit. Let [Grid](?path=/docs/layout-primitive-grid--docs) or wrapping stacks reorganize the layout.
+- Do not compensate for nested registers with arbitrary pixel overrides. Root-derived scaling and explicit semantic overrides have different responsibilities.

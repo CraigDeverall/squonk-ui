@@ -1,0 +1,78 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as HStackStories from "./hstack.stories.tsx";
+import meta from "./hstack.stories.tsx";
+import { HStack } from "./hstack.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# HStack
+
+<ResizableCanvas of={HStackStories.Default} />
+
+`HStack` arranges its children horizontally (left to right) with a token-driven gap and sensible alignment props. It is **not** a styled container — no padding, border, or background, only arrangement. For vertical arrangement use `VStack`; for wrapping rows of chips/tags use `Cluster`; for "leading group | trailing group" use `Split`.
+
+<Controls />
+
+## Default
+
+The basic use — a row of items with consistent gap.
+
+<InlineCodeExample>
+  {`<HStack gap="sm" align="center">
+  <Button variant="primary">Save</Button>
+  <Button variant="secondary">Cancel</Button>
+</HStack>`}
+</InlineCodeExample>
+
+## Space between
+
+Push the first child to the start and the last to the end with `justify="between"`.
+
+<InlineCodeExample>
+  {`<HStack justify="between" align="center">
+  <Heading level={3}>Active sessions</Heading>
+  <Button variant="primary">New session</Button>
+</HStack>`}
+</InlineCodeExample>
+
+## Wrapping
+
+For rows of variable-width children that should flow onto the next line, set `wrap`. For chips/tags specifically, `Cluster` is more declarative.
+
+<InlineCodeExample>
+  {`<HStack gap="xs" wrap>
+  {tags.map(tag => <Badge key={tag}>{tag}</Badge>)}
+</HStack>`}
+</InlineCodeExample>
+
+## Alignment
+
+`align` controls cross-axis (vertical) alignment. `center` is the default — switch to `start` for top-aligned multi-line rows, `baseline` to align text rows on their baseline.
+
+<InlineCodeExample>
+  {`<HStack align="start" gap="md">
+  <Avatar name="Ada Lovelace" />
+  <div>
+    <Heading level={4}>Ada Lovelace</Heading>
+    <Text tone="secondary">Mathematician</Text>
+  </div>
+</HStack>`}
+</InlineCodeExample>
+
+## Accessibility
+
+- Renders a plain `<div>` — no roles, no announcements. Children supply their own semantics.
+- DOM order is reading order; the visual `justify="between"` doesn't change traversal.
+- For a row of equivalent navigation items, render as `<nav>` (`as="nav"`) and use a child `<ul>` for the list count.
+
+## Common pitfalls
+
+- **Don't add margins to children.** The whole point of HStack is that the parent owns the spacing. If you find yourself reaching for `margin-right` on a child, change the `gap` instead.
+- **`align="center"` is the default.** Children align to the row centerline. Switch to `align="start"` to top-align them.
+- **Need vertical arrangement?** Use `VStack` — they are peer components, not variants of one another.
+- **Don't reach for HStack when a named composition exists.** A `Cluster` is HStack-with-wrap; a `Split` is HStack-with-justify-between; a `MediaObject` is HStack-with-content-stack. Use the named one when it fits.

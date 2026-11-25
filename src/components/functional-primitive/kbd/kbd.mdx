@@ -1,0 +1,88 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as KbdStories from "./kbd.stories.tsx";
+import meta from "./kbd.stories.tsx";
+import { Kbd } from "./kbd.tsx";
+import { HStack } from "../../layout-primitive/hstack/hstack.tsx";
+import { Grid } from "../../layout-primitive/grid/grid.tsx";
+import { Text } from "../text/text.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Kbd
+
+<ResizableCanvas of={KbdStories.Default} defaultRecipe="inline" />
+
+`Kbd` displays a keystroke or chord — a single key or a combo. Use it in documentation, tooltips, empty-state hints, and command-palette UIs. For code (commands, file paths, identifiers) use `Code` instead — the visual treatments are deliberately different so the reader can tell a key from a token.
+
+## Single key
+
+Render one `Kbd` per key. The component picks a comfortable min-width so single-character labels (K, X) don't look pinched.
+
+<InlineCodeExample>
+  <HStack gap="sm">
+    <Kbd>K</Kbd>
+    <Kbd>⌘</Kbd>
+    <Kbd>Esc</Kbd>
+    <Kbd>Tab</Kbd>
+  </HStack>
+</InlineCodeExample>
+
+## Combos
+
+For chords, render one `Kbd` per key with a small gap. Don't put `+` between them — the visual gap already communicates the chord.
+
+<InlineCodeExample>
+  <Text>
+    Press <Kbd>⌘</Kbd> <Kbd>K</Kbd> to open the command palette.
+  </Text>
+</InlineCodeExample>
+
+## In a list of shortcuts
+
+The canonical "keyboard help" pattern — a column of action / shortcut pairs.
+
+<InlineCodeExample>
+  <Grid columns="1fr auto" gap="sm">
+    <Text>Open command palette</Text>
+    <Text><Kbd>⌘</Kbd> <Kbd>K</Kbd></Text>
+    <Text>Search the docs</Text>
+    <Text><Kbd>/</Kbd></Text>
+    <Text>Toggle theme</Text>
+    <Text><Kbd>⌘</Kbd> <Kbd>⇧</Kbd> <Kbd>T</Kbd></Text>
+    <Text>Close dialog</Text>
+    <Text><Kbd>Esc</Kbd></Text>
+  </Grid>
+</InlineCodeExample>
+
+## In an empty state
+
+A short keyboard hint next to a primary CTA reinforces a power-user shortcut.
+
+<InlineCodeExample>
+  <Text>
+    No projects yet — press <Kbd>N</Kbd> to create one.
+  </Text>
+</InlineCodeExample>
+
+## Accessibility
+
+- Renders native `<kbd>` markup to identify keyboard input; actual announcement varies by browser and assistive technology.
+- The "raised" appearance comes from a slightly heavier bottom border and inset shadow. Check key-label contrast after changing theme tokens.
+- Use platform-appropriate key names. Explain unfamiliar symbols such as `⌘` as Command in surrounding text or an accessible description.
+
+## Common pitfalls
+
+- **Don't put `+` between Kbds.** The space between two `<Kbd>` elements already reads as a chord. `<Kbd>⌘</Kbd> + <Kbd>K</Kbd>` adds noise.
+- **Don't use Kbd for code or commands.** Use `Code` for `npm install`; use `Kbd` for the keys you press.
+- **Don't wrap multi-key chords in a single Kbd.** `<Kbd>⌘K</Kbd>` reads as one key. Split them: `<Kbd>⌘</Kbd> <Kbd>K</Kbd>`.
+- **Don't use Kbd for non-keyboard hints.** Mouse buttons and gestures aren't keys — use plain prose or a custom icon.
+
+
+## Shortcut behavior belongs to the application
+
+`Kbd` displays a hint; it does not register a keyboard handler. Only advertise implemented shortcuts, avoid firing application commands while the user types in an input, and provide a visible way to perform the same action. Character-only shortcuts need a way to turn them off, remap them to include a non-character key, or restrict them to the relevant focused control. See [WCAG character-key shortcut guidance](https://www.w3.org/WAI/WCAG22/Understanding/character-key-shortcuts.html).

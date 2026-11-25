@@ -1,0 +1,110 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../documentation-imports/index.ts";
+import { Alert, Badge, Block, Button, HStack, Link, Text, ThemeStyleBlock, VStack } from "../../components";
+import { Specimen, Swatch, SwatchGrid } from "./foundation-blocks.tsx";
+
+<Meta title="Foundations/Colour" />
+
+<HideSbBar />
+
+# Colour
+
+Colour carries meaning, so it is used sparingly: a calm neutral page, Squonk
+blue for the thing to act on, and status colours only when something has a
+status. Every swatch below is read from the theme you are viewing; switch light
+and dark in the toolbar, or change a colour in the Theme panel, and they follow.
+
+## Brand and action
+
+<SwatchGrid>
+  <Swatch token="--squonk-roles-color-accent" name="Accent" use="The leading action, selected states, progress." />
+  <Swatch token="--squonk-roles-color-accent-hover" name="Accent, pointed at" use="The accent under the pointer." />
+  <Swatch token="--squonk-roles-color-on-accent" name="On accent" use="Text and icons on the accent." />
+  <Swatch token="--squonk-roles-color-link" name="Link" use="Links in running text." />
+</SwatchGrid>
+
+<Specimen>
+  <HStack gap="sm" wrap align="center">
+    <Button variant="primary">Pay now</Button>
+    <Button variant="secondary">Set up a plan</Button>
+    <Text>Read the <Link href="#colour">payment options</Link>.</Text>
+  </HStack>
+</Specimen>
+
+**The brand colour is a fill.** Use Squonk blue for buttons, selections and
+highlights. Links use the link colour, which is tuned to read as body text on
+every background.
+
+## Text
+
+<SwatchGrid>
+  <Swatch token="--squonk-roles-color-text" name="Text" use="Body text and values people type." />
+  <Swatch token="--squonk-roles-color-text-supporting" name="Supporting" use="Descriptions, captions and meta." />
+  <Swatch token="--squonk-roles-color-hint" name="Hint" use="Help under a field." />
+  <Swatch token="--squonk-roles-color-text-quiet" name="Quiet" use="De-emphasised text. Keep it readable." />
+  <Swatch token="--squonk-roles-color-invalid-text" name="Error text" use="Error messages." />
+</SwatchGrid>
+
+## Surfaces and lines
+
+<SwatchGrid>
+  <Swatch token="--squonk-roles-color-page" name="Page" use="Behind content." />
+  <Swatch token="--squonk-roles-color-surface" name="Surface" use="Cards, menus, popovers and dialogs." />
+  <Swatch token="--squonk-roles-color-well" name="Well" use="Recessed areas: tracks, code, skeletons." />
+  <Swatch token="--squonk-roles-color-hover" name="Hover" use="A row or quiet button under the pointer." />
+  <Swatch token="--squonk-roles-color-selected" name="Selected" use="A selected row or option." />
+  <Swatch token="--squonk-roles-color-backdrop" name="Backdrop" use="The dimmed page behind a dialog." />
+  <Swatch token="--squonk-roles-color-divider" name="Divider" use="Lines between rows and sections." />
+  <Swatch token="--squonk-roles-color-field-border" name="Field border" use="The edge of a field at rest." />
+  <Swatch token="--squonk-roles-color-focus-ring" name="Focus ring" use="The keyboard focus indicator." />
+</SwatchGrid>
+
+## Status
+
+Status colours always come with words: a colour alone must never be the only way
+to tell an error, a warning or success. Use them through the `tone` of a
+[Badge](?path=/docs/functional-badge--docs) or an
+[Alert](?path=/docs/functional-alert--docs), and say the status in their text.
+
+<Specimen>
+  <VStack gap="md">
+    <HStack gap="sm" wrap>
+      <Badge tone="neutral">Draft</Badge>
+      <Badge tone="info">Processing</Badge>
+      <Badge tone="success">Paid</Badge>
+      <Badge tone="warning">Due soon</Badge>
+      <Badge tone="error">Overdue</Badge>
+    </HStack>
+    <Alert tone="success" title="Sighting logged">We've received your sighting report for 12 September.</Alert>
+    <Alert tone="error" title="Payment failed">Your bank declined the payment. Try another account.</Alert>
+  </VStack>
+</Specimen>
+
+## Light and dark
+
+Every colour has a light and a dark value; components pick the right one. A
+section can take the opposite mode with `ThemeStyleBlock invertMode`, and text on
+it stays readable.
+
+<Specimen label="The same components inside ThemeStyleBlock invertMode.">
+  <ThemeStyleBlock invertMode>
+    <Block background="default" padding="md" radius="md">
+    <VStack gap="sm">
+      <Alert tone="info" title="Inverted section">Components recompute their colours for the opposite mode.</Alert>
+      <HStack gap="sm" wrap>
+        <Button variant="primary">Continue</Button>
+        <Badge tone="warning">Due soon</Badge>
+      </HStack>
+    </VStack>
+    </Block>
+  </ThemeStyleBlock>
+</Specimen>
+
+## Checking your own colours
+
+The library tests contrast for its own text roles on its own surfaces. Custom
+colours, brand overrides, translucent panels and text over images are yours to
+check: aim for 4.5:1 for normal text and 3:1 for large text and the edges of
+controls. Change colours in the theme, not in component CSS; see
+[Theme](?path=/docs/foundations-theme--docs) and
+[Purpose tokens](?path=/docs/foundations-purpose-tokens--docs).

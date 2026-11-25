@@ -1,0 +1,82 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../documentation-imports/index.ts";
+import { Example } from "./pattern-blocks.tsx";
+import { FirstRunExample, SetupChecklistExample } from "./screen-examples.tsx";
+
+<Meta title="Patterns/Onboarding and first run" />
+
+<HideSbBar />
+
+# Onboarding and first run
+
+The first visit is the screen with the least in it and the most riding on it.
+Don't explain the app; get people to the first useful thing. Show what will
+appear and offer the first step, then step out of the way. Compose
+[EmptyState](?path=/docs/layout-empty-state--docs),
+[Illustration](?path=/docs/components-text-and-icons-illustration--docs),
+[ProgressBar](?path=/docs/functional-progress-bar--docs),
+[Card](?path=/docs/layout-card--docs) and [Button](?path=/docs/functional-button--docs).
+
+## Which approach
+
+| The situation | Use |
+| --- | --- |
+| An area that's empty until people add something | A first-use [EmptyState](?path=/docs/layout-empty-state--docs): what will appear here, and one primary action to start |
+| Several set-up steps people can do in any order, over days | A set-up checklist in a Card on the overview, with progress |
+| Steps that must happen in order before the app works | A short [multi-step form](?path=/docs/patterns-forms-multi-step-forms--docs), then the app |
+| A new feature in an app people already know | An inline [Alert](?path=/docs/functional-alert--docs) `tone="info"` they can dismiss (`onDismiss`), next to the feature |
+| A term or field people may not understand | `helperText`, or a [Popover](?path=/docs/functional-popover--docs) with a link to more |
+
+## First use
+
+<Example caption="A first-use empty state: an illustration, what will appear here, and the first step.">
+  <FirstRunExample />
+</Example>
+
+A first-use empty state says what the area is for and offers one way to start.
+An [Illustration](?path=/docs/components-text-and-icons-illustration--docs) makes
+the moment friendlier; leave it out in small spaces. Make the action specific
+("Log your first sighting", not "Get started"). See
+[Empty and error states](?path=/docs/patterns-empty-and-error-states--docs).
+
+## Set-up checklists
+
+<Example caption="Progress in words and a bar, done steps marked, and the next step as the one primary action.">
+  <SetupChecklistExample />
+</Example>
+
+- **Say how far along people are** in words ("2 of 4 done") as well as the bar.
+- **Offer the next step** as the one primary action; the rest stay in the list.
+- **Let people leave and come back.** Keep progress on the server, not in the
+  browser.
+- **Go away when it's done.** Thank them once, then remove the checklist.
+
+## Tours and walkthroughs
+
+The library has no tour or coach-mark component, on purpose. Overlays that
+point at parts of the screen hide what they explain, are hard to use with a
+keyboard or a screen reader, and are usually skipped. Put the explanation where
+it's needed: a clear label, help text, an empty state that teaches by doing.
+
+## Accessibility
+
+- A checklist is an ordered list (`<ol>`); mark done steps with text or an icon
+  with a `label`, not with colour or strikethrough alone.
+- Don't move focus to welcome messages or dismissible Alerts on load.
+- A dismissed message stays dismissed: remember it on the server.
+
+## Pitfalls
+
+- **A welcome modal before anything else.** It blocks the first task to talk
+  about it.
+- **Empty dashboards.** A new account's overview shows set-up, not zeros.
+- **Asking for everything up front.** Ask only what the first task needs; the
+  rest can wait until it matters.
+- **Onboarding that never ends.** Every hint has an end: when it's done, or when
+  it's dismissed.
+
+## Related
+
+- [Empty and error states](?path=/docs/patterns-empty-and-error-states--docs)
+- [Dashboards and summaries](?path=/docs/patterns-dashboards-and-summaries--docs)
+- [Illustrations, icons and images](?path=/docs/patterns-illustrations-icons-and-images--docs)

@@ -1,0 +1,90 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../documentation-imports/index.ts";
+import { Example } from "./pattern-blocks.tsx";
+import { SettingsExample } from "./screen-examples.tsx";
+
+<Meta title="Patterns/Settings and preferences" />
+
+<HideSbBar />
+
+# Settings and preferences
+
+A settings page is a set of small, separate decisions that people come back to
+rarely and want to get right. Group them by topic, make it obvious when each
+change takes effect, and keep the risky ones apart. Compose
+[Heading](?path=/docs/functional-primitives-heading--docs)s,
+[Switch](?path=/docs/functional-switch--docs),
+[RadioGroup](?path=/docs/functional-radio-group--docs),
+[Select](?path=/docs/functional-select--docs),
+[Fieldset](?path=/docs/functional-fieldset--docs) and
+[Button](?path=/docs/functional-button--docs).
+
+<Example caption="Notifications save as they're switched. Statements are a small form with its own Save button that names what it saves.">
+  <SettingsExample />
+</Example>
+
+## Saving: at once, or with a button
+
+| The setting… | Use | Saves |
+| --- | --- | --- |
+| Turns one thing on or off ("Email reminders") | [Switch](?path=/docs/functional-switch--docs) | At once. Say "Saved", or move it back and say why if it fails |
+| Is one choice from a few, with no side effects ("Theme: light, dark, system") | [RadioGroup](?path=/docs/functional-radio-group--docs) or [Select](?path=/docs/functional-select--docs) | At once, the same way |
+| Is several fields that only make sense together (an address, a bank account) | A small form in its own section | With a button that names it: "Save address" |
+| Is text people type | [TextField](?path=/docs/functional-text-field--docs) in a section form | With the section's button, never on each keystroke |
+| Is hard to undo (cancel the membership, stop all newsletters) | A Button `danger` in its own section, last | After a [ConfirmModal](?path=/docs/functional-modal--docs) that names the consequence |
+
+Say at the top of each section which kind it is ("These change as soon as you
+switch them", "Saved when you press the button"). Never mix the two inside one
+group. See [Switches, checkboxes and saving](?path=/docs/patterns-switches-checkboxes-and-saving--docs).
+
+## Laying out a settings page
+
+- **Group by topic**, each group a section with a heading and a one-line
+  description: Contact details, Notifications, Security, Danger zone.
+- **Long pages get a side navigation.** With more than five or six groups, add a
+  [NavList](?path=/docs/components-navigation-navlist--docs) of the sections, or
+  split them into pages under a settings section of the app.
+- **One column.** Settings read top to bottom; keep them in a column capped at a
+  readable width.
+- **Destructive settings go last**, in their own section, with the consequence
+  in words.
+
+## Labels and help
+
+Label the setting, not its state: "Email reminders", not "Reminders are on".
+Use `helperText` for what changes ("Before each due date. You'll still get
+notices.") and for anything people might worry about. See
+[Writing for the interface](?path=/docs/patterns-writing-for-the-interface--docs).
+
+## Accessibility
+
+- Each section is a `<section>` named by its heading (`aria-labelledby`), so
+  screen-reader users can move between groups.
+- A switch that saves at once announces the result near itself (`role="status"`),
+  not in a toast only.
+- Related fields share a [Fieldset](?path=/docs/functional-fieldset--docs) with a
+  legend that states the question.
+- Don't disable a Save button to show nothing has changed; let it say "No
+  changes to save" if pressed.
+
+## Pitfalls
+
+- **One Save button for the whole page.** People change one thing, scroll, and
+  leave without saving. Save per section, or at once.
+- **Switches in a form that saves later.** People can't tell whether anything
+  changed.
+- **Settings in a modal.** A settings page people return to deserves its own
+  URL; use a modal only for one quick change.
+- **Hidden consequences.** If a setting affects other people (a household member's
+  access), say so beside it.
+
+The [Account settings](?path=/story/examples-account-settings--overview)
+example shows each kind: a contact form with an error summary, switches that
+save at once (one fails and moves back), statements saved by a button, signed-in
+devices with a menu, and a confirmation that can't be dismissed while it works.
+
+## Related
+
+- [Switches, checkboxes and saving](?path=/docs/patterns-switches-checkboxes-and-saving--docs)
+- [Destructive actions](?path=/docs/patterns-destructive-actions--docs)
+- [Forms](?path=/docs/patterns-forms-overview--docs)

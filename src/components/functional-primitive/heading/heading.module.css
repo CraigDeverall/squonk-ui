@@ -1,0 +1,30 @@
+@layer dt.components {
+  /* Inside any heading, <em> is a coloured, non-italic accent fragment —
+     the "Ship products, **not platforms.**" pattern. */
+  .root {
+    margin: 0;
+    font-family: var(--squonk-roles-type-heading-font);
+    font-size: var(--heading-size);
+    /* Set by the weight prop below; with none, the heading sets it inline to
+       its level's default weight. */
+    font-weight: var(--heading-weight);
+    line-height: 1.25;
+    letter-spacing: 0;
+    color: var(--squonk-roles-color-heading);
+  }
+
+  .root[data-register="default"] { letter-spacing: var(--squonk-components-heading-tracking-default); }
+  .root[data-register="large"] { line-height: 1.1; letter-spacing: var(--squonk-components-heading-tracking-large); }
+  .root[data-register="hero"] { line-height: 1.02; letter-spacing: var(--squonk-components-heading-tracking-hero); }
+
+  .root[data-weight="regular"] { --heading-weight: var(--squonk-roles-type-regular); }
+  .root[data-weight="bold"] { --heading-weight: var(--squonk-roles-type-strong); }
+  .root[data-weight="heavy"] { --heading-weight: 900; }
+
+  .root[data-tone="secondary"] { color: var(--squonk-roles-color-text-supporting); }
+
+  .root em {
+    font-style: normal;
+    color: var(--squonk-components-heading-accent);
+  }
+}

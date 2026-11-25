@@ -1,0 +1,17 @@
+@layer dt.components {
+  /* Follows the surrounding text by default (1em), so an icon next to a
+     label matches it. Fixed steps match the type sizes; "control"
+     follows the Presentation register's icon size. */
+  .root {
+    --icon-size: 1em;
+    width: var(--icon-size);
+    height: var(--icon-size);
+    flex-shrink: 0;
+    vertical-align: -0.125em;
+  }
+
+  .root[data-size="sm"] { --icon-size: var(--squonk-components-icon-small); }
+  .root[data-size="md"] { --icon-size: var(--squonk-components-icon-medium); }
+  .root[data-size="lg"] { --icon-size: var(--squonk-components-icon-large); }
+  .root[data-size="control"] { --icon-size: var(--icon-control-size); }
+}

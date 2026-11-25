@@ -1,0 +1,86 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--squonk-spacing-sm);
+  font-family: var(--squonk-typography-fonts-base);
+  color: var(--squonk-colors-text-primary);
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--squonk-spacing-md);
+}
+
+.toolbar > :first-child {
+  flex: 1 1 16rem;
+}
+
+.status {
+  margin: 0;
+  min-height: 1.5em;
+  color: var(--squonk-colors-text-secondary);
+  font-size: var(--squonk-typography-sizes-sm);
+}
+
+.status code {
+  font-family: var(--squonk-typography-fonts-code);
+  color: var(--squonk-colors-text-primary);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
+  gap: var(--squonk-spacing-xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--squonk-spacing-xs);
+  width: 100%;
+  padding: var(--squonk-spacing-md) var(--squonk-spacing-xs);
+  border: var(--squonk-borders-width) solid var(--squonk-colors-border-default);
+  border-radius: var(--squonk-borders-radius-md);
+  background: var(--squonk-colors-background-default);
+  color: var(--squonk-colors-text-primary);
+  font: inherit;
+  cursor: pointer;
+}
+
+.tile:hover {
+  background: var(--squonk-colors-background-surface);
+  border-color: var(--squonk-colors-border-strong);
+}
+
+.tile:focus-visible {
+  outline: 2px solid var(--squonk-colors-border-focus);
+  outline-offset: 2px;
+}
+
+.tile[data-copied] {
+  border-color: var(--squonk-colors-border-focus);
+}
+
+/* Beats the icon's own 1em default whatever order the stylesheets load in. */
+.tile .glyph {
+  --icon-size: var(--squonk-typography-sizes-xl);
+}
+
+.name {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  font-size: var(--squonk-typography-sizes-xs);
+  color: var(--squonk-colors-text-secondary);
+  text-align: center;
+}
+
+.empty {
+  margin: 0;
+  color: var(--squonk-colors-text-secondary);
+}

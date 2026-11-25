@@ -1,0 +1,23 @@
+name: squonk-ui-tests
+services:
+  playwright-tests:
+    build:
+      context: ../
+      dockerfile: ./test-setup/Dockerfile
+    # Run as the host user so snapshots, reports and results written to the
+    # mounted folders belong to you, not root (storybook-test.sh sets these).
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+    ports:
+      - "9323:9323"
+    environment:
+      - UPDATE_SNAPSHOTS=$UPDATE_SNAPSHOTS
+      - HOME=/tmp
+    volumes:
+      - ../src:/workspace/src
+      - ../test-setup:/workspace/test-setup
+      - ../test-results:/workspace/test-results
+      - ../playwright-report:/workspace/playwright-report
+      # Mount playwright.config.ts so config changes don't require an image rebuild.
+      # Without this, the baked-in copy from `COPY . /workspace/` is used until the
+      # next manual `docker compose build` — silent staleness.
+      - ../playwright.config.ts:/workspace/playwright.config.ts

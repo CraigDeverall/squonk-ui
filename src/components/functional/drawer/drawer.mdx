@@ -1,0 +1,77 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as DrawerStories from "./drawer.stories.tsx";
+import meta from "./drawer.stories.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Drawer
+
+<ResizableCanvas of={DrawerStories.Default} defaultRecipe="centered" defaultHeight={160} />
+
+`Drawer` slides a panel in from the edge of the screen for a task or detail that
+needs more room than a `Popover`, while keeping the page beside it in view:
+editing a record from a list, a case's details, filters on a phone. It behaves
+like a `Modal`: focus stays inside until it closes.
+
+```tsx
+import { Drawer } from "@squonkstack/ui/drawer";
+
+<Drawer
+  open={open}
+  onClose={() => setOpen(false)}
+  title="Contact details"
+  footer={<Button variant="primary" onClick={save}>Save</Button>}
+>
+  <ContactForm />
+</Drawer>
+```
+
+Use a `Modal` for a short decision ("Delete this draft?"), and a separate page for
+a long task people may want to come back to.
+
+<Controls />
+
+## Placement
+
+`end` (the default) suits detail and editing. `start` suits navigation menus.
+`bottom` suits short choices on phones, close to the thumb.
+
+<ResizableCanvas of={DrawerStories.Start} defaultRecipe="centered" defaultHeight={160} />
+
+<ResizableCanvas of={DrawerStories.Bottom} defaultRecipe="centered" defaultHeight={160} />
+
+## Size
+
+`sm`, `md` and `lg` are 320, 420 and 640px wide (40, 60 and 85% of the screen
+height at the bottom), and never wider than the screen less a gutter.
+
+## Forms and unsaved changes
+
+The title and footer stay in place while the body scrolls. When closing would
+throw away changes, ask first: a `ConfirmModal` opened from a Drawer stacks above it.
+
+<ResizableCanvas of={DrawerStories.EditInPlace} defaultRecipe="centered" defaultHeight={160} />
+
+## Accessibility
+
+- A modal `dialog` named by `title`. Focus moves into it on open, stays inside
+  while open, and returns to the control that opened it on close.
+- Escape and a backdrop press request close through `onClose`; the page behind is
+  hidden from assistive technology and doesn't scroll.
+- The slide animation is removed when people ask for reduced motion.
+
+## Common pitfalls
+
+- **Don't use a Drawer for primary navigation on desktop.** Keep navigation visible.
+- **Don't stack Drawers.** Open a Modal from a Drawer for a confirmation, not
+  another Drawer.
+- **Don't lose work on close.** Confirm before discarding changes.
+
+## UX guidance
+
+- [Overlays and disclosures](?path=/docs/patterns-overlays-and-disclosures--docs)
+- [Focus management](?path=/docs/patterns-focus-management--docs)

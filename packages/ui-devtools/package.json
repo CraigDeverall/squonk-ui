@@ -1,0 +1,25 @@
+{
+  "name": "@squonkstack/ui-devtools",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Chrome extension: edit the theme of any site built with @squonkstack/ui, live, from a side panel.",
+  "type": "module",
+  "scripts": {
+    "build": "vite build && vite build --mode content",
+    "package": "vite build && vite build --mode content && node scripts/package.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test scripts/*.test.mjs",
+    "test:e2e": "vite build && vite build --mode content && vite build --mode fixture && node test/e2e.mjs"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.1.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CraigDeverall/squonk-ui.git",
+    "directory": "packages/ui-devtools"
+  },
+  "bugs": {
+    "url": "https://github.com/CraigDeverall/squonk-ui/issues"
+  }
+}

@@ -1,0 +1,92 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as TooltipStories from "./tooltip.stories.tsx";
+import meta from "./tooltip.stories.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Tooltip
+
+<ResizableCanvas of={TooltipStories.Default} defaultRecipe="centered" defaultHeight={160} />
+
+`Tooltip` shows a short hint when someone hovers or tabs to a control. It is for
+*extra* information: naming an icon-only button, or explaining a term. Anything a
+person needs in order to finish the task belongs on the page, because touch
+screens have no hover and many people never discover a tooltip.
+
+```tsx
+import { Tooltip } from "@squonkstack/ui/tooltip";
+
+<Tooltip content="Copies the share link">
+  <Button>Copy link</Button>
+</Tooltip>
+```
+
+<Controls />
+
+## The trigger
+
+The child is the trigger. It must be **one focusable element that accepts a `ref`**:
+`Button`, `IconButton`, `Link` or a native `<button>`. The tooltip adds its
+event handlers and `aria-describedby` to that element, so no wrapper is added
+to the page.
+
+<ResizableCanvas of={TooltipStories.Open} defaultRecipe="centered" defaultHeight={160} />
+
+## Placement
+
+`placement` is a preference. The hint flips to the opposite side when there is no
+room, and is portalled to `<body>`, so a scrolling table or a card with
+`overflow: hidden` never clips it.
+
+<ResizableCanvas of={TooltipStories.Placements} defaultRecipe="centered" defaultHeight={220} />
+
+## Naming icon-only buttons
+
+The most common use. Give the button its accessible name with `aria-label`
+(or use `IconButton`, which does both) and repeat it in the tooltip so sighted
+mouse users can learn what the icon means.
+
+<ResizableCanvas of={TooltipStories.OnIconButtons} defaultRecipe="centered" defaultHeight={140} />
+
+## Explaining a term
+
+<ResizableCanvas of={TooltipStories.ExplainATerm} defaultRecipe="centered" defaultHeight={180} />
+
+## Timing
+
+The hint opens after `openDelay` (400ms) of hover, so it doesn't flash while the
+pointer crosses the page, and immediately on keyboard focus. It closes
+`closeDelay` (150ms) after the pointer leaves, and stays open while the pointer is
+over the hint itself.
+
+## Accessibility
+
+- While open, the trigger's `aria-describedby` points at the hint, so screen
+  readers announce it after the control's name. It is a description, not a name:
+  an icon-only control still needs its own `aria-label`.
+- Opens on keyboard focus as well as hover. `Escape` closes it without moving focus.
+- The pointer can move onto the hint without it closing, and it stays until the
+  pointer or focus leaves (WCAG 1.4.13, content on hover or focus).
+- The hint has `role="tooltip"` and must not contain links, buttons or other
+  controls. Use a `Popover` for interactive content.
+
+## Common pitfalls
+
+- **Don't wrap a disabled button.** Disabled buttons fire no pointer or focus
+  events, so the tooltip never opens. Explain why something is unavailable in
+  helper text instead.
+- **Don't put essential instructions in a tooltip.** Touch users can't hover;
+  show the information on the page.
+- **Don't wrap plain text.** The trigger must be focusable, or keyboard users
+  can't reach the hint.
+- **Don't repeat the visible label.** "Save" on a button labelled "Save" adds
+  noise for screen-reader users.
+
+## UX guidance
+
+- [Overlays and disclosures](?path=/docs/patterns-overlays-and-disclosures--docs)
+- [Labels, help and validation](?path=/docs/patterns-labels-help-and-validation--docs)

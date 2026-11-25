@@ -1,0 +1,106 @@
+@layer dt.components {
+  .root {
+    position: relative;
+    display: inline-block;
+  }
+
+  .trigger {
+    appearance: none;
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--squonk-roles-space-icon-gap);
+    border-radius: var(--squonk-roles-radius-control);
+  }
+
+  .trigger[data-focus-visible] {
+    outline: var(--squonk-roles-border-focus-width) solid var(--squonk-roles-color-focus-ring);
+    outline-offset: var(--squonk-roles-border-focus-offset);
+  }
+
+  .trigger[data-disabled] {
+    cursor: not-allowed;
+    opacity: var(--squonk-roles-state-disabled-opacity);
+  }
+
+  /* React Aria sets an inline z-index and caps the height to the room
+     available; the token wins, and the menu inside scrolls. */
+  .popover {
+    display: flex;
+    z-index: var(--squonk-roles-layer-menu) !important;
+    transform-origin: var(--trigger-anchor-point);
+  }
+
+  /* 180px minimum: tuned for item legibility, not the spacing scale. */
+  .content {
+    min-width: max(var(--trigger-width, 0px), 180px);
+    overflow-y: auto;
+    box-sizing: border-box;
+    padding: var(--squonk-roles-space-list-inset);
+    display: flex;
+    flex-direction: column;
+    gap: var(--squonk-roles-space-list-gap);
+    background-color: var(--squonk-roles-color-surface);
+    border: var(--squonk-roles-border-width) solid var(--squonk-roles-color-floating-border);
+    border-radius: var(--squonk-roles-radius-list);
+    box-shadow: var(--squonk-roles-elevation-floating);
+    font-family: var(--squonk-roles-type-font);
+    outline: none;
+  }
+
+  .item {
+    --item-color: var(--squonk-roles-color-on-surface);
+    box-sizing: border-box;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: var(--squonk-roles-space-item-gap);
+    padding: var(--squonk-roles-space-list-item-inset-block) var(--squonk-roles-space-list-item-inset-inline);
+    /* Concentric with the panel's corners. The line height is fixed because
+       the panel's radius is limited by the height of a row. */
+    border-radius: var(--squonk-roles-radius-list-item);
+    line-height: var(--squonk-roles-type-tight-line-height);
+    font-size: var(--squonk-roles-type-list-item);
+    text-align: left;
+    white-space: nowrap;
+    cursor: pointer;
+    color: var(--item-color);
+  }
+
+  .item[data-tone="danger"] { --item-color: var(--squonk-roles-color-danger); }
+
+  /* Focus moves onto items, by keyboard or by following the pointer.
+     Keyboard focus also draws the ring. */
+  .item[data-focused] {
+    --item-color: var(--squonk-roles-color-on-hover);
+    background-color: var(--squonk-roles-color-hover);
+    outline: none;
+  }
+
+  .item[data-tone="danger"][data-focused] {
+    --item-color: var(--squonk-roles-color-danger-on-hover);
+  }
+
+  .item[data-focus-visible] {
+    outline: var(--squonk-roles-border-focus-width) solid var(--squonk-roles-color-focus-ring);
+    outline-offset: calc(var(--squonk-roles-border-focus-offset) * -1);
+  }
+
+  .item[data-disabled] {
+    cursor: not-allowed;
+    opacity: var(--squonk-roles-state-disabled-opacity);
+  }
+
+  .separator {
+    height: 0;
+    border: none;
+    border-top: var(--squonk-roles-border-width) solid var(--squonk-roles-color-divider);
+    margin: var(--squonk-roles-space-list-gap) 0;
+  }
+}

@@ -1,0 +1,88 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../documentation-imports/index.ts";
+import { Do, DoDont, Dont, Example } from "./pattern-blocks.tsx";
+import { HelpAsTextExample, HelpInTooltipExample, OverlayLadderExample } from "./pattern-examples.tsx";
+
+<Meta title="Patterns/Overlays and disclosures" />
+
+<HideSbBar />
+
+# Overlays and disclosures
+
+Pick the lightest surface that does the job. Each step up interrupts more and
+costs keyboard and screen-reader users more effort.
+
+| You need to… | Use | In `@squonkstack/ui` |
+| --- | --- | --- |
+| Show or hide a section in place (an FAQ answer, advanced settings) | An inline disclosure: a button with `aria-expanded` that reveals content below it | [Accordion](?path=/docs/functional-accordion--docs), with one item for a single disclosure |
+| Offer a short list of commands for an item | A menu button | [DropdownMenu](?path=/docs/functional-dropdown-menu--docs) |
+| Pick a value from a list | A select | [Select](?path=/docs/functional-select--docs) |
+| Show a little content next to a control, with links or a few fields, without blocking the page | A non-modal dialog | [Popover](?path=/docs/functional-popover--docs) |
+| Ask for a decision or a short task that must finish before continuing | A modal dialog | [Modal](?path=/docs/functional-modal--docs), [ConfirmModal](?path=/docs/functional-modal--docs) |
+| A longer side task while keeping the page in view | A modal dialog at the edge of the screen | [Drawer](?path=/docs/functional-drawer--docs) |
+| Name an icon-only control, or explain a term in a few words | A tooltip | [Tooltip](?path=/docs/functional-tooltip--docs); [IconButton](?path=/docs/functional-iconbutton--docs) shows its label as one |
+
+<Example caption="From lightest to heaviest: an inline disclosure, a popover with a link, a tooltip naming an icon button, and a modal for a short task.">
+  <OverlayLadderExample />
+</Example>
+
+## Inline disclosure first
+
+If the extra content belongs to the page and the user may want it next to
+everything else, reveal it in place. Nothing is hidden behind a layer, the page
+keeps its scroll position, and the content is part of the normal reading order.
+Keep interactive elements out of the disclosure button itself; put related
+actions next to it.
+
+## Menus are for actions, not values
+
+`DropdownMenu` lists things to *do*. It has no value of its own and closes after
+a choice. Use `Select` when the user is choosing a *value* that the form or page
+keeps. Don't use a menu for site navigation: menu semantics promise app-like
+keyboard behaviour that ordinary links don't need.
+
+## Modal only when the page must wait
+
+A `Modal` makes the rest of the page inert and hidden from assistive technology
+until it closes, so use it only when the user genuinely can't continue without
+answering. Give it a visible title (`title`) or an `aria-label`, keep a visible
+way out (`onClose` shows the × button; Escape also asks to close), and keep the
+content short. For long forms or multi-step work, use a page.
+
+When content must float without blocking the page (an explanation with a link,
+a few filters), use a `Popover`: it closes when people click elsewhere, so never
+put anything they must finish in one. For longer side tasks use a `Drawer`, which
+blocks the page like a `Modal` but keeps it in view.
+
+## Tooltips are supplementary
+
+Hover-only content is invisible to touch users and easy to miss with a magnifier.
+If information is needed to use a control, show it as `helperText` on the field
+instead. Never put links or buttons in a tooltip; content that needs interaction
+needs a dialog or disclosure.
+
+<DoDont>
+  <Do caption="The format is help text: always visible, and read with the field.">
+    <HelpAsTextExample />
+  </Do>
+  <Dont caption="The format hidden in a tooltip: touch users never see it.">
+    <HelpInTooltipExample />
+  </Dont>
+</DoDont>
+
+## Related
+
+- [Focus management](?path=/docs/patterns-focus-management--docs)
+- [Destructive actions](?path=/docs/patterns-destructive-actions--docs)
+- [Menus and commands](?path=/docs/patterns-menus-and-commands--docs)
+
+---
+
+Sources, paraphrased: [WAI-ARIA Authoring Practices: dialog (modal)](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/),
+[disclosure](https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/),
+[menu button](https://www.w3.org/WAI/ARIA/apg/patterns/menu-button/) and
+[tooltip](https://www.w3.org/WAI/ARIA/apg/patterns/tooltip/), © W3C, under the
+[W3C Software and Document License](https://www.w3.org/copyright/software-license/);
+[React Spectrum Tooltip and ContextualHelp guidance](https://react-spectrum.adobe.com/v3/Tooltip.html), © Adobe;
+[Chakra UI v3 Dialog](https://chakra-ui.com/docs/components/dialog) and
+[Hover Card](https://chakra-ui.com/docs/components/hover-card) notes (MIT).

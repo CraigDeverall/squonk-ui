@@ -1,0 +1,135 @@
+@layer dt.components {
+  .root {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--squonk-roles-space-icon-gap);
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: var(--squonk-components-tag-padding-block-default) var(--squonk-components-tag-padding-inline-default);
+    font-family: var(--squonk-roles-type-font);
+    font-size: var(--squonk-components-tag-font-size-default);
+    font-weight: var(--squonk-roles-type-regular);
+    line-height: var(--squonk-roles-type-body-line-height);
+    border-radius: var(--squonk-roles-radius-chip);
+    border: var(--squonk-roles-border-width) solid transparent;
+    vertical-align: middle;
+  }
+
+  /* Tone: point the local palette at the tone's --squonk-colors-tone-* set.
+     A colour the theme added (data-tone="custom") sets the same --tone-*
+     properties inline (src/theme/tone.ts), so the variants below cover it. */
+  .root[data-tone="neutral"] {
+    --tone-solid: var(--squonk-colors-tone-neutral-solid);
+    --tone-subtle: var(--squonk-colors-tone-neutral-subtle);
+    --tone-on-subtle: var(--squonk-colors-tone-neutral-on-subtle);
+    --tone-outline-text: var(--squonk-colors-tone-neutral-outline-text);
+  }
+  .root[data-tone="primary"] {
+    --tone-solid: var(--squonk-colors-tone-primary-solid);
+    --tone-subtle: var(--squonk-colors-tone-primary-subtle);
+    --tone-on-subtle: var(--squonk-colors-tone-primary-on-subtle);
+    --tone-outline-text: var(--squonk-colors-tone-primary-outline-text);
+  }
+  .root[data-tone="info"] {
+    --tone-solid: var(--squonk-colors-tone-info-solid);
+    --tone-subtle: var(--squonk-colors-tone-info-subtle);
+    --tone-on-subtle: var(--squonk-colors-tone-info-on-subtle);
+    --tone-outline-text: var(--squonk-colors-tone-info-outline-text);
+  }
+
+  /* Variant: read only the local palette. */
+  .root[data-variant="subtle"] {
+    background-color: var(--tone-subtle);
+    color: var(--tone-on-subtle);
+  }
+  .root[data-variant="outline"] {
+    background-color: transparent;
+    color: var(--tone-outline-text);
+    border-color: var(--tone-solid);
+  }
+
+  /* Register (from <Presentation>) */
+  .root[data-register="compact"] {
+    padding: var(--squonk-components-tag-padding-block-compact) var(--squonk-components-tag-padding-inline-compact);
+    font-size: var(--squonk-components-tag-font-size-compact);
+  }
+  .root[data-register="large"] {
+    padding: var(--squonk-components-tag-padding-block-large) var(--squonk-components-tag-padding-inline-large);
+    font-size: var(--squonk-components-tag-font-size-large);
+  }
+  .root[data-register="hero"] {
+    padding: var(--squonk-components-tag-padding-block-hero) var(--squonk-components-tag-padding-inline-hero);
+    font-size: var(--squonk-components-tag-font-size-hero);
+  }
+
+  .root[data-disabled] { opacity: var(--squonk-roles-state-disabled-opacity); }
+
+  /* A grouped tag is the focus target itself. */
+  .root[data-focus-visible] {
+    outline: var(--squonk-roles-border-focus-width) solid var(--squonk-roles-color-focus-ring);
+    outline-offset: var(--squonk-roles-border-focus-offset);
+  }
+
+  .icon {
+    display: inline-flex;
+    flex-shrink: 0;
+  }
+
+  .label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* 1.25em square: a 20px target at the default size, enlarged by the
+     tag's own padding. */
+  .remove {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 1.25em;
+    height: 1.25em;
+    margin-inline: calc(var(--squonk-components-tag-remove-offset-start) * -1) calc(var(--squonk-components-tag-remove-offset-end) * -1);
+    padding: 0;
+    border: none;
+    /* Round inside a round tag, square inside a square one. */
+    border-radius: max(var(--squonk-roles-radius-item), calc(var(--squonk-roles-radius-chip) - var(--squonk-components-tag-padding-block-default)));
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .remove[data-hovered]:not([data-disabled]) {
+    background-color: color-mix(in srgb, currentColor 14%, transparent);
+  }
+
+  .remove[data-focus-visible] {
+    outline: var(--squonk-roles-border-focus-width) solid var(--squonk-roles-color-focus-ring);
+    outline-offset: 0;
+  }
+
+  .remove[data-disabled] { cursor: not-allowed; }
+
+  .group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--squonk-roles-space-field-gap);
+    font-family: var(--squonk-roles-type-font);
+  }
+
+  .groupLabel {
+    font-size: var(--squonk-roles-type-label);
+    font-weight: var(--squonk-roles-type-strong);
+    color: var(--squonk-roles-color-text);
+  }
+
+  .list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--squonk-roles-space-control-group-gap);
+  }
+}

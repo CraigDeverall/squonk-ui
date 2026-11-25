@@ -1,0 +1,84 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as PopoverStories from "./popover.stories.tsx";
+import meta from "./popover.stories.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Popover
+
+<ResizableCanvas of={PopoverStories.Default} defaultHeight={300} />
+
+`Popover` shows a small panel next to the control that opened it: an
+explanation with a link, a few filters, a person's contact details. Unlike a
+`Tooltip`, it opens on a click and can hold links, buttons and form fields.
+Unlike a `Modal`, the page behind stays usable and it closes when people click
+elsewhere.
+
+```tsx
+import { Popover } from "@squonkstack/ui/popover";
+
+<Popover trigger={<Button>What's included?</Button>} title="Included in your dues">
+  <Text>Annual dues, a late fee and the Swamp Fund levy to today.</Text>
+</Popover>
+```
+
+Use a `Modal` when people must finish or cancel before carrying on, a `Drawer`
+for longer side tasks, and a `DropdownMenu` for a list of actions.
+
+<Controls />
+
+## The trigger
+
+`trigger` is one focusable element that accepts a `ref`, usually a `Button` or
+`IconButton`. The popover adds `aria-expanded` and `aria-controls` to it.
+
+<ResizableCanvas of={PopoverStories.Open} defaultHeight={300} />
+
+## Arrow and placement
+
+`placement` is a preference; the panel flips when there is no room. `arrow` adds
+a pointer at the trigger.
+
+<ResizableCanvas of={PopoverStories.WithArrow} defaultHeight={300} />
+
+## A small form
+
+Filters that apply on demand. Keep it to a few fields; anything longer belongs
+in a `Drawer`.
+
+<ResizableCanvas of={PopoverStories.Filters} defaultHeight={360} />
+
+## Explaining a figure
+
+An info `IconButton` that opens a short explanation with a link to more. Use a
+Popover rather than a Tooltip whenever the explanation has a link.
+
+<ResizableCanvas of={PopoverStories.ExplainAFigure} defaultHeight={260} />
+
+## Details on demand
+
+<ResizableCanvas of={PopoverStories.ContactCard} defaultHeight={260} />
+
+## Accessibility
+
+- The panel is a non-modal `dialog`, named by `title` and described by
+  `description`. Without a title, give it an `aria-label`.
+- Opening moves focus into the panel; Escape, the close button or a click outside
+  closes it and returns focus to the trigger.
+- The panel is portalled so it is never clipped. While it is open, `Tab` stays
+  within the panel and the rest of the page is hidden from assistive
+  technology, so close it to move on.
+
+## Common pitfalls
+
+- **Don't use a Popover for essential steps.** It closes when people click away.
+- **Don't open a Popover on hover.** Use a `Tooltip` for hover hints.
+- **Don't put a long form in a Popover.** It scrolls in a small box; use a `Drawer`.
+
+## UX guidance
+
+- [Overlays and disclosures](?path=/docs/patterns-overlays-and-disclosures--docs)

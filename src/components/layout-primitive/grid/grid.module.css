@@ -1,0 +1,23 @@
+@layer dt.components {
+  .root {
+    display: grid;
+    gap: var(--grid-gap);
+    min-width: 0;
+    grid-template-columns: var(--grid-columns);
+  }
+
+  /* Media queries can't read var(), so these are the default theme
+     breakpoints (tablet 768px, desktop 1024px, wide 1280px). grid.test.ts
+     fails if they drift from theme.breakpoints. */
+  @media (min-width: 768px) {
+    .tablet { grid-template-columns: var(--grid-columns-tablet); }
+  }
+
+  @media (min-width: 1024px) {
+    .desktop { grid-template-columns: var(--grid-columns-desktop); }
+  }
+
+  @media (min-width: 1280px) {
+    .wide { grid-template-columns: var(--grid-columns-wide); }
+  }
+}
