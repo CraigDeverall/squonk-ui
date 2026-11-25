@@ -7712,7 +7712,7 @@
         {
           "path": "src/demos/theme-showcase.test.tsx",
           "kind": "Playwright component",
-          "sha256": "86217e2c1be1d30b04d934f11b0f06bb68769320bcc3d05c1f2785b298008826"
+          "sha256": "b541e17a10f674d8e66abeae91b09c6d5efe91187c1d0d23b114ad09c008b562"
         }
       ],
       "patterns": [

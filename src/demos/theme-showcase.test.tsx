@@ -6,6 +6,12 @@ test("Renders the same components in Tidepool and Monolith", async ({
   mount,
   page,
 }) => {
+  // The example themes' web fonts come from Google, which a test runner may
+  // or may not reach. Block them so the snapshot always shows the fallback
+  // fonts and is the same on every machine.
+  await page.route(/^https:\/\/fonts\.(googleapis|gstatic)\.com\//, (route) =>
+    route.abort()
+  );
   await page.setViewportSize({ width: 1280, height: 1000 });
   await mount(<ThemeShowcase themes={["tidepool", "monolith"]} />);
   await expect(
@@ -14,28 +20,7 @@ test("Renders the same components in Tidepool and Monolith", async ({
   await expect(
     page.getByRole("heading", { level: 2, name: "Monolith" })
   ).toBeVisible();
-  // The example themes' web fonts come from Google through a stylesheet the
-  // showcase adds after mounting. `document.fonts.ready` alone can resolve
-  // before that stylesheet arrives, so wait for it, then load every face it
-  // declares. If Google can't be reached, carry on with the fallback fonts.
-  await page
-    .waitForFunction(
-      () =>
-        (
-          document.getElementById(
-            "example-theme-fonts"
-          ) as HTMLLinkElement | null
-        )?.sheet,
-      undefined,
-      { timeout: 15_000 }
-    )
-    .catch(() => {});
-  await page.evaluate(async () => {
-    await Promise.all(
-      [...document.fonts].map((face) => face.load().catch(() => undefined))
-    );
-    await document.fonts.ready;
-  });
+  await page.evaluate(() => document.fonts.ready);
   await expect(await page.screenshot({ fullPage: true })).toMatchSnapshot();
 });
 
