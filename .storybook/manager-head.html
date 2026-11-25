@@ -37,6 +37,8 @@
   content="React components, a theme and patterns for building interfaces that look right and work for everyone. Accessible, light and dark, and ready for coding agents."
 />
 <link rel="canonical" href="https://ui.squonkstack.io/" />
+<meta name="robots" content="index, follow, max-image-preview:large" />
+<link rel="icon" type="image/png" sizes="192x192" href="pwa/icon-192.png" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="SquonkUI" />
 <meta property="og:locale" content="en_NZ" />
@@ -72,16 +74,52 @@
   content="SquonkUI: build interfaces that look right and work for everyone. Two example screens built with the library, one light and one dark."
 />
 <!--
-  Makes the published site installable as an app (Windows, macOS, Android,
-  iOS). The manifest is fetched with credentials because the private Pages
-  site needs its sign-in cookie. The service worker only registers over
-  HTTPS, so local Storybook is unaffected.
+  Structured data for search engines: the site, and the open-source library it
+  documents. Keep the names, addresses and description in step with the tags
+  above and with package.json.
 -->
-<link
-  rel="manifest"
-  href="manifest.webmanifest"
-  crossorigin="use-credentials"
-/>
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://ui.squonkstack.io/#website",
+        "name": "SquonkUI",
+        "url": "https://ui.squonkstack.io/",
+        "description": "React components, a theme and patterns for building interfaces that look right and work for everyone.",
+        "inLanguage": "en-NZ",
+        "publisher": { "@id": "https://ui.squonkstack.io/#organization" }
+      },
+      {
+        "@type": "Organization",
+        "@id": "https://ui.squonkstack.io/#organization",
+        "name": "Squonk",
+        "url": "https://squonkstack.io/",
+        "logo": "https://ui.squonkstack.io/pwa/icon-512.png"
+      },
+      {
+        "@type": "SoftwareSourceCode",
+        "name": "@squonkstack/ui",
+        "description": "Accessible React 19 components, a theme and patterns, in light and dark, with an MCP server that connects coding agents to the library.",
+        "url": "https://ui.squonkstack.io/",
+        "image": "https://ui.squonkstack.io/og.png",
+        "codeRepository": "https://github.com/CraigDeverall/squonk-ui",
+        "programmingLanguage": ["TypeScript", "CSS"],
+        "runtimePlatform": "React 19",
+        "license": "https://opensource.org/licenses/MIT",
+        "isAccessibleForFree": true,
+        "author": { "@id": "https://ui.squonkstack.io/#organization" }
+      }
+    ]
+  }
+</script>
+<!--
+  Makes the published site installable as an app (Windows, macOS, Android,
+  iOS). The service worker only registers over HTTPS, so local Storybook is
+  unaffected.
+-->
+<link rel="manifest" href="manifest.webmanifest" />
 <link rel="apple-touch-icon" href="pwa/apple-touch-icon.png" />
 <meta
   name="theme-color"

@@ -2,9 +2,22 @@
   "name": "@squonkstack/ui-mcp",
   "version": "0.0.0-development",
   "description": "MCP server and setup command that connect coding agents to @squonkstack/ui: component lookup, design guidance and the library's stories with live controls.",
+  "homepage": "https://ui.squonkstack.io/?path=/docs/get-started-working-with-your-agent--docs",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "react",
+    "component-library",
+    "design-system",
+    "claude-code",
+    "codex",
+    "cursor",
+    "copilot",
+    "ai-agents"
+  ],
   "type": "module",
   "bin": {
-    "squonk-ui-mcp": "./dist/cli.js"
+    "squonk-ui-mcp": "dist/cli.js"
   },
   "files": [
     "dist/**/*",
@@ -28,7 +41,7 @@
     "zod": "^4.2.0"
   },
   "peerDependencies": {
-    "@squonkstack/ui": ">=2.0.0",
+    "@squonkstack/ui": ">=1.0.0",
     "playwright": ">=1.50.0"
   },
   "peerDependenciesMeta": {
