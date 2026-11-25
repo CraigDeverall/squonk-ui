@@ -462,7 +462,7 @@
     }
   },
   "bin": {
-    "squonk-ui": "./bin/squonk-ui.mjs"
+    "squonk-ui": "bin/squonk-ui.mjs"
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",

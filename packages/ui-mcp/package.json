@@ -17,7 +17,7 @@
   ],
   "type": "module",
   "bin": {
-    "squonk-ui-mcp": "./dist/cli.js"
+    "squonk-ui-mcp": "dist/cli.js"
   },
   "files": [
     "dist/**/*",
