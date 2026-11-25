@@ -452,7 +452,7 @@
     "prebuild": "rm -rf dist && node scripts/generate-package-exports.mjs && node scripts/generate-tokens-css.mjs --check",
     "lint": "eslint . && node scripts/check-purpose-tokens.mjs",
     "dev": "storybook dev -p 6006",
-    "build-storybook": "storybook build && node scripts/storybook-site-title.mjs",
+    "build-storybook": "storybook build && node scripts/storybook-site-title.mjs && node scripts/generate-sitemap.mjs",
     "pretest": "node scripts/check-docker.mjs",
     "test": "./test-setup/storybook-test.sh",
     "pretest:update": "node scripts/check-docker.mjs",

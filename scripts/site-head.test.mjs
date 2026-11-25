@@ -48,6 +48,30 @@ test("the head carries everything a link preview reads", () => {
   assert.ok(content("name", "description").length <= 160);
 });
 
+test("search engines may index the site and show its image large", () => {
+  assert.match(content("name", "robots"), /\bindex\b/);
+  assert.match(content("name", "robots"), /max-image-preview:large/);
+});
+
+test("the structured data parses and agrees with the tags", () => {
+  const json = /<script type="application\/ld\+json">([\s\S]*?)<\/script>/.exec(
+    head
+  )?.[1];
+  assert.ok(json, "no JSON-LD block");
+  const graph = JSON.parse(json)["@graph"];
+  const site = graph.find((node) => node["@type"] === "WebSite");
+  const code = graph.find((node) => node["@type"] === "SoftwareSourceCode");
+  assert.equal(site.url, SITE);
+  assert.equal(site.name, content("property", "og:site_name"));
+  assert.equal(code.image, content("property", "og:image"));
+  const pkg = JSON.parse(readFileSync(resolve(root, "package.json"), "utf8"));
+  assert.equal(code.name, pkg.name);
+  assert.equal(
+    code.codeRepository,
+    pkg.repository.url.replace(/^git\+/, "").replace(/\.git$/, "")
+  );
+});
+
 test("the preview image exists at the size the head declares", () => {
   const address = content("property", "og:image");
   assert.ok(address.startsWith(SITE), "previews need an absolute address");
