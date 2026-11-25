@@ -1,0 +1,14 @@
+import { expect, test } from "@playwright/experimental-ct-react";
+import { SquonkThemeProvider } from "../../../theme/theme-provider";
+import { <%= componentName %> } from "./<%= componentNameKebab %>";
+
+for (const mode of ["light", "dark"] as const) {
+  test(`<%= componentName %> default render (${mode})`, async ({ mount, page }) => {
+    await mount(
+      <SquonkThemeProvider mode={mode}>
+        <<%= componentName %><% if (baseElement === "img") { %> alt="<%= exampleLabel %>"<% } else if (!acceptsChildren && ["input", "button"].includes(baseElement)) { %> aria-label="<%= exampleLabel %>"<% } %><% if (acceptsChildren) { %>><%= exampleLabel %></<%= componentName %>><% } else { %> /><% } %>
+      </SquonkThemeProvider>
+    );
+    await expect(page).toHaveScreenshot(`<%= componentNameKebab %>-${mode}.png`);
+  });
+}

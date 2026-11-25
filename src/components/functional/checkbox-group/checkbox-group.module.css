@@ -1,0 +1,13 @@
+@layer dt.components {
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: var(--squonk-roles-space-choice-list-gap);
+  }
+
+  .options[data-direction="row"] {
+    flex-direction: row;
+    flex-wrap: wrap;
+    column-gap: var(--squonk-roles-space-choice-list-gap-inline);
+  }
+}

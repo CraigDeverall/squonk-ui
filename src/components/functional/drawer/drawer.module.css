@@ -1,0 +1,108 @@
+@layer dt.components {
+  /* The backdrop, and the layer that holds the drawer against its edge.
+     Later dialogs portal in after earlier ones, so equal z-indexes stack in
+     opening order. */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    z-index: var(--squonk-roles-layer-dialog);
+    display: flex;
+    justify-content: flex-end;
+    align-items: stretch;
+    background-color: var(--squonk-roles-color-backdrop);
+  }
+
+  .overlay:has([data-placement="start"]) { justify-content: flex-start; }
+  .overlay:has([data-placement="bottom"]) { flex-direction: column; justify-content: flex-end; }
+
+  /* Widths 320 / 420 / 640px (heights 40 / 60 / 85vh at the bottom) are
+     component geometry; never wider than the screen less a gutter. */
+  .content {
+    --drawer-size: 420px;
+    position: relative;
+    width: min(var(--drawer-size), 100vw - var(--squonk-components-drawer-viewport-margin));
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    background-color: var(--squonk-roles-color-surface);
+    color: var(--squonk-roles-color-on-surface);
+    box-shadow: var(--squonk-roles-elevation-overlay);
+    font-family: var(--squonk-roles-type-font);
+    outline: none;
+  }
+
+  .content[data-size="sm"] { --drawer-size: 320px; }
+  .content[data-size="lg"] { --drawer-size: 640px; }
+
+  .content[data-placement="end"] { border-inline-start: var(--squonk-roles-border-width) solid var(--squonk-roles-color-floating-border); }
+  .content[data-placement="start"] { border-inline-end: var(--squonk-roles-border-width) solid var(--squonk-roles-color-floating-border); }
+
+  .content[data-placement="bottom"] {
+    --drawer-size: 60vh;
+    width: 100%;
+    height: auto;
+    max-height: var(--drawer-size);
+    border-top: var(--squonk-roles-border-width) solid var(--squonk-roles-color-floating-border);
+    border-radius: var(--squonk-roles-radius-overlay) var(--squonk-roles-radius-overlay) 0 0;
+  }
+
+  .content[data-placement="bottom"][data-size="sm"] { --drawer-size: 40vh; }
+  .content[data-placement="bottom"][data-size="lg"] { --drawer-size: 85vh; }
+
+  .content:focus-visible {
+    outline: var(--squonk-roles-border-focus-width) solid var(--squonk-roles-color-focus-ring);
+    outline-offset: calc(var(--squonk-roles-border-focus-width) * -1);
+  }
+
+  .titleRow {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--squonk-roles-space-title-row-gap);
+    padding: var(--squonk-roles-space-overlay-inset) var(--squonk-roles-space-overlay-inset) var(--squonk-roles-space-overlay-gap);
+    border-bottom: var(--squonk-roles-border-width) solid var(--squonk-roles-color-divider);
+  }
+
+  .close {
+    display: inline-flex;
+    appearance: none;
+    background: transparent;
+    border: none;
+    color: var(--squonk-roles-color-dismiss);
+    cursor: pointer;
+    padding: var(--squonk-roles-space-close-inset);
+    margin-inline-start: auto;
+    font-size: var(--squonk-roles-size-close-icon);
+    line-height: 1;
+    border-radius: var(--squonk-roles-radius-item);
+    flex-shrink: 0;
+  }
+
+  .close[data-hovered] { color: var(--squonk-roles-color-dismiss-hover); }
+
+  .close[data-focus-visible] {
+    outline: var(--squonk-roles-border-focus-width) solid var(--squonk-roles-color-focus-ring);
+    outline-offset: var(--squonk-roles-border-focus-offset);
+  }
+
+  /* The body scrolls; the title and footer stay put. */
+  .body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: var(--squonk-roles-space-overlay-inset);
+    display: flex;
+    flex-direction: column;
+    gap: var(--squonk-roles-space-overlay-gap);
+  }
+
+  .footer {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: var(--squonk-roles-space-action-gap);
+    padding: var(--squonk-components-drawer-footer-inset-block) var(--squonk-roles-space-overlay-inset);
+    border-top: var(--squonk-roles-border-width) solid var(--squonk-roles-color-divider);
+    background-color: var(--squonk-components-drawer-footer-background);
+  }
+}

@@ -1,0 +1,28 @@
+.prompt {
+  display: grid;
+  gap: var(--squonk-roles-space-text-gap);
+  padding: var(--squonk-roles-space-surface-gap) var(--squonk-roles-space-surface-inset);
+  border-radius: var(--squonk-roles-radius-surface);
+  background-color: var(--squonk-roles-color-well);
+}
+
+.steps {
+  display: grid;
+  gap: var(--squonk-roles-space-surface-gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step {
+  display: grid;
+  gap: var(--squonk-roles-space-text-gap);
+}
+
+@media (min-width: 640px) {
+  .step {
+    grid-template-columns: minmax(9rem, auto) minmax(0, 1fr);
+    gap: var(--squonk-roles-space-surface-gap);
+    align-items: baseline;
+  }
+}

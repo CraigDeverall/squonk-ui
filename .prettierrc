@@ -1,0 +1,22 @@
+{
+  "trailingComma": "es5",
+  "tabWidth": 2,
+  "semi": true,
+  "singleQuote": false,
+  "plugins": ["@trivago/prettier-plugin-sort-imports"],
+  "importOrder": [
+    "^react",
+    "^@(?!workspace|src|root)\\w",
+    "^@(workspace|src|root)",
+    "^[./]",
+    "\\.(scss|css)$",
+    "\\.(png|jpe?g|gif|svg)$"
+  ],
+  "importOrderSeparation": false,
+  "importOrderSortSpecifiers": true,
+  "overrides": [
+    {
+      "files": ["./applications/*", "./tests/*", "./datamigrations/*"]
+    }
+  ]
+}

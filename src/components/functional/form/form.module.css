@@ -1,0 +1,54 @@
+@layer dt.components {
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--squonk-roles-space-question-gap);
+    font-family: var(--squonk-roles-type-font);
+  }
+
+  .field { min-width: 0; }
+
+  /* A thick error rule on the left, as in GOV.UK's error summary. */
+  .summary {
+    padding: var(--squonk-components-form-summary-inset-block) var(--squonk-components-form-summary-inset-inline);
+    border: var(--squonk-roles-border-width) solid var(--squonk-roles-color-invalid);
+    border-inline-start-width: calc(var(--squonk-roles-border-rule-width) * 2);
+    border-radius: var(--squonk-roles-radius-surface);
+    background-color: var(--squonk-roles-color-surface);
+    color: var(--squonk-roles-color-on-surface);
+  }
+
+  .summary:focus-visible,
+  .summary:focus {
+    outline: var(--squonk-roles-border-focus-width) solid var(--squonk-roles-color-focus-ring);
+    outline-offset: var(--squonk-roles-border-focus-offset);
+  }
+
+  .summaryTitle {
+    margin: 0 0 var(--squonk-roles-space-surface-gap);
+    font-size: var(--squonk-roles-type-title);
+    font-weight: var(--squonk-roles-type-strong);
+    line-height: var(--squonk-roles-type-tight-line-height);
+  }
+
+  .summaryList {
+    margin: 0;
+    padding-inline-start: var(--squonk-components-form-summary-indent);
+    display: flex;
+    flex-direction: column;
+    gap: var(--squonk-components-form-summary-gap);
+  }
+
+  .summaryList a {
+    color: var(--squonk-roles-color-invalid-text);
+    font-weight: var(--squonk-roles-type-strong);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .summaryList a:focus-visible {
+    outline: var(--squonk-roles-border-focus-width) solid var(--squonk-roles-color-focus-ring);
+    outline-offset: var(--squonk-roles-border-focus-offset);
+    border-radius: var(--squonk-roles-radius-item);
+  }
+}

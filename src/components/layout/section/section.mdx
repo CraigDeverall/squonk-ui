@@ -1,0 +1,122 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as SectionStories from "./section.stories.tsx";
+import meta from "./section.stories.tsx";
+import { Section, BleedSection } from "./section.tsx";
+import { SectionHeading } from "../section-heading/section-heading.tsx";
+import { Grid } from "../../layout-primitive/grid/grid.tsx";
+import { VStack } from "../../layout-primitive/vstack/vstack.tsx";
+import { Card } from "../card/card.tsx";
+import { Heading } from "../../functional-primitive/heading/heading.tsx";
+import { Text } from "../../functional-primitive/text/text.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Section
+
+<ResizableCanvas of={SectionStories.Default} />
+
+`Section` is the standard marketing/page section: a semantic `<section>` with vertical breathing room (`register`), an optional background `tone`, and an inner `Container` that constrains content to a 1180px shell. Use it to build up a landing or marketing page as a stack of `Section`s — a hero, a features strip, a pricing grid, a footer CTA.
+
+Section sets its own `Presentation` register for its descendants, so every `Heading`, `Text`, `Button`, and `Card` inside sizes itself to match the section's "voice" without any per-component `size` prop.
+
+<Controls />
+
+## Tones
+
+`transparent` (default) inherits the page background — use for most sections. `surface` raises the section onto a paper-toned background, the classic "alternating stripe" pattern for separating sections without a hard rule. `subtle` is a deeper tint, typically reserved for full-bleed colored sections.
+
+<InlineCodeExample>
+  <VStack gap="none">
+    <Section tone="transparent" register="compact">
+      <Text align="center">transparent — inherits the page background</Text>
+    </Section>
+    <Section tone="surface" register="compact">
+      <Text align="center">surface — raised paper-toned stripe</Text>
+    </Section>
+    <Section tone="subtle" register="compact">
+      <Text align="center">subtle — deeper tint</Text>
+    </Section>
+  </VStack>
+</InlineCodeExample>
+
+## Registers
+
+The `register` sets the visual scale for everything inside — spacing, type size, and control size all step together. `compact` for dense utility sections, `default` for the standard body of a page, `large` for feature call-outs, `hero` for the page's headline moment.
+
+<InlineCodeExample>
+  <Section tone="surface" register="hero">
+    <VStack align="center">
+      <SectionHeading
+        eyebrow="New"
+        headline="Ship with confidence"
+        sub="Visual regression testing built into every release."
+      />
+    </VStack>
+  </Section>
+</InlineCodeExample>
+
+Center a heading block with a parent `VStack align="center"`. The heading’s `align` prop controls its internal text alignment, not its placement within the section.
+
+## Composition — pricing grid
+
+Sections commonly host a `SectionHeading` followed by a `Grid` of `Card`s. Because the register cascades, the cards' internal padding and the heading's type scale stay in step automatically.
+
+<InlineCodeExample>
+  <Section tone="surface">
+    <VStack gap="lg">
+      <SectionHeading
+        align="start"
+        headline="Pricing"
+        sub="Simple plans that scale with your team."
+      />
+      <Grid columns={3} gap="md">
+        <Card variant="outlined">
+          <VStack gap="xs">
+            <Heading level={4}>Starter</Heading>
+            <Text tone="secondary">For small teams getting started.</Text>
+          </VStack>
+        </Card>
+        <Card variant="featured">
+          <VStack gap="xs">
+            <Heading level={4}>Growth</Heading>
+            <Text>Most popular — everything a scaling team needs.</Text>
+          </VStack>
+        </Card>
+        <Card variant="outlined">
+          <VStack gap="xs">
+            <Heading level={4}>Enterprise</Heading>
+            <Text tone="secondary">Custom limits and dedicated support.</Text>
+          </VStack>
+        </Card>
+      </Grid>
+    </VStack>
+  </Section>
+</InlineCodeExample>
+
+## BleedSection
+
+`BleedSection` is `Section` without the inner `Container` — children flow edge-to-edge. Reach for it when the content provides its own width limits: a full-bleed image, a custom hero composition with its own inner constraints.
+
+<InlineCodeExample>
+  <BleedSection tone="subtle" register="compact">
+    <Text align="center">
+      No inner Container — this text block runs the full width of its parent.
+    </Text>
+  </BleedSection>
+</InlineCodeExample>
+
+## Accessibility
+
+- Renders a real `<section>` landmark by default. Pair with a `SectionHeading` and point `aria-labelledby` at the heading's `id` if you need the landmark to have an accessible name for assistive tech that lists landmarks.
+- `register` only affects visual scale — it has no accessibility implication of its own; the components inside (Heading levels, focus rings, etc.) carry their own semantics regardless of register.
+
+## Common pitfalls
+
+- **Don't nest a `Section` inside another `Section`.** Registers cascade via context, so a nested Section's own `register` prop will win for its subtree, but the double `<section>` landmark and doubled vertical padding rarely reads as intended. Use a plain `Block` or `VStack` for internal grouping instead.
+- **Don't fight the `Container` width with your own `maxWidth`.** If content needs to be narrower or wider than 1180px, wrap it in a `Block maxWidth="…"` inside the Section rather than reaching for `BleedSection` and re-adding your own container.
+- **Don't use `tone="subtle"` for more than one or two sections per page.** It's a strong visual break — overusing it flattens the hierarchy it's meant to create.

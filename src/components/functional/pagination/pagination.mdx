@@ -1,0 +1,88 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as PaginationStories from "./pagination.stories.tsx";
+import meta from "./pagination.stories.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Pagination
+
+<ResizableCanvas of={PaginationStories.Default} defaultHeight={120} />
+
+`Pagination` moves through a long list a page at a time. Use it when people need
+to know where they are in a large set, come back to the same place, or jump to
+the end: search results, a history of notices, an audit log. For short lists,
+show everything; for feeds people only scroll through, a "Show more" button is
+simpler.
+
+```tsx
+import { Pagination } from "@squonk/ui/pagination";
+
+<Pagination count={totalNotices} pageSize={20} page={page} onPageChange={setPage} showRange />
+```
+
+<Controls />
+
+## Long ranges
+
+The first and last pages are always shown, with `siblingCount` pages either side
+of the current one and an ellipsis for the gaps.
+
+<ResizableCanvas of={PaginationStories.MiddlePage} defaultHeight={120} />
+
+## Showing the range
+
+`showRange` adds "Showing 21–30 of 112" so people know how much there is.
+
+<ResizableCanvas of={PaginationStories.WithRange} defaultHeight={120} />
+
+## Compact
+
+`compact` replaces the numbers with "Page 3 of 12": for cards, side panels and
+other narrow spaces. On phones the Previous and Next buttons also drop their
+words and keep the arrows.
+
+<ResizableCanvas of={PaginationStories.Compact} defaultHeight={120} />
+
+## Pages as links
+
+With `getPageUrl`, every page is a link with its own address, so a page can be
+bookmarked, shared and opened in a new tab, and the browser's Back button
+works. Prefer this for search results and anything people link to.
+
+<ResizableCanvas of={PaginationStories.AsLinks} defaultHeight={120} />
+
+## Registers
+
+Buttons are as tall as other controls in the surrounding `Presentation` register.
+
+<ResizableCanvas of={PaginationStories.Registers} defaultHeight={260} />
+
+## With a list
+
+<ResizableCanvas of={PaginationStories.PagedList} defaultHeight={520} />
+
+## Accessibility
+
+- A `nav` landmark named "Pagination". Give it a more specific `aria-label`
+  ("Notices pages") when a page has more than one.
+- Page buttons are named "Page 3"; the last is "Page 12, last page". The current
+  page has `aria-current="page"`.
+- Previous and Next are disabled at the ends (`aria-disabled` links in link mode).
+- After a page change, the list changes but focus stays on the pagination. If the
+  list is long, move focus to its heading or first item so people don't have to
+  scroll back up.
+
+## Common pitfalls
+
+- **Don't page a short list.** Under about 50 rows, show them all.
+- **Don't reset the page silently.** When filters change the total, go back to
+  page 1 and say so with the range text.
+- **Don't use button pages for results people share.** Use `getPageUrl`.
+
+## UX guidance
+
+- [Tables and grids](?path=/docs/patterns-tables-and-grids--docs)

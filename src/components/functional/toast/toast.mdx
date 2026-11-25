@@ -1,0 +1,115 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as ToastStories from "./toast.stories.tsx";
+import meta from "./toast.stories.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Toast
+
+<ResizableCanvas of={ToastStories.Default} />
+
+Transient notifications that stack in a viewport corner and auto-dismiss.
+`ToastProvider` renders the stack (portal on `document.body`) and publishes
+the imperative `useToast` handle. Toasts render as elevated `Alert`s, so tones
+and dark mode follow the ambient theme.
+
+Use toasts for fire-and-forget feedback about an *action* ("Invite sent",
+"Save failed"). For persistent page-state messages, render an `Alert` inline;
+for blocking decisions, use `Modal`.
+
+<Controls />
+
+## Setup
+
+Mount the provider once, near the app root and inside the theme provider:
+
+```tsx
+import { SquonkThemeProvider, ToastProvider } from "@squonk/ui";
+
+<SquonkThemeProvider>
+  <ToastProvider position="bottom-right">
+    <App />
+  </ToastProvider>
+</SquonkThemeProvider>;
+```
+
+## Firing toasts
+
+```tsx
+const toast = useToast();
+
+toast.success("Invite sent.", "Done");
+toast.error("The server rejected the request.", "Save failed");
+toast.show({ tone: "warning", message: "Certificate expires soon.", duration: 0 });
+```
+
+`success` / `error` / `info` / `warning` are sugar over `show`. Every call
+returns an id; `toast.dismiss(id)` removes it early. `duration: 0` makes a
+toast sticky until the user dismisses it — use sparingly, and only for
+messages that must not be missed.
+
+## Action
+
+`action` adds one button to a toast, for the obvious next step: "Undo" after archiving, "View" after creating. Activating it calls `onAction` and then dismisses the toast.
+
+```tsx
+toast.show({
+  tone: "success",
+  message: "Case archived.",
+  duration: 10000,
+  action: { label: "Undo", onAction: () => restore(caseId) },
+});
+```
+
+<ResizableCanvas of={ToastStories.WithAction} />
+
+A toast goes away on its own and can be missed, so its action must never be the only way to do the thing: keep the same action somewhere on the page (a "Restore" button, an Archived list). Give a toast with an action more time than the default, keep the label to a short verb, and use one action only; a choice between two belongs in a `Modal`.
+
+## Position and duration
+
+The provider sets the stack corner (`position`, default `bottom-right`) and
+the default `duration` (5s). Individual toasts can override `duration`.
+
+<ResizableCanvas of={ToastStories.TopCenter} />
+
+## Accessibility
+
+- Each notification uses Alert’s status/alert semantics. The surrounding Notifications region does not add a second, nested live region.
+- `F6` or `Alt+T` moves focus to the Notifications region, and `Escape` dismisses the focused toast. When a focused toast closes, focus moves to the next toast, or back to where it was before.
+- Error and warning toasts render `Alert`'s `role="alert"`, which announces
+  assertively.
+- Every toast gets a Dismiss button; auto-dismiss never removes the user's
+  only chance to act — put required actions on the page, not in a toast.
+- An `action` is a real `<button>` inside the toast's Alert, after the message
+  and before Dismiss in the tab order. It is read out with the message
+  ("Case archived. Undo, button"), and the timer pauses while the toast is
+  hovered or focused. People who miss the toast still need the same action on
+  the page.
+
+## Pitfalls
+
+- `useToast` throws outside a `ToastProvider` — mount the provider above
+  anything that fires toasts (including error boundaries that report).
+- Don't use toasts for validation errors next to a form field; that's
+  `TextField`'s `error` prop.
+
+## Queue, reading time and overflow
+
+At most `maxVisible` notifications are shown (default **3**), the newest nearest the screen edge. Another `maxQueued` wait (default **50**); errors and warnings are released ahead of other tones, and toasts of the same tone keep their order. Positive finite limits are rounded down and clamped to at least one; non-finite limits use the defaults. A waiting toast starts its duration only when it becomes visible. Hovering or focusing the Notifications region pauses all visible timers, which resume with their remaining time after both hover and focus leave; timers also pause while the page is hidden. Keep messages short: the stack does not scroll, so very tall toasts can run past the viewport.
+
+When both visible and waiting capacity are full, a new request is not displayed and `onOverflow(options)` is called if supplied. Already accepted messages are preserved. `show` still returns an id; dismissing the id of a rejected message is harmless. Use `onOverflow` to record a durable notification history when loss would matter. Lowering limits governs new admissions and visible count; previously accepted waiting messages drain normally rather than being discarded.
+
+For an important error, use `toast.show({ tone: "error", message: "Save failed. Your draft is still available.", duration: 0 })` and keep recovery actions on the page. A transient toast is not a durable action history. All timers are cancelled when the provider unmounts.
+
+## Migration: bounded notifications
+
+The previous provider rendered every toast immediately and counted waiting/reading time toward dismissal. Bursts now queue, and hover/focus pauses timeout. Configure the limits and overflow handler for your application; do not depend on every request being simultaneously visible. The stack’s duplicate live-region wrapper was removed; status/alert semantics remain on individual notifications. Screen-reader announcements should still be verified in your target browser/assistive-technology combination.
+
+## UX guidance
+
+- [Toasts, alerts and dialogs](?path=/docs/patterns-toasts-alerts-and-dialogs--docs)
+- [Destructive actions](?path=/docs/patterns-destructive-actions--docs)

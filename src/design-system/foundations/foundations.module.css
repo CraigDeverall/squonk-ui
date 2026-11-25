@@ -1,0 +1,168 @@
+/* Docs-only specimens for the Foundations pages. */
+
+.specimen {
+  display: flex;
+  flex-direction: column;
+  margin: var(--squonk-roles-space-overlay-gap) 0;
+  border: var(--squonk-roles-border-width) solid var(--squonk-roles-color-divider);
+  border-radius: var(--squonk-roles-radius-surface);
+  overflow: hidden;
+}
+
+.specimenBody {
+  flex: 1;
+  padding: var(--squonk-roles-space-overlay-inset);
+  background-color: var(--squonk-roles-color-surface);
+  color: var(--squonk-roles-color-on-surface);
+  font-family: var(--squonk-roles-type-font);
+}
+
+.caption {
+  padding: var(--squonk-roles-space-list-item-inset-block) var(--squonk-roles-space-overlay-inset);
+  border-top: var(--squonk-roles-border-width) solid var(--squonk-roles-color-divider);
+  background-color: var(--squonk-roles-color-well);
+  color: var(--squonk-roles-color-on-well-supporting);
+  font-family: var(--squonk-roles-type-font);
+  font-size: var(--squonk-roles-type-meta);
+}
+
+.swatchGrid,
+.sampleGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+  gap: var(--squonk-roles-space-overlay-gap);
+  margin: var(--squonk-roles-space-surface-gap) 0 var(--squonk-roles-space-overlay-gap);
+}
+
+/* Specimens in a grid line up edge to edge, captions along the bottom. */
+.sampleGrid > .specimen { margin: 0; }
+
+.sampleGrid[data-narrow] { grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr)); }
+
+.swatch,
+.gapSample,
+.shapeSample {
+  display: flex;
+  gap: var(--squonk-roles-space-item-gap);
+  align-items: flex-start;
+  min-width: 0;
+  font-family: var(--squonk-roles-type-font);
+}
+
+.chip {
+  flex-shrink: 0;
+  width: 3rem;
+  height: 3rem;
+  border-radius: var(--squonk-roles-radius-item);
+  border: var(--squonk-roles-border-width) solid var(--squonk-roles-color-divider);
+}
+
+.swatchText {
+  display: grid;
+  gap: var(--squonk-roles-space-text-gap);
+  min-width: 0;
+}
+
+.swatchName {
+  font-family: var(--squonk-roles-type-font);
+  font-size: var(--squonk-roles-type-label);
+  font-weight: var(--squonk-roles-type-strong);
+  color: var(--squonk-roles-color-text);
+  overflow-wrap: anywhere;
+}
+
+code.swatchName { font-family: var(--squonk-roles-type-code-font); font-weight: var(--squonk-roles-type-regular); }
+
+.swatchUse {
+  font-size: var(--squonk-roles-type-meta);
+  color: var(--squonk-roles-color-text-supporting);
+  line-height: var(--squonk-roles-type-body-line-height);
+}
+
+.swatchValue {
+  font-family: var(--squonk-roles-type-code-font);
+  font-size: var(--squonk-roles-type-hint);
+  color: var(--squonk-roles-color-text-supporting);
+  overflow-wrap: anywhere;
+}
+
+.scale,
+.typeScale {
+  display: grid;
+  gap: var(--squonk-roles-space-surface-gap);
+  margin: var(--squonk-roles-space-surface-gap) 0 var(--squonk-roles-space-overlay-gap);
+}
+
+.scaleRow {
+  display: grid;
+  grid-template-columns: 7.5rem auto 1fr;
+  align-items: center;
+  gap: var(--squonk-roles-space-item-gap);
+}
+
+.scaleName {
+  font-family: var(--squonk-roles-type-code-font);
+  font-size: var(--squonk-roles-type-hint);
+  color: var(--squonk-roles-color-text-supporting);
+}
+
+.scaleBar {
+  display: block;
+  height: 1rem;
+  border-radius: var(--squonk-roles-radius-mark);
+  background-color: var(--squonk-roles-color-accent);
+}
+
+.scaleValue {
+  font-family: var(--squonk-roles-type-code-font);
+  font-size: var(--squonk-roles-type-hint);
+  color: var(--squonk-roles-color-text-supporting);
+}
+
+.typeRow {
+  display: grid;
+  gap: var(--squonk-roles-space-text-gap);
+  padding-bottom: var(--squonk-roles-space-surface-gap);
+  border-bottom: var(--squonk-roles-border-width) solid var(--squonk-roles-color-divider);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.gapDemo {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding: var(--squonk-roles-space-segment-gap);
+  border-radius: var(--squonk-roles-radius-item);
+  background-color: var(--squonk-roles-color-well);
+}
+
+.gapBlock {
+  display: block;
+  width: 1.25rem;
+  height: 2.25rem;
+  border-radius: var(--squonk-roles-radius-mark);
+  background-color: var(--squonk-roles-color-accent);
+}
+
+.shapeBox {
+  flex-shrink: 0;
+  width: 4rem;
+  height: 3rem;
+  border: calc(var(--squonk-roles-border-width) * 2) solid var(--squonk-roles-color-accent);
+  background-color: var(--squonk-roles-color-selected);
+}
+
+/* Shadows read against the page colour, as they do in an app. */
+.stage {
+  flex-shrink: 0;
+  padding: var(--squonk-roles-space-surface-inset);
+  border-radius: var(--squonk-roles-radius-item);
+  background-color: var(--squonk-roles-color-page);
+}
+
+.stage .shapeBox {
+  border: none;
+  border-radius: var(--squonk-roles-radius-surface);
+  background-color: var(--squonk-roles-color-surface);
+}

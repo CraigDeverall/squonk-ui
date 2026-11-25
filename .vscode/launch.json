@@ -1,0 +1,18 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Debug Yeoman Generator",
+        "type": "node",
+        "request": "launch",
+        "program": "${workspaceFolder}/node_modules/yo/lib/cli.js",
+        "args": [
+          "./generators/component"  // Replace with your generator's name as installed by Yeoman
+        ],
+        "cwd": "${workspaceFolder}",
+        "protocol": "inspector",
+        "console": "integratedTerminal",
+        "internalConsoleOptions": "neverOpen"
+      }
+    ]
+  }

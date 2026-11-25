@@ -1,0 +1,4 @@
+# Copilot code review reviews this repository (see .github/copilot-instructions.md).
+reviews:
+  auto_review:
+    enabled: false

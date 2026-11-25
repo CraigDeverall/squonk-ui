@@ -1,0 +1,64 @@
+{
+  "name": "@squonk/ui-mcp",
+  "version": "0.0.0-development",
+  "description": "MCP server and setup command that connect coding agents to @squonk/ui: component lookup, design guidance and the library's stories with live controls.",
+  "type": "module",
+  "bin": {
+    "squonk-ui-mcp": "./dist/cli.js"
+  },
+  "files": [
+    "dist/**/*",
+    "src/shell/story-runtime.tsx",
+    "src/shell/protocol.ts",
+    "src/shell/virtual.d.ts",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.build.json && chmod +x dist/cli.js",
+    "prepack": "npm run build",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:e2e": "npm run build && node test/e2e.mjs && node test/host.mjs"
+  },
+  "dependencies": {
+    "@clack/prompts": "^1.8.1",
+    "@modelcontextprotocol/ext-apps": "^1.7.5",
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "esbuild": "^0.28.2",
+    "zod": "^4.2.0"
+  },
+  "peerDependencies": {
+    "@squonk/ui": ">=2.0.0",
+    "playwright": ">=1.50.0"
+  },
+  "peerDependenciesMeta": {
+    "playwright": {
+      "optional": true
+    },
+    "@squonk/ui": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": "^22.14.0 || >=24.10.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true,
+    "registry": "https://registry.npmjs.org/"
+  },
+  "author": "Squonk",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.18.0",
+    "@types/react": "^19.3.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CraigDeverall/squonk-ui.git",
+    "directory": "packages/ui-mcp"
+  },
+  "bugs": {
+    "url": "https://github.com/CraigDeverall/squonk-ui/issues"
+  }
+}

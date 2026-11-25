@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "created": "2026-11-08",
+  "exceptions": [
+    {
+      "package": "glob",
+      "url": "https://github.com/advisories/GHSA-3g3m-2fjr-6pw4",
+      "versions": [
+        "13.0.6"
+      ],
+      "expires": "2026-12-23T00:00:00Z",
+      "owner": "UI maintainers",
+      "reason": "Bundled inside npm 12.2.2 (the latest release), which @semantic-release/npm runs to publish; no npm release yet bundles the fixed version, and overrides cannot replace bundled files. Every other copy is overridden to the fixed major. Track the next npm release and drop this entry when it bundles the fix.",
+      "mitigation": "Excluded from the published runtime dependency graph; publish runs only in protected CI on reviewed main. Production and critical-development audits still block delivery."
+    },
+    {
+      "package": "minimatch",
+      "url": "https://github.com/advisories/GHSA-g3hv-75wg-m249",
+      "versions": [
+        "10.2.5"
+      ],
+      "expires": "2026-12-23T00:00:00Z",
+      "owner": "UI maintainers",
+      "reason": "Bundled inside npm 12.2.2 (the latest release), which @semantic-release/npm runs to publish; no npm release yet bundles the fixed version, and overrides cannot replace bundled files. Every other copy is overridden to the fixed major. Track the next npm release and drop this entry when it bundles the fix.",
+      "mitigation": "Excluded from the published runtime dependency graph; publish runs only in protected CI on reviewed main. Production and critical-development audits still block delivery."
+    },
+    {
+      "package": "deepmerge",
+      "url": "https://github.com/advisories/GHSA-gcqx-w48m-w2h4",
+      "versions": [
+        "4.3.1"
+      ],
+      "expires": "2026-11-22T00:00:00Z",
+      "owner": "UI maintainers",
+      "reason": "No fixed release exists: 4.3.1 is the latest deepmerge and is affected (low severity, prototype poisoning of merged objects). Only @rollup/plugin-node-resolve uses it, at build time, to merge the repository's own plugin options.",
+      "mitigation": "Build-time only, on trusted repository config, never on user input; not in the published runtime graph. Re-check for a deepmerge release or a plugin version without it before expiry."
+    },
+    {
+      "package": "picomatch",
+      "url": "https://github.com/advisories/GHSA-fc5q-39xc-vjpf",
+      "versions": [
+        "2.3.2",
+        "4.0.5",
+        "4.0.7"
+      ],
+      "expires": "2026-12-02T00:00:00Z",
+      "owner": "UI maintainers",
+      "reason": "No fixed release exists: 4.0.7 is the latest picomatch and every version up to it is affected (ReDoS through repeated extglobs). It is used only by development tooling: Vite, Vitest, Rollup plugins, lint-staged, micromatch and the copy bundled inside npm.",
+      "mitigation": "Development and build time only, matching globs written in this repository, never user input; not in the published runtime graph. Re-check for a picomatch release before expiry."
+    }
+  ]
+}

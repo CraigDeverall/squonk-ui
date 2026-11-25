@@ -1,0 +1,107 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as HeaderStories from "./header.stories.tsx";
+import meta from "./header.stories.tsx";
+import { Header, FixedHeader, StickyHeader } from "./header.tsx";
+import { Split } from "../split/split.tsx";
+import { Cluster } from "../cluster/cluster.tsx";
+import { Link } from "../../functional/link/link.tsx";
+import { Button } from "../../functional/button/button.tsx";
+import { Text } from "../../functional-primitive/text/text.tsx";
+import { Block } from "../../layout-primitive/block/block.tsx";
+import { VStack } from "../../layout-primitive/vstack/vstack.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Header
+
+<ResizableCanvas of={HeaderStories.Default} />
+
+`Header` renders the top landmark of a page — semantic `<header>`, full width, bottom border, container padding, and a built-in `Presentation` register (defaults to `compact`, since headers are usually utility-dense). Like `Footer`, it's content-agnostic: slot in your logo, nav, search, user menu, and arrange them with a `Split` / `Cluster` inside. Companions: `FixedHeader` pins to the viewport, `StickyHeader` sticks when its parent scrolls.
+
+<Controls />
+
+## Default
+
+The standard app-shell header — brand on the left, nav in the middle, user controls on the right.
+
+<InlineCodeExample>
+  <Header>
+    <Split>
+      <Cluster gap="md">
+        <Text weight="bold">Squonk</Text>
+        <Cluster gap="md">
+          <Link href="#" variant="subtle">Dashboard</Link>
+          <Link href="#" variant="subtle">Projects</Link>
+          <Link href="#" variant="subtle">Reports</Link>
+        </Cluster>
+      </Cluster>
+      <Cluster gap="sm">
+        <Button variant="ghost">Help</Button>
+        <Text>Ada Lovelace</Text>
+      </Cluster>
+    </Split>
+  </Header>
+</InlineCodeExample>
+
+## Translucent
+
+`tone="translucent"` pairs with a backdrop blur — the frosted-glass nav-over-hero look. Most useful with `FixedHeader` over a marketing hero.
+
+<InlineCodeExample>
+  <Block padding="lg" radius="md" style={{ background: "linear-gradient(135deg, #692bcc, #d83cb2)" }}>
+    <Header tone="translucent">
+      <Split>
+        <Text weight="bold">Squonk</Text>
+        <Cluster gap="md">
+          <Link href="#" variant="subtle">Product</Link>
+          <Link href="#" variant="subtle">Pricing</Link>
+          <Button variant="primary">Sign up</Button>
+        </Cluster>
+      </Split>
+    </Header>
+  </Block>
+</InlineCodeExample>
+
+## Register
+
+`register` sets both the header's own padding scale *and* a `Presentation` context for descendants. `compact` (default) for app shells; `default` for a tall marketing header where the logo and nav want more breathing room.
+
+<InlineCodeExample>
+  <VStack gap="sm">
+    <Header register="compact">
+      <Text weight="bold">Compact header</Text>
+    </Header>
+    <Header register="default">
+      <Text weight="bold">Default header</Text>
+    </Header>
+  </VStack>
+</InlineCodeExample>
+
+## Fixed vs Sticky
+
+- `FixedHeader` is pinned to the viewport at all times. Pair with a same-height spacer below so content doesn't slide under it on page load.
+- `StickyHeader` scrolls with the document up to the top, then sticks. Best for app shells where the header should disappear when reading long content but reappear with the nav.
+
+The plain `Header` is static — it scrolls with the rest of the page.
+
+## Accessibility
+
+- Renders a native `<header>` landmark — screen readers announce it as the page banner when it's the top-level header.
+- Only one top-level `<header>` per page becomes the banner landmark; nested `<header>` elements inside `<article>` or `<section>` are valid but not landmarks.
+- `FixedHeader` uses `theme.zIndices.fixed`; `StickyHeader` uses `theme.zIndices.sticky` — both sit below modals and popovers.
+
+## Common pitfalls
+
+- **Don't hardcode the header height.** It sizes itself from content + register padding — let it flex when you add a search box or a tall logo.
+- **Don't ship multiple page-level Headers.** Pick one (Header, FixedHeader, or StickyHeader) per page.
+- **Don't forget the spacer under a `FixedHeader`.** Without it, page content sits behind the header on initial load.
+- **Don't wrap header content in another `Presentation`.** `Header` already sets the register — re-wrapping fights the inheritance.
+
+## Translucent theme colors
+
+The translucent tone applies 80% of the theme background’s existing alpha. Hex, RGB/RGBA and named colors are parsed directly. CSS variables and other browser-resolved color expressions use `color-mix(in srgb, … 80%, transparent)`, which requires browser support for `color-mix`. Use `tone="default"` if supporting older browsers without it.

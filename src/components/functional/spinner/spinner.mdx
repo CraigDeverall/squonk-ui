@@ -1,0 +1,88 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as SpinnerStories from "./spinner.stories.tsx";
+import meta from "./spinner.stories.tsx";
+import { Spinner } from "./spinner.tsx";
+import { Presentation } from "../../style/presentation/presentation.tsx";
+import { HStack } from "../../layout-primitive/hstack/hstack.tsx";
+import { Block } from "../../layout-primitive/block/block.tsx";
+import { Button } from "../button/button.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Spinner
+
+<ResizableCanvas
+  of={SpinnerStories.Default}
+  defaultRecipe="centered"
+  defaultHeight={120}
+/>
+
+`Spinner` is the busy indicator for short, indeterminate operations — submitting a form, sending a one-shot request, swapping a tab. For *known* progress with a measurable duration, prefer `ProgressBar`; for loading a content area where the final shape is known, prefer `Skeleton`.
+
+<Controls />
+
+## Tones
+
+Three tones cover the common surfaces. `primary` is the default; `neutral` for low-key inline use; `inverse` for placement on a dark or branded background where the primary color wouldn't contrast.
+
+<InlineCodeExample>
+  <HStack gap="lg" align="center">
+    <Spinner tone="primary" />
+    <Spinner tone="neutral" />
+    <Block background="subtle" padding="md" radius="base">
+      <Spinner tone="inverse" />
+    </Block>
+  </HStack>
+</InlineCodeExample>
+
+## Sizing via Presentation
+
+Dimensions track the surrounding register. Wrap in `Presentation` to scale a spinner to its context — `compact` inside a button row, `hero` for a full-page loading state.
+
+<InlineCodeExample>
+  <HStack gap="lg" align="center">
+    <Presentation register="compact"><Spinner /></Presentation>
+    <Presentation register="default"><Spinner /></Presentation>
+    <Presentation register="large"><Spinner /></Presentation>
+    <Presentation register="hero"><Spinner /></Presentation>
+  </HStack>
+</InlineCodeExample>
+
+## In a button
+
+A `compact` spinner is the right inline indicator for a submitting button.
+
+<InlineCodeExample>
+  <Button variant="primary" disabled>
+    <HStack gap="sm" align="center">
+      <Presentation register="compact"><Spinner tone="inverse" /></Presentation>
+      Saving…
+    </HStack>
+  </Button>
+</InlineCodeExample>
+
+## Custom label
+
+The accessible label defaults to "Loading"; override for context-specific announcements.
+
+<InlineCodeExample>
+  <Spinner label="Submitting form" />
+</InlineCodeExample>
+
+## Accessibility
+
+- Renders inside `role="status"` with `aria-live="polite"` so screen readers announce the operation without interrupting.
+- The visible ring carries `aria-hidden="true"`; the announced text comes from a visually-hidden `<span>` (defaults to "Loading", overridable via `label`).
+- Respects `prefers-reduced-motion` by slowing the spin from 800ms to 1800ms — the indicator stays useful without becoming a vestibular trigger.
+
+## Common pitfalls
+
+- **Don't show a spinner for a layout area you could skeleton.** If you know the loaded content has shape (a card, a list row), `Skeleton` reduces layout shift; `Spinner` doesn't.
+- **Don't pair a spinner with a misleading "X% complete" label.** If you have a percentage, you have known progress — use `ProgressBar`.
+- **Don't render multiple spinners side-by-side.** They visually compete; one parent-level spinner usually serves better.
+- **Don't spin forever.** If the underlying request can hang, set a timeout in the consuming code and swap to an error state — a perpetual spinner is the worst kind of frozen UI.

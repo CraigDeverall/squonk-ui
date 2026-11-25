@@ -1,0 +1,94 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as FooterStories from "./footer.stories.tsx";
+import meta from "./footer.stories.tsx";
+import { Footer } from "./footer.tsx";
+import { Split } from "../split/split.tsx";
+import { Cluster } from "../cluster/cluster.tsx";
+import { Link } from "../../functional/link/link.tsx";
+import { Text } from "../../functional-primitive/text/text.tsx";
+import { Grid } from "../../layout-primitive/grid/grid.tsx";
+import { VStack } from "../../layout-primitive/vstack/vstack.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Footer
+
+<ResizableCanvas of={FooterStories.Default} />
+
+`Footer` renders the bottom landmark of a page — semantic `<footer>`, surface background, top border, smaller text scale. Like `Header`, it's a content-agnostic shell; the consumer composes what goes inside (copyright, links, address, social). Layout knobs are deliberately absent: use a `Split` / `Cluster` / `Grid` inside to control "copyright left, links right" or "three-column nav".
+
+<Controls />
+
+## Default
+
+The standard copyright + nav split.
+
+<InlineCodeExample>
+  <Footer>
+    <Split>
+      <Text tone="muted">© 2026 Squonk</Text>
+      <Cluster gap="md">
+        <Link href="#" variant="muted">Privacy</Link>
+        <Link href="#" variant="muted">Terms</Link>
+        <Link href="#" variant="muted">Status</Link>
+      </Cluster>
+    </Split>
+  </Footer>
+</InlineCodeExample>
+
+## Page tone
+
+`tone="page"` removes the surface tint and sits flush with the page background — for layouts whose page bg is already a brand color and the surface stripe would look like a bug.
+
+<InlineCodeExample>
+  <Footer tone="page">
+    <Text tone="muted">© 2026 Squonk</Text>
+  </Footer>
+</InlineCodeExample>
+
+## Multi-column
+
+For a marketing-site footer, slot a `Grid` inside.
+
+<InlineCodeExample>
+  <Footer>
+    <Grid columns={3} gap="lg">
+      <VStack gap="xs">
+        <Text weight="bold">Product</Text>
+        <Link href="#" variant="muted">Features</Link>
+        <Link href="#" variant="muted">Pricing</Link>
+        <Link href="#" variant="muted">Changelog</Link>
+      </VStack>
+      <VStack gap="xs">
+        <Text weight="bold">Company</Text>
+        <Link href="#" variant="muted">About</Link>
+        <Link href="#" variant="muted">Careers</Link>
+        <Link href="#" variant="muted">Contact</Link>
+      </VStack>
+      <VStack gap="xs">
+        <Text weight="bold">Legal</Text>
+        <Link href="#" variant="muted">Privacy</Link>
+        <Link href="#" variant="muted">Terms</Link>
+        <Link href="#" variant="muted">DPA</Link>
+      </VStack>
+    </Grid>
+  </Footer>
+</InlineCodeExample>
+
+## Accessibility
+
+- Renders a native `<footer>` landmark — at the top level of the page, screen readers announce it as `contentinfo`.
+- A `<footer>` nested inside an `<article>` or `<section>` is a *section* footer, not the page contentinfo — still valid HTML, just not a landmark.
+- Text contrast uses `theme.colors.text.secondary` against the surface background — verified to meet WCAG AA on both themes.
+
+## Common pitfalls
+
+- **Don't pin the Footer to the bottom of the viewport.** A footer that always shows is a *toolbar*, not a footer. Let it sit at the natural end of the page.
+- **Don't ship multiple page-level Footers.** One per page; multiple `<footer>` elements without a containing landmark confuse screen-reader navigation.
+- **Don't hardcode width inside.** Wrap link groups in a `Container` so wide monitors don't stretch the footer's link list into a thin ribbon.
+- **Don't use `tone="page"` on the default theme.** It only helps when your page background is itself a strong color. On the standard white/dark page the surface tint *is* the visual separator.

@@ -1,0 +1,40 @@
+import { Meta, Source } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../documentation-imports/index.ts";
+import { ResizableCanvas } from "../utils/resizable-canvas.tsx";
+import * as Examples from "./forms.stories.tsx";
+import code from "./examples/membership-application-steps.tsx?raw";
+
+<Meta title="Patterns/Forms/Multi-step forms" />
+
+<HideSbBar />
+
+# Multi-step forms
+
+<ResizableCanvas of={Examples.MultiStep} defaultHeight={560} />
+
+Split a long form when the steps are separate topics, or when a later step
+depends on an earlier answer. Keep a single page when people need to see
+everything together.
+
+- **One form per step**, each with its own schema. A step can't be left until it
+  is valid, and its error summary covers only that step.
+- **Keep the answers in the parent**, so Back returns to filled-in fields.
+- **Say where they are**: "Step 2 of 3", and the step's name as its heading.
+- **Move focus to the new heading** on each step, so screen-reader users hear
+  where they have arrived.
+- **End with a check page** and send nothing until it is confirmed.
+
+## One long page, or steps
+
+| The form… | Use |
+| --- | --- |
+| Is short, or people need to see every answer together | One page |
+| Is long but people fill it in one sitting, in any order | One page with a heading (or a `Fieldset`) per topic, and the error summary at the top |
+| Has separate topics, or later questions depend on earlier answers | Steps, as here |
+| Is a quick task started from another page | A [Modal](?path=/docs/functional-modal--docs) or [Drawer](?path=/docs/functional-drawer--docs), only if it's a few fields; otherwise a page |
+
+Save long forms as people go, or warn before they leave with unsaved answers.
+The [Join the Society](?path=/story/examples-join-the-society--registration)
+example is a long single-page form with sections and a review drawer.
+
+<Source code={code} language="tsx" />

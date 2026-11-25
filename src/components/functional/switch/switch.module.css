@@ -1,0 +1,85 @@
+@layer dt.components {
+  /* Track in the first column; label and hint share the second. The label
+     element itself is display: contents so the hint sits outside it. */
+  .root {
+    display: inline-grid;
+    grid-template-columns: auto 1fr;
+    column-gap: var(--squonk-roles-space-choice-gap);
+    row-gap: var(--squonk-roles-space-choice-hint-gap);
+    align-items: start;
+    font-family: var(--squonk-roles-type-font);
+    font-size: var(--squonk-roles-type-body);
+    line-height: var(--squonk-roles-type-tight-line-height);
+  }
+
+  .root[data-disabled] { opacity: var(--squonk-roles-state-disabled-opacity); }
+
+  /* With a hint, the control spans both rows so only the label sets the
+     first row's height. */
+  .root:has(> .hint) .control { grid-row: span 2; }
+
+  .button {
+    display: contents;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .button[data-disabled] { cursor: not-allowed; }
+
+  /* Track and thumb geometry steps with the register. */
+  .control {
+    --switch-width: var(--squonk-components-switch-track-width-default);
+    --switch-height: var(--squonk-components-switch-track-height-default);
+    --switch-thumb: var(--squonk-components-switch-thumb-size-default);
+    grid-column: 1;
+    position: relative;
+    width: var(--switch-width);
+    height: var(--switch-height);
+    border-radius: var(--squonk-roles-radius-pill);
+    background-color: var(--squonk-components-switch-track-off);
+    background-image: var(--squonk-roles-relief-well-fill);
+    background-blend-mode: var(--squonk-roles-relief-blend);
+    box-shadow: var(--squonk-roles-relief-well-edge);
+    cursor: inherit;
+  }
+
+  .control[data-register="compact"] { --switch-width: var(--squonk-components-switch-track-width-compact); --switch-height: var(--squonk-components-switch-track-height-compact); --switch-thumb: var(--squonk-components-switch-thumb-size-compact); }
+  .control[data-register="large"] { --switch-width: var(--squonk-components-switch-track-width-large); --switch-height: var(--squonk-components-switch-track-height-large); --switch-thumb: var(--squonk-components-switch-thumb-size-large); }
+  .control[data-register="hero"] { --switch-width: var(--squonk-components-switch-track-width-hero); --switch-height: var(--squonk-components-switch-track-height-hero); --switch-thumb: var(--squonk-components-switch-thumb-size-hero); }
+
+  .root[data-selected] .control { background-color: var(--squonk-roles-color-accent); }
+
+  .button[data-focus-visible] .control {
+    outline: var(--squonk-roles-border-focus-width) solid var(--squonk-roles-color-focus-ring);
+    outline-offset: var(--squonk-roles-border-focus-offset);
+  }
+
+  .thumb {
+    position: absolute;
+    top: var(--squonk-components-switch-thumb-inset);
+    left: var(--squonk-components-switch-thumb-inset);
+    width: var(--switch-thumb);
+    height: var(--switch-thumb);
+    border-radius: 50%;
+    background-color: var(--squonk-components-switch-thumb);
+    background-image: var(--squonk-roles-relief-control-fill);
+    background-blend-mode: var(--squonk-roles-relief-blend);
+    box-shadow: var(--squonk-roles-relief-control-edge), var(--squonk-roles-elevation-raised);
+  }
+
+  .root[data-selected] .thumb {
+    left: calc(var(--switch-width) - var(--switch-thumb) - var(--squonk-components-switch-thumb-inset));
+  }
+
+  .label {
+    grid-column: 2;
+    color: var(--squonk-roles-color-text);
+    cursor: inherit;
+  }
+
+  .hint {
+    grid-column: 2;
+    font-size: var(--squonk-roles-type-hint);
+    color: var(--squonk-roles-color-hint);
+  }
+}

@@ -1,0 +1,336 @@
+import { Canvas, Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as NetworkGraphStories from "./network-graph.stories.tsx";
+import meta from "./network-graph.stories.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# NetworkGraph
+
+<ResizableCanvas of={NetworkGraphStories.Default} defaultRecipe="block" defaultHeight={460} />
+
+`NetworkGraph` draws things as nodes and the relationships between them as arrows, and arranges them so that connected things sit together. The reader can pan, zoom and select a node to see what it connects to. `NetworkGraphLegend` is its key, and can hide and show each kind of node and link.
+
+Use it when the question is about **shape**: what is connected to what, which things cluster, which one sits in the middle, what stands alone. It does not rank, total or compare, and it does not lay things out as a hierarchy, a timeline or a flow with steps.
+
+<Controls />
+
+## When to use a graph, and when a table or list is better
+
+A graph is the slowest way to read a single fact and the fastest way to see a pattern. Choose by the question the reader is asking.
+
+| The reader wants to | Use |
+| --- | --- |
+| See how things connect: clusters, hubs, chains, things that stand alone | `NetworkGraph` |
+| Follow a path across several steps ("which chapter shares maps with the chapter we fund?") | `NetworkGraph` |
+| Find one item, or read its exact details | A [Table](?path=/docs/functional-table--docs) with search |
+| Compare, sort or total items | A Table |
+| See what one item is related to, and nothing further | A list under that item's heading |
+| Read a strict parent-and-child structure | A nested list or an [Accordion](?path=/docs/functional-accordion--docs) |
+| Count how many of each kind there are | A [BarChart](?path=/docs/functional-bar-chart--docs) or a Table |
+
+Three checks before you reach for a graph:
+
+- **Are the links the point?** If people mostly read the nodes and rarely the links, it is a list with a "related" column.
+- **Is it small enough to read?** Up to about 30 nodes, people read individual nodes and links. Up to about 150 they see clusters and outliers but can no longer read labels without zooming. Past that, filter first: show one item's neighbourhood, or one kind at a time.
+- **Does it have many-to-many links?** If every item has exactly one parent, a nested list is clearer and works on a phone.
+
+A graph is rarely enough alone. Pair it with a table of the same items for looking things up, or show the selected node's details beside it. People who use a screen reader get the same data as tables (see [Accessibility](#accessibility)).
+
+## Nodes and links
+
+A node has an `id`, a `label` and a `kind`. A link goes from a `source` id to a `target` id, and is drawn as an arrow in that direction; give it a `label` when the relationship has a detail worth showing ("Funds 60%"). Links to an `id` that is not in `nodes` are left out. `label` on the graph says what it shows, for assistive technology.
+
+<Canvas of={NetworkGraphStories.NodesAndLinks} />
+
+```tsx
+<NetworkGraph
+  label="Who funds and leads the Waikato Chapter"
+  style={{ height: 280 }}
+  nodes={[
+    { id: "waikato", label: "Waikato Chapter", kind: "company" },
+    { id: "trust", label: "Chen Household", kind: "trust" },
+    { id: "avery", label: "Avery Chen", kind: "person" },
+    { id: "marcus", label: "Marcus Olu", kind: "person" },
+  ]}
+  links={[
+    { source: "trust", target: "waikato", label: "Funds 60%" },
+    { source: "marcus", target: "waikato", label: "Funds 40%" },
+    { source: "avery", target: "trust", label: "Treasurer" },
+  ]}
+  nodeKinds={{
+    company: { label: "Chapter" },
+    person: { label: "Member", shape: "square" },
+    trust: { label: "Household", shape: "diamond" },
+  }}
+/>
+```
+
+Link labels appear while the link, or a node at either end, is hovered, focused or selected. Showing them all at once would bury the drawing. Long node labels are cut to 24 characters; the full text is in the tooltip and in the node's accessible name.
+
+## Kinds
+
+`nodeKinds` and `linkKinds` describe each kind once: its name, its colour and, for nodes, its shape. Pass the same objects to the graph and to the legend so the two always agree.
+
+- **Shape** (`circle`, `square`, `diamond`, `triangle`, `hexagon`) is what tells kinds apart for people who cannot tell the colours apart. Give each kind its own shape when you have five or fewer.
+- **Colour** comes from the theme and follows light and dark mode. Leave `tone` and `slot` out and each kind takes the next colour of the [data series palette](?path=/docs/patterns-data-visualization--docs), in the order `nodeKinds` lists them. That is right for kinds that are just categories.
+- Set `tone` (`success`, `warning`, `error`, `info`, `primary`, `neutral`) only when the kind **is** a status, such as an overdue case. A tone also takes the key of a colour the theme added (`addedColorPrimitives`), such as `"violet"`.
+- Set `slot` (1–8) to match a series charted elsewhere on the page.
+
+<Canvas of={NetworkGraphStories.KindsAndTones} />
+
+A single node can set its own `tone` to flag a status on top of its kind. Keep that for the exception: when most nodes carry their own tone, the kinds stop reading.
+
+A link kind has a `tone` or `slot` too, and a `variant`. Most graphs read best with plain links and one coloured kind for the relationship that matters. A kind that is not described is drawn as a neutral circle named by its key, so missing configuration shows up rather than failing.
+
+## Dashed nodes and links
+
+`variant="dashed"` draws a node as an empty, dashed outline with a quieter label: something that is still part of the picture but de-emphasised, such as a closed membership or a chapter that has closed. On a link, `dashed` marks a weaker, indirect or past relationship; a link kind can set it for all its links.
+
+A dashed outline says "different", not what the difference is. Put that in the node's `description`: it is added to the tooltip, the accessible name and the table.
+
+<Canvas of={NetworkGraphStories.DashedNodesAndLinks} />
+
+## Selection
+
+Clicking a node selects it. The node gets a ring and a bold label, its neighbours stay as they are, and everything else is set back, so the reader sees one node's neighbourhood. Clicking the selected node again, clicking the background or pressing Escape clears the selection.
+
+Let the graph hold the selection (`defaultSelectedId`) when nothing else on the page depends on it. Hold it yourself (`selectedId` and `onSelectionChange`) when you show the selected node's details beside the graph, which is the usual reason to select at all.
+
+<Canvas of={NetworkGraphStories.ControlledSelection} />
+
+```tsx
+const [selectedId, setSelectedId] = useState<string | null>(null);
+
+<NetworkGraph
+  label="Funding and map sharing in the Waikato region"
+  nodes={nodes}
+  links={links}
+  nodeKinds={nodeKinds}
+  selectedId={selectedId}
+  onSelectionChange={setSelectedId}
+/>
+```
+
+Only one node can be selected. A `selectedId` that is hidden or no longer in `nodes` highlights nothing.
+
+## The legend, and hiding kinds
+
+`NetworkGraphLegend` lists the node kinds with their shapes and the link kinds with their lines. Give it `nodes` and `links` and it lists only the kinds that occur, each with its count.
+
+With `onHiddenKindsChange`, each entry is a button that hides or shows that kind. Keep `hiddenKinds` in your own state and pass it to both components. Hiding a node kind also hides the links that touch those nodes. Nothing else moves when a kind is hidden or shown, so the reader keeps their bearings.
+
+<Canvas of={NetworkGraphStories.WithLegend} />
+
+```tsx
+const [hiddenKinds, setHiddenKinds] = useState<NetworkGraphHiddenKinds>({});
+
+<NetworkGraphLegend
+  nodeKinds={nodeKinds}
+  linkKinds={linkKinds}
+  nodes={nodes}
+  links={links}
+  hiddenKinds={hiddenKinds}
+  onHiddenKindsChange={setHiddenKinds}
+/>
+<NetworkGraph label="…" nodes={nodes} links={links} nodeKinds={nodeKinds} linkKinds={linkKinds} hiddenKinds={hiddenKinds} />
+```
+
+Without `onHiddenKindsChange` the legend is a plain key. Use that when the graph is small enough that hiding things is no help.
+
+<Canvas of={NetworkGraphStories.LegendAsKey} />
+
+The legend is a separate component so you can put it where the page has room: above the graph, in a card header or in a side panel.
+
+## Icons, images and size
+
+A kind's `icon` is drawn inside every node of that kind and on its legend key; a node's own `icon` wins. Use a library icon (`<UserIcon />`): it takes the canvas colour on a filled shape and the node's colour inside a dashed one. An `image` URL, such as a photo or a logo, is drawn in a circle ringed in the node's colour, in place of the shape.
+
+`size` draws a node larger or smaller than usual (0.5–3 times), for a measure such as tear volume or headcount. Larger nodes keep more room around them, so the layout spreads to fit. Say near the graph what size means.
+
+<Canvas of={NetworkGraphStories.IconsImagesAndSizes} />
+
+Icons and images decorate; the kind, label and `description` still say what a node is, and stay in its accessible name.
+
+## Drawing nodes yourself
+
+`renderNode` draws the inside of each node, as SVG centred on 0,0, in place of the shape, icon and image. It gets the node and its state: `radius` to size the drawing, `color` (the node's tone or its kind's colour), `shape`, `kindLabel`, and whether it is `selected`, `hovered`, `dimmed` or `pinned`. The graph still draws the label, the selection and focus rings, the pin and a hit area, so selection, keyboard use and the accessible name work as before.
+
+<Canvas of={NetworkGraphStories.CustomNodeRenderer} />
+
+Colour the drawing with `state.color` and theme tokens, not literals, so kinds, tones and dark mode still apply.
+
+## Line weight
+
+`thickness` sets a link's width in pixels (0.5–12; 1.5 by default) on the link or its kind. It stays the same at every zoom, and the arrowhead grows with it. Use it for a measure, such as an amount or a volume, and say what it means near the graph.
+
+<Canvas of={NetworkGraphStories.LinkThickness} />
+
+## Motion along links
+
+`animation` on a link or its kind shows that something travels along it, from source to target:
+
+| `animation` | Looks like | Use it for |
+| --- | --- | --- |
+| `flow` | The line marches | A steady stream: data, goods |
+| `particles` | Dots travel the line | Discrete things: requests, dues payments |
+| `pulse` | The line brightens and fades | Something active or failing now |
+
+`animationDuration` sets how long one cycle takes, in milliseconds (1600 by default); lower is faster. Use speed for a rate, not decoration.
+
+<Canvas of={NetworkGraphStories.AnimatedLinks} />
+
+Motion is decoration. It stops when the reader's device asks for reduced motion or the app sets a reduced [motion level](?path=/docs/animation-motion--docs), and the particles are hidden, so never let motion carry meaning alone. Say it in the link's `label` too ("38% failing").
+
+## Lighting up structure on hover
+
+`hoverHighlight` lights a part of the graph around the node the reader points at, or moves keyboard focus to, and sets the rest back, as selection does:
+
+| `hoverHighlight` | Lights |
+| --- | --- |
+| `none` | Nothing. The default: pointing shows the node's link labels only |
+| `neighbours` | The node and everything one link away |
+| `outgoing`, `incoming` | Only the nodes its arrows point at, or that point at it |
+| `downstream` | Everything reachable by following arrows from it: what it feeds or affects |
+| `upstream` | Everything that reaches it: what it depends on |
+
+<Canvas of={NetworkGraphStories.HoverStructures} />
+
+For a structure of your own, pass a function. It gets the node and the graph on show and returns the ids of the nodes to light; links between two lit nodes are lit too.
+
+```tsx
+<NetworkGraph
+  {...props}
+  hoverHighlight={(node, graph) => graph.nodes.filter((other) => other.kind === node.kind).map((other) => other.id)}
+/>
+```
+
+<Canvas of={NetworkGraphStories.CustomHighlight} />
+
+## A live layout, and pinning
+
+By default the layout is worked out once and nothing moves. `layout="force"` makes it a live simulation: drag a node and the nodes linked to it follow, then the graph settles when it is let go. Dragging the background still pans. `draggableNodes` turns node dragging on or off whatever the layout; with the `static` layout a dragged node stays where it is dropped and nothing else moves.
+
+A pinned node shows a pin and stays where it is while the rest move. The reader pins or unpins a node by double-clicking it, or by pressing P while it has focus. Pinning is on with the `force` layout, or whenever you pass a pin prop. Hold the pins with `pinnedIds` and `onPinnedChange`, or start some with `defaultPinnedIds`.
+
+<Canvas of={NetworkGraphStories.ForceLayout} />
+
+Holding the pins lets the page offer its own control, such as a button that pins the selected node:
+
+<Canvas of={NetworkGraphStories.PinTheSelectedNode} />
+
+## Everything together
+
+<Canvas of={NetworkGraphStories.OperationsMap} />
+
+## Data that changes
+
+The graph is made for data that arrives while it is open. Pass new `nodes` and `links` and:
+
+- every node that is still there stays exactly where it was;
+- each new node is placed beside the nodes it links to, and fades in;
+- a node that was there before and comes back returns to the place it had;
+- removed nodes fade out where they stood, and their links go;
+- the reader's pan and zoom are left alone. New nodes can land outside the view; **Fit to view** brings everything back.
+
+A node is "the same node" while its `id` is the same, so keep ids stable between updates. Rebuilding the arrays on every render is fine.
+
+<Canvas of={NetworkGraphStories.LiveUpdate} />
+
+### Fitting as the data changes
+
+When the page narrows the graph as someone types a search, pass `autoFit`. The view then fits again each time the shown nodes change or the box changes size, and moves there smoothly. Without it the view is fitted once and left to the reader. `maxFitZoom` lets a fit zoom in past actual size, so a few matching nodes can fill the box. A value of 1.5 to 2 keeps labels readable.
+
+Nodes keep their places, so what is left after a search can sit in clusters far apart, and a fit can't make it bigger. Pass `settleOnChange` too and the nodes that stay may move: the graph settles again each time nodes come or go, and the nodes glide to their new places. Leave it off for live data that people watch, where a node that moves is harder to follow.
+
+Every view move (fitting, and the zoom buttons) eases over the theme's layout duration. With motion reduced or off, the view and the nodes jump, and nodes appear and go without fading.
+
+## Full screen
+
+`allowFullscreen` adds a **Full screen** button beside the zoom buttons. The graph then covers the window, and the browser's full screen too when the page allows it. **Exit full screen** or Escape returns it. Escape first clears a selection, and does nothing while the reader is typing in a field.
+
+The page's own controls are out of sight in full screen, so pass the ones the reader still needs:
+
+- `fullscreenToolbar` shows across the top, for the search and filters the page shows above the graph.
+- `fullscreenAside` shows on a card at the end, for the details of the selected node. Pass `null` when nothing is selected.
+
+Pass the same elements the page shows, so their state is shared. A fit keeps the nodes clear of both. `onFullscreenChange` says when the graph enters and leaves full screen.
+
+<Canvas of={NetworkGraphStories.SearchAndFullScreen} />
+
+## Size
+
+The graph fills the width and height of its container, so the container decides its size. Set a height on the parent or pass one through `style`; with none, the graph is 160px tall. It keeps its middle in the middle when the container is resized. The first time it has something to draw, it zooms out far enough to show every node, and never zooms in past actual size.
+
+Give it room. Below about 320px wide a graph of more than a few nodes is unreadable; on a phone, show the table or list instead.
+
+<Canvas of={NetworkGraphStories.ManyNodes} />
+
+## Empty state
+
+With no nodes the graph shows `empty` in place of the drawing ("No data to show" by default). Say what would appear and when, as you would in any [empty state](?path=/docs/patterns-empty-and-error-states--docs).
+
+<Canvas of={NetworkGraphStories.Empty} />
+
+## In a card
+
+The graph draws its own surface and outline, so it can sit straight on the page. Inside a [Card](?path=/docs/layout-card--docs), put the legend and a line of context above it.
+
+<Canvas of={NetworkGraphStories.InACard} />
+
+## CSS variables
+
+Colours come from `tone` and `slot`, never from a colour you pass in. A theme tunes the rest with these tokens (`roleBindings`):
+
+| Token | Controls | Default |
+| --- | --- | --- |
+| `--squonk-components-network-graph-canvas` | The surface the graph is drawn on, and the halo behind its labels | `roles.color.surface` |
+| `--squonk-components-network-graph-link` | A link whose kind has no colour | `roles.color.edgeStrong` |
+| `--squonk-components-network-graph-link-label` | The words on a link | `roles.color.textSupporting` |
+| `--squonk-components-network-graph-dim-opacity` | How far back unrelated nodes and links are set when a node is selected, and a hidden kind's key in the legend | `0.25` |
+| `--squonk-components-network-graph-min-height` | The least height, when the container sets none | `160px` |
+| `--squonk-components-network-graph-controls-inset` | The zoom buttons' distance from the corner | `roles.space.grouped` |
+| `--squonk-components-network-graph-legend-gap` | Between the entries of the legend | `roles.space.separated` |
+| `--squonk-components-network-graph-overlay-gap` | In full screen, between the toolbar or aside and the nodes, and between the toolbar and the aside | `roles.space.separated` |
+| `--squonk-components-network-graph-controls-room` | In full screen, the height kept clear for the zoom buttons below the aside | `48px` |
+| `--squonk-components-network-graph-aside-width` | In full screen, the most width the aside takes | `22rem` |
+
+The usual node size, link length and arrowheads are fixed geometry: the layout depends on them. Scale a node with `size` and a line with `thickness`.
+
+## Accessibility
+
+- **Name the graph.** `label` is required and names both the graph and its tables. Say what the nodes and links are: "Funding and map sharing between chapters in the Waikato region", not "Graph".
+- **Every node is a button** named with its label, its kind, its `description` and how many connections it has ("Waikato Chapter, Chapter, 5 connections"). `aria-pressed` says whether it is selected.
+- **Keyboard.** The graph is one tab stop. Inside it:
+
+  | Key | Does |
+  | --- | --- |
+  | Arrow keys | Move to the connected node that lies most nearly in that direction. Nothing happens when no linked node lies that way. |
+  | Page Down, Page Up | Move to the next or previous node in the order of `nodes`, so nodes with no links can be reached |
+  | Home, End | Move to the first or last node |
+  | Enter, Space | Select the focused node, or clear it if it is already selected |
+  | Escape | Clear the selection |
+  | P | Pin or unpin the focused node, when pinning is on |
+
+  A focused node shows its links' labels and lights the `hoverHighlight` structure, and the view pans to keep it in sight. A pinned node's name ends in "pinned". Zoom in, Zoom out and Fit to view are buttons after the drawing.
+- **The same data as tables.** Screen readers get two visually hidden tables after the drawing: the nodes (name, kind, description, what each connects to) and the links (from, to, relationship). They list what is on show, so a hidden kind is left out of them too.
+- **Not colour alone.** Kinds differ by shape, dashed nodes and links by their line, the selection by a ring and bold text, a hidden legend entry by a strike-through. Give each kind its own `shape`, and explain a dashed node in its `description`.
+- **Motion.** With the `static` layout, the layout is worked out before anything is drawn, so nothing moves while the reader looks at it. With `force`, nodes move only while the reader drags one. New nodes fade in; with reduced motion, or motion turned off, they are simply there. Link animations stop under reduced motion.
+- **Pointer.** Drag pans (or moves a node, when nodes are draggable), the wheel and a pinch zoom. Moving a node is never the only way to reach information: every node stays reachable from the keyboard. While the pointer is over the graph the wheel zooms it instead of scrolling the page, so do not make the graph taller than the screen.
+
+## Common pitfalls
+
+- **Using a graph as a lookup.** If people come to find one chapter and read its details, give them a searchable Table, and at most a small graph of that chapter's neighbourhood.
+- **Too many nodes.** Hundreds of nodes make a hairball that shows nothing. Filter before you draw: one neighbourhood, one kind, one time period.
+- **Colour as the only difference between kinds.** Set a `shape` for each kind. About one in twelve men cannot tell some of the palette's colours apart.
+- **A status tone for a category.** `tone="error"` on a kind called "Chapter" tells the reader something is wrong. Keep tones for statuses and let categories take the palette.
+- **Unstable ids.** If a node's `id` changes between updates (an array index, a new random id), the graph treats it as a new node and it moves. Use the record's own key.
+- **No height.** The graph fills its container. In a container with no height it falls back to 160px, which is too small for more than a handful of nodes.
+- **A row of flex items with no width.** The graph takes the width it is given and has no width of its own, so in a row (`HStack`) give it or its wrapper a width.
+- **Meaning in position.** The layout only keeps linked things close. Left, right, up and down mean nothing, and a node near the middle is not more important. If order or rank matters, use a Table or a list.
+- **Motion everywhere.** Animate the links that carry something now, not every link. A graph where everything moves draws the eye nowhere.
+- **Meaning only in motion, weight or size.** Reduced motion stops the animation, and widths and sizes are hard to compare. Put the number or the state in the label or `description` too.
+- **Every link labelled.** Label the links that carry a detail. A link with no `label` shows its kind's name, which is usually enough.

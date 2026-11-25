@@ -1,0 +1,140 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as CardStories from "./card.stories.tsx";
+import meta from "./card.stories.tsx";
+import { Card } from "./card.tsx";
+import { VStack } from "../../layout-primitive/vstack/vstack.tsx";
+import { HStack } from "../../layout-primitive/hstack/hstack.tsx";
+import { Grid } from "../../layout-primitive/grid/grid.tsx";
+import { Heading } from "../../functional-primitive/heading/heading.tsx";
+import { Text } from "../../functional-primitive/text/text.tsx";
+import { Button } from "../../functional/button/button.tsx";
+import { Badge } from "../../functional/badge/badge.tsx";
+import { Presentation } from "../../style/presentation/presentation.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Card
+
+<ResizableCanvas of={CardStories.Outlined} />
+
+`Card` is a themed visual container — background, border, radius, and shadow driven by `variant`. It exposes no layout knobs on purpose: internal padding adapts to the surrounding `Presentation` register, and the arrangement of children is whatever `VStack` / `HStack` / `Grid` / `Block` you put inside. For a card with a hover-lift state, use `InteractiveCard`; for a fully clickable card, use `InteractiveCard as="a"`.
+
+<Controls />
+
+## Variants
+
+Four variants cover the common surfaces. `outlined` is the safe default; `elevated` for floating panels; `filled` for the "raised paper" look; `featured` is the inverse-contrast "recommended" card in a comparison group.
+
+<InlineCodeExample>
+  <Grid columns={2} gap="md">
+    <Card variant="outlined">
+      <VStack gap="xs">
+        <Heading level={4}>Outlined</Heading>
+        <Text tone="secondary">Bordered card on the page background.</Text>
+      </VStack>
+    </Card>
+    <Card variant="elevated">
+      <VStack gap="xs">
+        <Heading level={4}>Elevated</Heading>
+        <Text tone="secondary">Borderless card with a soft drop shadow.</Text>
+      </VStack>
+    </Card>
+    <Card variant="filled">
+      <VStack gap="xs">
+        <Heading level={4}>Filled</Heading>
+        <Text tone="secondary">Sits on the raised surface background.</Text>
+      </VStack>
+    </Card>
+    <Card variant="featured">
+      <VStack gap="xs">
+        <Heading level={4}>Featured</Heading>
+        <Text>High-contrast, for the "recommended" option.</Text>
+      </VStack>
+    </Card>
+  </Grid>
+</InlineCodeExample>
+
+## A border and a shadow together
+
+An outlined card has a border and no shadow. A theme can add one with `components.card.outlinedElevation`, the outlined card's `box-shadow` beside its border. It draws nothing by default, so outlined cards look as they did until a theme sets it.
+
+<Canvas of={CardStories.OutlinedWithShadow} />
+
+```tsx
+<SquonkThemeProvider roleBindings={{ "components.card.outlinedElevation": "roles.elevation.soft" }}>
+```
+
+Point it at an elevation (`roles.elevation.soft`, `roles.elevation.raised`, `shadows.pop`) or write a shadow. It sits in a shadow list after the card's relief edge, so for no shadow use `0 0 #0000`, not `none`, which would drop the relief edge too. For a shadow per colour mode, bind a `{ light, dark }` pair. An `InteractiveCard` swaps it for its hover shadow while pointed at.
+
+## Padding via Presentation
+
+Cards have no `padding` prop. Internal padding adapts to the ambient `Presentation` register — `compact` for dense panels, `hero` for marketing.
+
+<InlineCodeExample>
+  <VStack gap="sm">
+    <Presentation register="compact"><Card><Text>Compact card padding</Text></Card></Presentation>
+    <Presentation register="default"><Card><Text>Default card padding</Text></Card></Presentation>
+    <Presentation register="large"><Card><Text>Large card padding</Text></Card></Presentation>
+    <Presentation register="hero"><Card><Text>Hero card padding</Text></Card></Presentation>
+  </VStack>
+</InlineCodeExample>
+
+## Composition
+
+Cards are visual chrome only — arrange the contents with a `VStack` or `Grid` inside. The library does not ship a `<CardHeader>` / `<CardBody>` because those would re-invent the stacks.
+
+<InlineCodeExample>
+  <Card variant="outlined">
+    <VStack gap="sm">
+      <HStack justify="between" align="center">
+        <Heading level={3}>checkout-flow</Heading>
+        <Badge tone="success" variant="subtle">Live</Badge>
+      </HStack>
+      <Text tone="secondary">
+        Production traffic from web and mobile clients. Last deployed 4 hours ago.
+      </Text>
+      <HStack gap="xs">
+        <Button variant="primary">View dashboard</Button>
+        <Button variant="ghost">Settings</Button>
+      </HStack>
+    </VStack>
+  </Card>
+</InlineCodeExample>
+
+## Polymorphic
+
+`Card` defaults to `<section>` because cards are usually thematic groupings. Render as `<article>` for self-contained content (a blog post preview), or as `<div>` when no landmark is wanted.
+
+<InlineCodeExample>
+  <Card as="article" variant="elevated">
+    <VStack gap="xs">
+      <Heading level={4}>Shipping faster with snapshot tests</Heading>
+      <Text tone="secondary">A short note on visual regression in practice.</Text>
+    </VStack>
+  </Card>
+</InlineCodeExample>
+
+## Accessibility
+
+- Renders a real `<section>` by default — counts as a landmark when given an `aria-labelledby` pointing at its heading.
+- No interactive behavior — keyboard / focus belong to whatever you put inside (use `InteractiveCard` if the whole card needs to be clickable).
+- Card establishes foreground roles against its own background, so default Heading, Text and Link content remains readable in all variants. Code, Kbd and painted controls retain independently calculated foregrounds for their own surfaces. Explicit semantic tones, custom colors and translucent backgrounds still require composition-specific validation.
+
+## Common pitfalls
+
+- **Don't reach for a `padding` prop — there isn't one.** Wrap the card (or its ancestor `Section`) in a `Presentation` register; the padding follows.
+- **Don't put two cards inside a card.** Nested cards turn into a stack of borders. Use a `VStack` inside one card instead.
+- **Don't make a non-interactive `Card` clickable.** A bare `Card` with an `onClick` has no focus, no keyboard support, and no `role="button"`. Use `InteractiveCard` (or wrap in a `Link`).
+- **Don't use `featured` for more than one card per group.** Its job is to single out the recommended option — two "recommended" cards mean none of them are.
+
+
+## Semantic surfaces and sizing
+
+Every Card scopes primary, secondary, muted and default-link foreground roles to its painted background. The featured background is chosen from the parent theme before those roles change. Nesting a normal card creates a new surface; an inner ThemeStyleBlock can change mode or size without forgetting the physical card background around it. Explicit ThemeModifier overrides placed inside the card remain authoritative, so verify custom overrides yourself.
+
+Padding comes from `theme.presentation.cardPadding`, derived from `spacingPx` and the Presentation register. The exported `cardPaddingByRegister` retains default-theme values for compatibility; components read the active theme instead. Applications that adjusted the browser root font to change card padding should now set the theme spacing primitive.

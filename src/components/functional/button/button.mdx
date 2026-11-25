@@ -1,0 +1,122 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as ButtonStories from "./button.stories.tsx";
+import meta from "./button.stories.tsx";
+import { Button } from "./button.tsx";
+import { Cluster } from "../../layout/cluster/cluster.tsx";
+import { HStack } from "../../layout-primitive/hstack/hstack.tsx";
+import { Block } from "../../layout-primitive/block/block.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Button
+
+<ResizableCanvas
+  of={ButtonStories.Primary}
+  defaultRecipe="centered"
+  defaultHeight={100}
+/>
+
+`Button` is the canonical action element — every click that mutates state, confirms a flow, or navigates the user should be a `Button` (or a `Button` with `as="a"` for navigation). For lower-emphasis text actions, drop to `variant="ghost"`; for destructive flows, `variant="danger"`.
+
+<Controls />
+
+## Variants
+
+Five variants cover the emphasis spectrum. `secondary` is the safe default; `primary` is the page's call-to-action; `solid` is a neutral high-contrast option; `ghost` is the lowest emphasis; `danger` is reserved for destructive actions.
+
+<InlineCodeExample>
+  <Cluster gap="sm">
+    <Button variant="primary">Save changes</Button>
+    <Button variant="secondary">Cancel</Button>
+    <Button variant="solid">Continue</Button>
+    <Button variant="ghost">Learn more</Button>
+    <Button variant="danger">Delete account</Button>
+  </Cluster>
+</InlineCodeExample>
+
+## Shape
+
+Every control shares one shape, set by the theme's `roles.radius.control`
+(6px by default), so buttons, fields, selects and pagination match. Change it
+for a whole theme or a scope with the `controlRadiusPx` primitive: `9999` makes
+every control a pill, `0` makes them square.
+
+For a single marketing call to action that should stand out as a pill, pass
+`shape="pill"`.
+
+<InlineCodeExample>
+  <HStack gap="sm">
+    <Button variant="primary">Save changes</Button>
+    <Button variant="primary" shape="pill">Start free trial</Button>
+  </HStack>
+</InlineCodeExample>
+
+## States
+
+`disabled` greys the button and removes the pointer cursor. The focus ring uses `theme.colors.border.focus` so the active control is always visible to keyboard users.
+
+<InlineCodeExample>
+  <HStack gap="sm">
+    <Button variant="primary">Default</Button>
+    <Button variant="primary" disabled>Disabled</Button>
+  </HStack>
+</InlineCodeExample>
+
+## Full width
+
+By default the button shrinks to fit its label. Set `fullWidth` when the button is the sole control in a form column or modal footer.
+
+<InlineCodeExample>
+  <Block width="280px">
+    <Button variant="primary" fullWidth>Continue</Button>
+  </Block>
+</InlineCodeExample>
+
+## Lift
+
+`lift` enables a subtle vertical pop + shadow on hover. On by default for `primary` (the lift is part of the brand affordance); off for everything else. Toggle per-instance when the surrounding layout calls for a different feel.
+
+<InlineCodeExample>
+  <HStack gap="sm">
+    <Button variant="secondary" lift>Hover me</Button>
+    <Button variant="ghost" lift>Hover me</Button>
+  </HStack>
+</InlineCodeExample>
+
+## As another element
+
+`Button` is polymorphic via `as`. Render as an anchor for navigation so the browser's middle-click / right-click affordances stay intact.
+
+<InlineCodeExample>
+  <Button as="a" href="https://squonkstack.io" variant="primary">
+    Open docs
+  </Button>
+</InlineCodeExample>
+
+## Accessibility
+
+- Renders a real `<button>` element by default, through React Aria's Button — full keyboard support, correct role, and consistent press handling across mouse, touch and keyboard.
+- The focus-visible outline uses `theme.colors.border.focus` with a 2px offset so it stays visible against the button surface.
+- `disabled` sets the native `disabled` attribute, taking the button out of the tab order.
+- Foreground helpers choose readable text for concrete opaque button surfaces. Their requested contrast is a target, not a guarantee for every custom color; CSS variables and translucent backgrounds require checking the resolved foreground against the rendered surface in each state.
+
+## Common pitfalls
+
+- **Don't use `ghost` for the primary action.** It reads as a tertiary option; users miss it.
+- **Don't stack two `primary` buttons side-by-side.** Pair `primary` with `secondary` or `ghost` so the call-to-action is unambiguous.
+- **Don't wrap a `Button` in an `<a>`** — use `as="a"` instead. Nested interactives produce two focus stops and confuse screen readers.
+- **`primary` lifts by default, others don't.** Override with `lift={false}` on `primary` if the surrounding density makes the motion feel busy.
+
+
+## Form and pending-action contract
+
+`Button` is built on React Aria's Button, so a press works the same with a mouse, touch, keyboard or screen reader, and it defaults to `type="button"`: set `type="submit"` on the single submit action. `onClick` still works (React Aria treats it as `onPress`).
+
+While a request is in flight, set `pending`. The button keeps focus and its place in the tab order, announces that it is busy, and ignores further presses, so the action can't be submitted twice. Keep a stable label or replace it with specific progress text; the consumer still owns recovery after a failed request.
+
+Native `disabled` behavior applies to the default button element. An anchor rendered with `as="a"` does not gain native disabled semantics from that prop; remove the unavailable navigation action or implement its keyboard and pointer policy explicitly. Prefer [Link](?path=/docs/functional-link--docs) for navigation within prose and [ConfirmModal](?path=/docs/functional-modal--docs) when a destructive action needs confirmation.

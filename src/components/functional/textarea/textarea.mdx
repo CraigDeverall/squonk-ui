@@ -1,0 +1,91 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as TextareaStories from "./textarea.stories.tsx";
+import meta from "./textarea.stories.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Textarea
+
+<ResizableCanvas of={TextareaStories.Default} defaultHeight={220} />
+
+`Textarea` takes several lines of free text: a reason, a description, a message.
+It has the same label, helper and error behaviour as `TextField`, so the two sit
+together in a form. Use `TextField` for anything that fits on one line (names,
+numbers, references).
+
+```tsx
+import { Textarea } from "@squonk/ui/textarea";
+
+<Textarea
+  label="Reason for the correction"
+  helperText="Explain what changed since you logged it."
+  maxLength={500}
+  showCount
+/>
+```
+
+<Controls />
+
+## Size it to the expected answer
+
+`rows` (3 by default) sets the starting height. Make it roughly the length of a
+typical answer: a tall box invites a long answer, a short one a short answer.
+People can drag the corner to make it taller.
+
+## Character count
+
+`showCount` adds a count below the box. With `maxLength` it shows "n / max",
+turns to the error colour at the limit, and the browser stops input there. The
+count is part of the textarea's description, so screen readers hear it on focus
+without being interrupted on every keystroke.
+
+<ResizableCanvas of={TextareaStories.WithCount} defaultHeight={220} />
+
+## Auto-resize
+
+`autoResize` grows the box with its content, so long answers never scroll inside
+a small box. `rows` stays the minimum height and the drag handle is removed.
+
+<ResizableCanvas of={TextareaStories.AutoResize} defaultHeight={260} />
+
+## Errors
+
+<ResizableCanvas of={TextareaStories.WithError} defaultHeight={220} />
+
+## Disabled
+
+<ResizableCanvas of={TextareaStories.Disabled} defaultHeight={200} />
+
+## Registers
+
+Text size and padding follow the surrounding `Presentation` register, and the
+minimum height matches a single-line control of that register.
+
+<ResizableCanvas of={TextareaStories.Registers} defaultHeight={420} />
+
+## In a form
+
+<ResizableCanvas of={TextareaStories.MessageForm} defaultHeight={300} />
+
+## Accessibility
+
+- The label is associated by `for`/`id`; helper, error and count text are
+  descriptions. A supplied `aria-describedby` is kept and combined with them.
+- `error` sets `aria-invalid` and is announced politely when it appears.
+- Avoid a placeholder as the only instruction: it disappears when people start
+  typing. Put guidance in `helperText`.
+
+## Common pitfalls
+
+- **Don't set a `maxLength` you haven't explained.** If there is a limit, show
+  it with `showCount` so people aren't cut off mid-sentence.
+- **Don't use `autoResize` in a fixed-height layout,** such as a dialog without
+  scrolling. The box can push the actions off screen.
+
+## UX guidance
+
+- [Labels, help and validation](?path=/docs/patterns-labels-help-and-validation--docs)

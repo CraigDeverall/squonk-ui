@@ -1,0 +1,126 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as AlertStories from "./alert.stories.tsx";
+import meta from "./alert.stories.tsx";
+import { Alert } from "./alert.tsx";
+import { VStack } from "../../layout-primitive/vstack/vstack.tsx";
+import { Block } from "../../layout-primitive/block/block.tsx";
+import { Text } from "../../functional-primitive/text/text.tsx";
+import { Code } from "../../functional-primitive/code/code.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Alert
+
+<ResizableCanvas of={AlertStories.Info} defaultHeight={120} />
+
+`Alert` surfaces a status message tied to a recent action or system state. Use it for in-flow messaging that the reader should see but that doesn't need to interrupt them. For modal interruptions use a Dialog; for transient feedback prefer a Toast.
+
+<Controls />
+
+## Tones
+
+Four semantic tones map to the theme's status colors. Pick the tone that matches the *severity*, not the visual feel — `warning` reads orange; `error` reads red; `success` reads green; `info` reads blue.
+
+<InlineCodeExample>
+  <Block width="420px">
+    <VStack gap="sm">
+      <Alert tone="info" title="Heads up">A new version of SquonkUI is available.</Alert>
+      <Alert tone="success" title="Saved">Your changes have been published.</Alert>
+      <Alert tone="warning" title="Reminder">This workspace will archive after 30 days.</Alert>
+      <Alert tone="error" title="Couldn't save">Try again in a moment.</Alert>
+    </VStack>
+  </Block>
+</InlineCodeExample>
+
+## Variants
+
+`accent` is the default: a thick edge in the tone's colour on the leading side, plus a border. `variant="tinted"` is a plain block of the tone's wash with no accent edge and no border. Use it where the edge would be one line too many, such as a notice inside a card or beside other bordered panels. The tone, the text colour and the announcement are the same in both.
+
+<InlineCodeExample>
+  <Block width="420px">
+    <VStack gap="sm">
+      <Alert tone="info" title="Accent">The default, with its accent edge.</Alert>
+      <Alert tone="info" variant="tinted" title="Tinted">The wash alone.</Alert>
+    </VStack>
+  </Block>
+</InlineCodeExample>
+
+## A theme's own colours as tones
+
+`tone` also takes the key of a colour the theme added with `addedColorPrimitives`, such as `tone="violet"`. The theme derives the same wash, text and border for it as for a built-in tone, in light and dark mode. An added colour carries no severity, so the alert is announced politely (`role="status"`); for a warning or an error use the built-in tone. A built-in name always means the built-in tone.
+
+<ResizableCanvas of={AlertStories.AddedTone} defaultHeight={260} />
+
+## Without a title
+
+Drop `title` for a single-line alert when the body is enough on its own.
+
+<InlineCodeExample>
+  <Block width="420px">
+    <Alert tone="success">Profile updated.</Alert>
+  </Block>
+</InlineCodeExample>
+
+## Dismissable
+
+Pass `onDismiss` to render a close button on the right. The handler runs when the user clicks `×` — wire it to local state to remove the alert from the DOM.
+
+<InlineCodeExample>
+  <Block width="420px">
+    <Alert tone="info" title="Tip" onDismiss={() => {}}>
+      You can drag-and-drop to reorder items in the list.
+    </Alert>
+  </Block>
+</InlineCodeExample>
+
+## Composition
+
+Stack multiple alerts inside a `VStack` when surfacing several states at once — the alert's left border + tone color helps the reader scan vertically.
+
+<InlineCodeExample>
+  <Block width="420px">
+    <VStack gap="sm">
+      <Alert tone="error" title="Build failed">3 tests broke in the last commit.</Alert>
+      <Alert tone="warning" title="Lint warnings">12 new warnings introduced.</Alert>
+      <Alert tone="info">Deployment will retry automatically in 5 minutes.</Alert>
+    </VStack>
+  </Block>
+</InlineCodeExample>
+
+## Nested Text + Code
+
+Children of an `Alert` inherit its tone-bound foreground color — including nested `Text`, `Heading`, `Link`, `Code`, and `Kbd`. This keeps body content readable against the light tone-bound background in both light and dark themes; without it, `Text` would always apply `theme.colors.text.primary` and bleach out against a light `info` / `success` alert in dark mode.
+
+<InlineCodeExample>
+  <Alert tone="info" title="Add a DNS record">
+    <Text>
+      Add this TXT record at your DNS provider: <Code>_squonk-verify.example.com</Code>
+    </Text>
+  </Alert>
+</InlineCodeExample>
+
+Surface-tinted elements (`Code`, `Kbd`) keep their own backgrounds — only the foreground inherits. Pass `tone` explicitly on a nested `Text` only when you really want to break out of the cascade (e.g. an inline `error`-toned hint inside an `info` alert).
+
+## Accessibility
+
+- `error` and `warning` render with `role="alert"` so assistive tech announces them immediately.
+- `info` and `success` use `role="status"` — announced politely, without interrupting the screen-reader queue. So does a tone from a colour the theme added.
+- `variant` changes only the edge and border; the role and text contrast are the same.
+- The dismiss button carries `aria-label="Dismiss"` and a visible focus ring (`theme.colors.border.focus`).
+- The Alert scopes default content foreground roles against its tone background. Code and Kbd keep their own surfaces and calculate their own contrast; no tag-wide CSS override forces their text to inherit the Alert foreground. Verify explicit semantic tones and custom color overrides in their actual composition.
+
+## Common pitfalls
+
+- **Don't use `error` for non-actionable messages.** It triggers an immediate screen-reader interruption; reserve it for things the user must address.
+- **Don't pile up identical alerts.** Coalesce repeats ("12 tests broke") rather than rendering 12 alerts in a row.
+- **Don't put critical actions inside an alert without a fallback elsewhere.** If the user dismisses, the action must remain reachable.
+
+## UX guidance
+
+- [Toasts, alerts and dialogs](?path=/docs/patterns-toasts-alerts-and-dialogs--docs)
+- [Labels, help and validation](?path=/docs/patterns-labels-help-and-validation--docs)

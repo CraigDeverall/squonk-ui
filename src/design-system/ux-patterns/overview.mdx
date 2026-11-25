@@ -1,0 +1,82 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../documentation-imports/index.ts";
+
+<Meta title="Patterns/Overview" />
+
+<HideSbBar />
+
+# Patterns
+
+Patterns are the decisions that sit above a single component: which control to
+use, how a message should reach someone, what an empty screen should say. Each
+page states the rule, shows it with real components, and says what your app
+still owns.
+
+## Start here
+
+| Pattern | When you need it | Uses |
+| --- | --- | --- |
+| [Choosing components](?path=/docs/patterns-choosing-components--docs) | Which component to use for a job: act, ask, show a status, give feedback, wait, navigate, show data, lay out a page | Every component |
+| [Page layouts and app shells](?path=/docs/patterns-page-layouts-and-app-shells--docs) | The shape of a screen, resizable workspaces, and how it responds across breakpoints | Page, Header, Sidebar, NavList, Section, Container, Grid, Split, ResizablePanels |
+| [Writing for the interface](?path=/docs/patterns-writing-for-the-interface--docs) | Words for labels, buttons, errors, empty states and messages | Every component |
+| [Density and registers](?path=/docs/patterns-density-and-registers--docs) | Sizing a region for its job, from dense admin to landing page | Presentation, Section, ThemeStyleBlock |
+
+## Forms and input
+
+| Pattern | When you need it | Uses |
+| --- | --- | --- |
+| [Forms](?path=/docs/patterns-forms-overview--docs) | Any form: state, validation, the error summary, server errors, steps | Form, every field |
+| [Labels, help and validation](?path=/docs/patterns-labels-help-and-validation--docs) | Labelling a field, writing help text and errors | TextField, Select, Checkbox, RadioGroup |
+| [Switches, checkboxes and saving](?path=/docs/patterns-switches-checkboxes-and-saving--docs) | A setting that saves at once, or a choice submitted later | Switch, Checkbox |
+| [Choosing a selection control](?path=/docs/patterns-choosing-a-selection-control--docs) | One choice, several choices, or a long list | RadioGroup, Select, CheckboxGroup, Checkbox, Switch |
+| [Settings and preferences](?path=/docs/patterns-settings-and-preferences--docs) | A settings page: grouping, saving at once or with a button, risky settings | Switch, RadioGroup, Fieldset, Button, ConfirmModal |
+
+## Labels and surfaces
+
+| Pattern | When you need it | Uses |
+| --- | --- | --- |
+| [Labels: Badge or Tag](?path=/docs/patterns-labels-badge-or-tag--docs) | A status, a count, a category or a person | Badge, Tag, Avatar, MediaObject |
+| [Cards and landing sections](?path=/docs/patterns-cards-and-landing-sections--docs) | A card that links somewhere, a card with actions, comparable plans | Card, InteractiveCard, Section, Grid |
+| [Illustrations, icons and images](?path=/docs/patterns-illustrations-icons-and-images--docs) | An icon, an illustration or a photograph: which, where and how big | Icon, Illustration, Avatar, AspectRatio |
+
+## Feedback
+
+| Pattern | When you need it | Uses |
+| --- | --- | --- |
+| [Toasts, alerts and dialogs](?path=/docs/patterns-toasts-alerts-and-dialogs--docs) | Telling someone something happened, or is happening | Toast, Alert, ConfirmModal |
+| [Loading and progress](?path=/docs/patterns-loading-and-progress--docs) | Waiting for data or work: which indicator, where, and for how long | Skeleton, Spinner, ProgressBar, Button |
+| [Empty and error states](?path=/docs/patterns-empty-and-error-states--docs) | Nothing to show yet, no matches, or a failed load | EmptyState, Button |
+| [Onboarding and first run](?path=/docs/patterns-onboarding-and-first-run--docs) | A first visit, a set-up checklist, a new feature | EmptyState, Illustration, ProgressBar, Alert |
+| [Destructive actions](?path=/docs/patterns-destructive-actions--docs) | Deleting or closing something | ConfirmModal, Toast, DropdownMenu |
+
+## Overlays
+
+| Pattern | When you need it | Uses |
+| --- | --- | --- |
+| [Overlays and disclosures](?path=/docs/patterns-overlays-and-disclosures--docs) | Showing more without leaving the page | Accordion, Popover, Tooltip, Modal, Drawer |
+| [Menus and commands](?path=/docs/patterns-menus-and-commands--docs) | A short list of things to do with an item | DropdownMenu, IconButton |
+| [Focus management](?path=/docs/patterns-focus-management--docs) | Anything that opens, closes, appears or disappears | Modal, DropdownMenu, Table |
+
+## Navigation
+
+| Pattern | When you need it | Uses |
+| --- | --- | --- |
+| [App navigation](?path=/docs/patterns-app-navigation--docs) | The frame around a signed-in app | Header, Sidebar, NavList, Breadcrumb, Tabs, Link |
+| [QR handoff](?path=/docs/patterns-qr-handoff--docs) | Moving someone from a screen to their phone | QrCode, Link |
+| [Printing](?path=/docs/patterns-printing--docs) | A page people print: a statement, receipt or plan | Printable, NotPrintable, PrintOnly |
+
+## Data and content
+
+| Pattern | When you need it | Uses |
+| --- | --- | --- |
+| [Lists, tables and cards](?path=/docs/patterns-lists-tables-and-cards--docs) | Showing a collection: compare, read in order, or pick one | Table, MediaObject, InteractiveCard, Grid, InfiniteList |
+| [Search, filtering and sorting](?path=/docs/patterns-search-filtering-and-sorting--docs) | Helping people find and narrow down items | TextField, Popover, CheckboxGroup, Tag, Table |
+| [Tables and grids](?path=/docs/patterns-tables-and-grids--docs) | Rows to read, sort, select or page through | Table, Pagination, InfiniteList, EmptyState |
+| [Dashboards and summaries](?path=/docs/patterns-dashboards-and-summaries--docs) | An overview screen, or a summary of one record | Alert, Stat, Card, Grid, charts |
+| [Data visualization](?path=/docs/patterns-data-visualization--docs) | A figure, a trend, a chart or a dashboard | Stat, Sparkline, LineChart, AreaChart, BarChart, DonutChart, ScatterChart, Meter |
+
+## Whole screens
+
+The [Examples](?path=/story/examples-member-dashboard--overview) are complete
+screens built from these patterns: a dashboard, sign-in, a long registration
+form, a sighting report, an instalment plan and a secretary work queue.

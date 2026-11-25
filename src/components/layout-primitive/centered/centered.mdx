@@ -1,0 +1,70 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as CenteredStories from "./centered.stories.tsx";
+import meta from "./centered.stories.tsx";
+import { Centered } from "./centered.tsx";
+import { Block } from "../block/block.tsx";
+import { Card } from "../../layout/card/card.tsx";
+import { Spinner } from "../../functional/spinner/spinner.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Centered
+
+<ResizableCanvas of={CenteredStories.Default} />
+
+`Centered` centers its children on both axes inside a flex container. Use it whenever you'd otherwise write `display: flex; align-items: center; justify-content: center;` by hand — empty states, loading spinners, "perfectly centered" hero callouts, modal contents. For a centered *column* of items with consistent gaps, use `VStack align="center" justify="center"` instead.
+
+<Controls />
+
+## Hero centering
+
+Set `minHeight` to a viewport-relative length to fill the visible area.
+
+<InlineCodeExample>
+  <Block background="subtle" radius="base">
+    <Centered minHeight="240px">
+      <Card variant="filled">I am perfectly centered.</Card>
+    </Centered>
+  </Block>
+</InlineCodeExample>
+
+## Loading spinner
+
+A common use — center a spinner in a panel that's waiting for data.
+
+<InlineCodeExample>
+  <Block background="subtle" radius="base">
+    <Centered minHeight="160px">
+      <Spinner />
+    </Centered>
+  </Block>
+</InlineCodeExample>
+
+## Not full-width
+
+`fullWidth={false}` collapses the wrapper to its content's intrinsic width — for centering a thing without forcing the wrapper to span the row.
+
+<InlineCodeExample>
+  <Block background="subtle" radius="base" width="fit">
+    <Centered fullWidth={false} minHeight="120px">
+      <Card variant="filled">Narrow center</Card>
+    </Centered>
+  </Block>
+</InlineCodeExample>
+
+## Accessibility
+
+- Renders a plain `<div>` flex container — no roles, no announcements. The centered child supplies its own semantics.
+- For a loading state inside Centered, ensure the inner element (e.g. `Spinner`) carries the `role="status"` announcement — Centered is layout only.
+
+## Common pitfalls
+
+- **Don't nest Centered inside Centered.** Once you need multiple children with gaps, switch to `VStack align="center" justify="center"`.
+- **Pass `minHeight` unless the parent already constrains height.** Without it, Centered collapses to the height of its child and "centering" becomes a no-op.
+- **Don't reach for Centered when an empty state is the real intent.** `EmptyState` already centers an icon + title + body + action; use the named component.
+- **Centered doesn't add padding.** If the centered child touches the edges, add padding on the parent or wrap in a `Block`.

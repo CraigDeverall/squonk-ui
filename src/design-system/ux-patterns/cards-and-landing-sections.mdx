@@ -1,0 +1,48 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../documentation-imports/index.ts";
+import { Do, DoDont, Dont, Example } from "./pattern-blocks.tsx";
+import { CardWithActionsExample, LinkCardExample, PricingExample } from "./pattern-examples.tsx";
+
+<Meta title="Patterns/Cards and landing sections" />
+
+<HideSbBar />
+
+# Cards and landing sections
+
+A card is a surface that groups one thing. Whether the whole card is clickable
+depends on how many things people can do with it.
+
+## A card that goes somewhere
+
+Use [InteractiveCard](?path=/docs/layout-interactive-card--docs) when the whole
+card has one destination or one action: `as="a"` with an `href` to navigate, or
+`onClick` for an action. Its heading names it. A plain
+[Card](?path=/docs/layout-card--docs) is just a surface.
+
+<DoDont>
+  <Do caption="One destination, so the whole card is the link.">
+    <LinkCardExample />
+  </Do>
+  <Do caption="Two actions, so a plain Card holds two real buttons. Never nest buttons or links inside an interactive card.">
+    <CardWithActionsExample />
+  </Do>
+</DoDont>
+
+Keep the focus ring visible and test long headings. A pointer cursor or hover
+lift doesn't make something interactive; the element underneath must be a link
+or a button.
+
+## Comparing plans
+
+Compose [Section](?path=/docs/layout-section--docs),
+[SectionHeading](?path=/docs/layout-section-heading--docs),
+[Grid](?path=/docs/layout-primitives-grid--docs) and Cards. Put the same
+information in the same order in every card, feature one option at most, and
+compare with words, not colour alone. The cards stack in reading order on a phone.
+
+<Example caption="One plan featured, with a badge that says why. Every plan lists price, audience and features in the same order.">
+  <PricingExample />
+</Example>
+
+Your app owns prices, billing periods and the purchase flow; when the
+billing period changes, every figure must change with it.

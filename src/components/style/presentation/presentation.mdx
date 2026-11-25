@@ -1,0 +1,115 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as PresentationStories from "./presentation.stories.tsx";
+import meta from "./presentation.stories.tsx";
+import { Presentation } from "./presentation.tsx";
+import { Card } from "../../layout/card/card.tsx";
+import { Grid } from "../../layout-primitive/grid/grid.tsx";
+import { VStack } from "../../layout-primitive/vstack/vstack.tsx";
+import { Heading } from "../../functional-primitive/heading/heading.tsx";
+import { Text } from "../../functional-primitive/text/text.tsx";
+import { Button } from "../../functional/button/button.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Presentation
+
+<ResizableCanvas of={PresentationStories.Default} />
+
+`Presentation` is a render-less context provider that sets the visual **register** (`compact` | `default` | `large` | `hero`) for every register-aware descendant — `Heading`, `Text`, `Button`, `Badge`, `Spinner`, `Avatar`, `TextField`, `Card`, `Section`, and more. It produces no DOM of its own; it only threads a value through context.
+
+This is how the library avoids per-component `size` props: instead of setting `size="lg"` on ten different components in a hero, wrap them once in `<Presentation register="hero">` and every register-aware component inside sizes itself consistently. `Section` (and `SectionHeading`) already provide their own `Presentation` internally — reach for `Presentation` directly only when scoping a register to a subtree that isn't a `Section`.
+
+<Controls />
+
+## Registers
+
+The four registers, side by side, wrapping the same card composition — watch the heading size, body text size, button size, and card padding step together.
+
+<InlineCodeExample>
+  <Grid columns={2} gap="md">
+    <Presentation register="compact">
+      <Card variant="outlined">
+        <VStack gap="xs">
+          <Heading level={4}>Compact</Heading>
+          <Text tone="secondary">Dense UI — forms, sidebars, toolbars.</Text>
+          <Button variant="primary">Save</Button>
+        </VStack>
+      </Card>
+    </Presentation>
+    <Presentation register="default">
+      <Card variant="outlined">
+        <VStack gap="xs">
+          <Heading level={4}>Default</Heading>
+          <Text tone="secondary">The standard application register.</Text>
+          <Button variant="primary">Save</Button>
+        </VStack>
+      </Card>
+    </Presentation>
+    <Presentation register="large">
+      <Card variant="outlined">
+        <VStack gap="xs">
+          <Heading level={4}>Large</Heading>
+          <Text tone="secondary">Display sections, marketing slabs.</Text>
+          <Button variant="primary">Save</Button>
+        </VStack>
+      </Card>
+    </Presentation>
+    <Presentation register="hero">
+      <Card variant="outlined">
+        <VStack gap="xs">
+          <Heading level={4}>Hero</Heading>
+          <Text tone="secondary">The page's headline moment.</Text>
+          <Button variant="primary">Save</Button>
+        </VStack>
+      </Card>
+    </Presentation>
+  </Grid>
+</InlineCodeExample>
+
+## Nesting to step back down
+
+Nest a `Presentation` inside a larger one to opt a subtree back to a smaller (or larger) register — e.g. a comment composer embedded inside a `hero`-register page section can opt back to `default`.
+
+<InlineCodeExample>
+  <Presentation register="hero">
+    <VStack gap="md">
+      <Heading level={2}>Big headline moment</Heading>
+      <Presentation register="default">
+        <Card variant="filled">
+          <Text>This card opts back to the default register even though its ancestor is hero-scale.</Text>
+        </Card>
+      </Presentation>
+    </VStack>
+  </Presentation>
+</InlineCodeExample>
+
+## Composition
+
+`Section` and `SectionHeading` set up their own `Presentation` automatically — you rarely need to reach for `Presentation` directly inside a `Section`. It's most useful for scoping a register to a card, a modal, or any subtree that isn't already inside a `Section`.
+
+<InlineCodeExample>
+  <Presentation register="compact">
+    <Card variant="outlined">
+      <VStack gap="xs">
+        <Heading level={5}>Settings</Heading>
+        <Text tone="secondary">A dense settings panel, opted into the compact register directly (no surrounding Section).</Text>
+      </VStack>
+    </Card>
+  </Presentation>
+</InlineCodeExample>
+
+## Accessibility
+
+- `Presentation` has no DOM output and no interactive behavior — it carries no accessibility implications of its own.
+- Register changes are purely visual (spacing, type size, control size); they never change semantic markup (heading levels, ARIA roles) on the components inside.
+
+## Common pitfalls
+
+- **Don't reach for `Presentation` when a `Section` would already provide the register.** If the content is a top-level page section, use `Section register="…"` — it gives you the register plus the padding/tone chrome in one component.
+- **Don't use `Presentation` to set an individual component's size.** If only one `Button` needs to be bigger, that's a sign the library is missing a targeted prop, not a signal to wrap a single component in its own `Presentation`. File it as a component gap rather than working around it.
+- **Don't nest more than two or three registers deep.** Each level of nesting makes it harder to predict the effective register at a glance — prefer a flatter structure where each section or card sets its register once.

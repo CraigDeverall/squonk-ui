@@ -1,0 +1,34 @@
+@layer dt.components {
+  .ring {
+    display: inline-block;
+    width: var(--spinner-size);
+    height: var(--spinner-size);
+    border-radius: 50%;
+    border: var(--spinner-stroke) solid var(--squonk-roles-color-well);
+    border-top-color: var(--squonk-roles-color-accent);
+    vertical-align: middle;
+  }
+
+  .ring[data-register="compact"] { --spinner-size: 16px; --spinner-stroke: 2px; }
+  .ring[data-register="default"] { --spinner-size: 24px; --spinner-stroke: 3px; }
+  .ring[data-register="large"] { --spinner-size: 32px; --spinner-stroke: 3px; }
+  .ring[data-register="hero"] { --spinner-size: 48px; --spinner-stroke: 4px; }
+
+  .ring[data-tone="neutral"] { border-top-color: var(--squonk-roles-color-text-supporting); }
+  .ring[data-tone="inverse"] {
+    border-color: rgba(255, 255, 255, 0.25);
+    border-top-color: var(--squonk-components-spinner-inverse-arc);
+  }
+
+  .srOnly {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}

@@ -1,0 +1,9 @@
+@layer dt.components {
+  .root {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: var(--inline-align);
+    gap: var(--inline-gap);
+    min-width: 0;
+  }
+}

@@ -1,0 +1,4 @@
+/* SquonkUI typefaces: Inter for text, Space Grotesk for headings. Self-hosted,
+   so apps need no font CDN. */
+@import "@fontsource-variable/inter/wght.css";
+@import "@fontsource-variable/space-grotesk/wght.css";

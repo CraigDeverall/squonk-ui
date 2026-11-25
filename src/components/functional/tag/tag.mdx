@@ -1,0 +1,105 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as TagStories from "./tag.stories.tsx";
+import meta from "./tag.stories.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Tag
+
+<ResizableCanvas of={TagStories.Default} defaultRecipe="centered" defaultHeight={120} />
+
+`Tag` is a compact label for a category, keyword, applied filter or entered value.
+It names something; it can be removed. Use `Badge` for a *status* ("Overdue",
+"Live", "3 new"), and `Tag` for things people add, choose or filter by.
+
+```tsx
+import { Tag } from "@squonk/ui/tag";
+
+<Tag tone="primary" onRemove={() => removeFilter("night-watches")}>Night watches</Tag>
+```
+
+<Controls />
+
+## Badge or Tag?
+
+A Badge reports the state or count of the thing beside it, set by the system
+("Overdue", "3"). A Tag names a value: a category, keyword or filter the person
+chose, added or can remove ("Night watches ×"). Tags never carry a status colour. See
+[Labels: Badge or Tag](?path=/docs/patterns-labels-badge-or-tag--docs).
+
+## Tones and variants
+
+Neutral is the default and right for most tags. `primary` marks the values
+the person has chosen, such as applied filters; `info` groups values the rest
+of the screen colours the same way. Tags have no success, warning or error
+tones: a coloured status is a [Badge](?path=/docs/functional-badge--docs).
+
+<ResizableCanvas of={TagStories.Tones} defaultRecipe="centered" defaultHeight={160} />
+
+## A theme's own colours as tones
+
+`tone` also takes the key of a colour the theme added with
+`addedColorPrimitives`, such as `tone="violet"`. The theme derives the same
+palette for it as for a built-in tone, in light and dark mode. Use one to
+group values the rest of the screen colours the same way; it still never
+means a status, and a built-in name always means the built-in tone.
+
+<ResizableCanvas of={TagStories.AddedTone} defaultRecipe="centered" defaultHeight={180} />
+
+## With an icon
+
+<ResizableCanvas of={TagStories.WithIcon} defaultRecipe="centered" defaultHeight={120} />
+
+## Removable
+
+Pass `onRemove` to show a remove button. Removing is immediate, so keep it to
+things that are easy to add back, like filters. Offer "Clear all" when there
+are several.
+
+<ResizableCanvas of={TagStories.ActiveFilters} defaultRecipe="centered" defaultHeight={180} />
+
+## Groups of tags
+
+Wrap a row of related tags, such as active filters, in a `TagGroup`. It is
+built on React Aria's TagGroup: the whole row is one tab stop, the arrow keys
+move between tags, and Delete or Backspace removes the focused tag by calling
+its `onRemove`. Give the group a `label` (or an `aria-label`), and each tag an
+`id` unless its children are plain text.
+
+<ResizableCanvas of={TagStories.Group} defaultRecipe="centered" defaultHeight={180} />
+
+## Long text
+
+A tag never grows wider than its parent; long text is cut off with an ellipsis
+and the remove button stays visible. Put the full value in nearby text if
+people need to read it.
+
+<ResizableCanvas of={TagStories.Truncated} defaultRecipe="centered" defaultHeight={120} />
+
+## Accessibility
+
+- A lone tag is a plain `<span>`; React Aria's TagGroup needs a set of tags,
+  so use `TagGroup` for a row of them.
+- The remove button is a real `<button>` (a React Aria Button) named "Remove &lt;text&gt;", so a row of
+  tags reads as "Remove Night watches", "Remove Overdue". Pass `removeLabel` when the
+  content isn't plain text.
+- After a tag is removed, its button disappears. When removing from a list, move
+  focus to the next tag's remove button or to the list's heading so keyboard
+  users aren't dropped at the top of the page.
+- Colour is never the only signal: the tag's text says what it is.
+
+## Common pitfalls
+
+- **Don't use a Tag as a button or link.** A tag isn't interactive apart from its
+  remove button. For a choice among options, use a `RadioGroup`, a
+  `CheckboxGroup` or a toggle.
+- **Don't use a Tag for status.** "Paid" and "Overdue" are `Badge`s.
+- **Don't colour every tag differently.** A rainbow of tones reads as noise.
+
+## UX guidance
+
+- [Tables and grids](?path=/docs/patterns-tables-and-grids--docs)

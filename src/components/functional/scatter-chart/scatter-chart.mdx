@@ -1,0 +1,184 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as ScatterChartStories from "./scatter-chart.stories.tsx";
+import meta from "./scatter-chart.stories.tsx";
+import { ScatterChart } from "./scatter-chart.tsx";
+import { Heading } from "../../functional-primitive/heading/heading.tsx";
+import { Text } from "../../functional-primitive/text/text.tsx";
+import { Card } from "../../layout/card/card.tsx";
+import { Block } from "../../layout-primitive/block/block.tsx";
+import { VStack } from "../../layout-primitive/vstack/vstack.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# ScatterChart
+
+<ResizableCanvas of={ScatterChartStories.Default} defaultRecipe="block" defaultHeight={400} />
+
+`ScatterChart` plots the relationship between two measures, one dot per item: days overdue against the dues owing, tear volume recorded against sightings logged. Use it to spot correlation, clusters and outliers across many items. It is not for change over time (use a [LineChart](?path=/docs/functional-line-chart--docs)) or for comparing totals across categories (use a [BarChart](?path=/docs/functional-bar-chart--docs)). Every point has two numeric values; if one of them is a category, it's a bar chart.
+
+<Controls />
+
+## Data, axes and labels
+
+Points come in groups: each entry in `series` has a `label` and its own `data` rows, and every group is plotted from the same `xKey` (across) and `yKey` (up). `xLabel` and `yLabel` are required. They title the axes, name the values in the tooltip and head the table columns, because a scatter plot without axis titles can't be read. Use `formatX` and `formatY` to give each axis its unit.
+
+<InlineCodeExample>
+  <Block width="640px">
+    <ScatterChart
+      title="Overdue dues"
+      description="Each dot is one membership"
+      series={[
+        {
+          label: "Wanderers",
+          data: [
+            { name: "Aroha Ngata", daysLate: 4, penalty: 50 },
+            { name: "James Whitfield", daysLate: 12, penalty: 120 },
+            { name: "Mei Lin Chen", daysLate: 21, penalty: 180 },
+            { name: "Tama Rāwiri", daysLate: 33, penalty: 310 },
+            { name: "Rangi Parata", daysLate: 60, penalty: 540 },
+          ],
+        },
+        {
+          label: "Keepers",
+          data: [
+            { name: "Tui Street household", daysLate: 6, penalty: 250 },
+            { name: "Hemlock Hollow household", daysLate: 15, penalty: 640 },
+            { name: "Southern Fern household", daysLate: 30, penalty: 1180 },
+            { name: "Rimu Ridge household", daysLate: 55, penalty: 2240 },
+          ],
+        },
+      ]}
+      xKey="daysLate"
+      yKey="penalty"
+      nameKey="name"
+      xLabel="Days late"
+      yLabel="Dues owing"
+      formatY={(v) => v.toLocaleString("en-NZ", { style: "currency", currency: "NZD", maximumFractionDigits: 0 })}
+    />
+  </Block>
+</InlineCodeExample>
+
+`nameKey` names each point. The name heads the point's tooltip and gets its own column in the table view, so a reader can find out which membership is the outlier. Without it, the tooltip shows only the group.
+
+## Groups
+
+Each group is drawn in its own palette slot, in order, and gets a legend entry once there are two. Keep to three groups: past that, the colours of groups that aren't next to each other in the palette get hard to tell apart where their points mingle. If you need more, plot each group as its own chart (small multiples) with the same axes.
+
+A single group needs no legend; pin it with `slot` if it appears in another colour elsewhere on the page.
+
+<InlineCodeExample>
+  <Block width="640px">
+    <ScatterChart
+      title="Overdue dues for households"
+      series={[
+        {
+          label: "Keepers",
+          slot: 2,
+          data: [
+            { name: "Tui Street household", daysLate: 6, penalty: 250 },
+            { name: "Hemlock Hollow household", daysLate: 15, penalty: 640 },
+            { name: "Coastline household", daysLate: 19, penalty: 820 },
+            { name: "Southern Fern household", daysLate: 30, penalty: 1180 },
+            { name: "Pōhutukawa Walk household", daysLate: 42, penalty: 1650 },
+            { name: "Rimu Ridge household", daysLate: 55, penalty: 2240 },
+          ],
+        },
+      ]}
+      xKey="daysLate"
+      yKey="penalty"
+      nameKey="name"
+      xLabel="Days late"
+      yLabel="Dues owing"
+      formatY={(v) => `$${v.toLocaleString("en-NZ")}`}
+    />
+  </Block>
+</InlineCodeExample>
+
+Every dot has a surface-coloured ring (`--chart-mark-gap`) so overlapping dots stay distinct without an outline.
+
+## Height, loading and empty
+
+The plot height follows the [Presentation](?path=/docs/style-presentation--docs) register: 160px `compact`, 240px `default`, 320px `large`, 400px `hero`. A scatter plot needs room to show its shape; prefer `default` or larger. `loading` holds the height with a skeleton and marks the figure `aria-busy`; with no points the plot shows "No data to show", or your `empty` message.
+
+## In a card
+
+Let the card carry the heading and set `hideTitle`; keep `title`, which names the chart for screen readers and captions the table view. Use the card's text to say what the pattern means.
+
+<InlineCodeExample>
+  <Block width="640px">
+    <Card>
+      <VStack gap="md">
+        <VStack gap="xs">
+          <Heading level={3}>Overdue dues and lateness</Heading>
+          <Text tone="secondary">Keeper household dues owing rise more than four times faster per day overdue than Wanderer dues.</Text>
+        </VStack>
+        <ScatterChart
+          title="Overdue dues by days late"
+          hideTitle
+          series={[
+            {
+              label: "Wanderers",
+              data: [
+                { name: "Aroha Ngata", daysLate: 4, penalty: 50 },
+                { name: "Mei Lin Chen", daysLate: 21, penalty: 180 },
+                { name: "Rangi Parata", daysLate: 60, penalty: 540 },
+              ],
+            },
+            {
+              label: "Keepers",
+              data: [
+                { name: "Tui Street household", daysLate: 6, penalty: 250 },
+                { name: "Southern Fern household", daysLate: 30, penalty: 1180 },
+                { name: "Rimu Ridge household", daysLate: 55, penalty: 2240 },
+              ],
+            },
+          ]}
+          xKey="daysLate"
+          yKey="penalty"
+          nameKey="name"
+          xLabel="Days late"
+          yLabel="Dues owing"
+          formatY={(v) => `$${v.toLocaleString("en-NZ")}`}
+        />
+      </VStack>
+    </Card>
+  </Block>
+</InlineCodeExample>
+
+## Customising
+
+The chart reads these custom properties from its root `<figure>`. Set them on the chart itself through `style` or `className`; a parent can't override them because the figure defines its own defaults.
+
+| Variable | Controls | Default |
+| --- | --- | --- |
+| `--chart-series-1` … `--chart-series-8` | The colour of each group's dots, legend and tooltip keys | `--squonk-roles-color-data-series1` … `8` |
+| `--chart-mark-gap` | The ring around each dot | `--squonk-components-chart-mark-gap` (the default background) |
+| `--chart-area-opacity` | The wash under an area (AreaChart only) | `--squonk-components-chart-area-opacity` (0.12) |
+| `--chart-gridline` | Gridlines in both directions | `--squonk-components-chart-gridline` (default border) |
+| `--chart-axis-line` | Axis lines | `--squonk-components-chart-axis-line` (strong border) |
+| `--chart-cursor` | The band that follows the pointer (BarChart) | `--squonk-components-chart-cursor` (subtle background) |
+
+On a surface other than the default background, such as a `filled` Card, set `--chart-mark-gap` to that surface (`var(--squonk-roles-color-page)` for `filled`) or each dot gets a white halo. Prefer `slot` to overriding `--chart-series-*`; the palette is validated for colour-vision deficiency in light and dark mode.
+
+## Accessibility
+
+- The chart is a `<figure>` named by `title` and described by `description`. `title` is required; `hideTitle` hides it visually only.
+- The "Table view" toggle button (`aria-pressed`) swaps the plot for a table with one row per point: its group (when there are several), its name (with `nameKey`) and both values under the axis labels. It is the dependable way to read exact values with a keyboard, screen reader or magnifier.
+- The plot is focusable (`role="application"`) and arrow keys move the tooltip between points.
+- Colour never works alone: two or more groups get a legend, the tooltip names the point and its values, and the table names each group. Light-mode slots 3 to 5 are under 3:1 contrast on white, which is why the legend and table view are always present.
+- Axis titles and tick labels stay in text colours, never a group's colour.
+
+## Common pitfalls
+
+- **Too many groups.** Past three, colours blur together where points overlap. Use small multiples.
+- **Plotting time on the x axis.** Dots over dates hide the sequence. Use a LineChart.
+- **Missing or vague axis labels.** "Value" on both axes makes the chart unreadable. Say what each axis measures and give it a unit with `formatX` and `formatY`.
+- **No `nameKey` on data about named items.** An outlier nobody can identify starts a hunt through the table. Name the points.
+- **Two value axes.** There is one y axis. Different units belong in different charts.
+- **Reading correlation as cause.** The chart shows that two measures move together; say in the text what you know about why, or don't claim it.
+- **Colouring text to match a group.** Text in slots 3 to 5 fails contrast; let the legend carry the colour.

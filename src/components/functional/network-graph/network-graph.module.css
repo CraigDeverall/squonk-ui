@@ -1,0 +1,410 @@
+@layer dt.components {
+  /* Fills the box its parent gives it. The parent sets the height; with
+     none, the graph keeps a least height so it never collapses. */
+  .root {
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: var(--squonk-components-network-graph-min-height);
+    overflow: hidden;
+    font-family: var(--squonk-roles-type-font);
+    color: var(--squonk-roles-color-text);
+    background-color: var(--squonk-components-network-graph-canvas);
+    border: var(--squonk-roles-border-width) solid var(--squonk-roles-color-outline);
+    border-radius: var(--squonk-roles-radius-surface);
+  }
+
+  /* The drawing takes every pointer gesture itself: drag pans, wheel and
+     pinch zoom. */
+  .svg {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+    user-select: none;
+    cursor: grab;
+  }
+
+  .svg[data-panning],
+  .svg[data-dragging],
+  .svg[data-dragging] .node {
+    cursor: grabbing;
+  }
+
+  /* Links. 1.5px whatever the zoom, so a zoomed-out graph keeps its lines;
+     a link's `thickness` sets its own width. */
+  .link {
+    --network-graph-link-color: var(--squonk-components-network-graph-link);
+    --network-graph-link-width: 1.5px;
+    --network-graph-link-duration: 1600ms;
+  }
+
+  .linkLine {
+    fill: none;
+    stroke: var(--network-graph-link-color);
+    stroke-width: var(--network-graph-link-width);
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .link[data-variant="dashed"] .linkLine {
+    stroke-dasharray: 5 4;
+  }
+
+  .linkArrow {
+    fill: var(--network-graph-link-color);
+    stroke: none;
+  }
+
+  /* Lit by the structure around the node pointed at: a little heavier. */
+  .link[data-highlighted] .linkLine {
+    stroke-width: calc(var(--network-graph-link-width) + 1px);
+  }
+
+  /* A wide, invisible line over each link, so it is easy to point at. */
+  .linkHit {
+    fill: none;
+    stroke: transparent;
+    stroke-width: max(14px, calc(var(--network-graph-link-width) + 8px));
+    pointer-events: stroke;
+  }
+
+  /* Motion along a link comes from Motion.Flow, Motion.Travel and
+     Motion.Pulse, which stop or hide with reduced motion. These rules only
+     shape what moves: the dashes that flow, the dots that travel, and a
+     pulse that breathes about the line's own middle. */
+  .link[data-animation="flow"] .linkLine {
+    --motion-flow-period: 18px;
+    stroke-dasharray: 10 8;
+  }
+
+  .link[data-animation="pulse"] .linkLine {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  .linkParticle {
+    fill: var(--network-graph-link-color);
+    stroke: var(--squonk-components-network-graph-canvas);
+    stroke-width: 1px;
+    pointer-events: none;
+  }
+
+  .linkLabel {
+    font-size: var(--squonk-roles-type-fine);
+    fill: var(--squonk-components-network-graph-link-label);
+    text-anchor: middle;
+    dominant-baseline: central;
+    pointer-events: none;
+    /* A halo in the canvas colour, so the words read over the line. */
+    paint-order: stroke;
+    stroke: var(--squonk-components-network-graph-canvas);
+    stroke-width: 4px;
+    stroke-linejoin: round;
+  }
+
+  /* Nodes. The shape carries the kind's colour; the label stays in text ink. */
+  .node {
+    cursor: pointer;
+    outline: none;
+  }
+
+  /* The pointer target: 32px across whatever the shape, above the 24px minimum. */
+  .nodeHit {
+    fill: transparent;
+    stroke: none;
+  }
+
+  .nodeShape {
+    fill: var(--network-graph-node-color);
+    stroke: var(--squonk-components-network-graph-canvas);
+    stroke-width: 2px;
+  }
+
+  /* De-emphasised: an empty, dashed outline in the node's colour. */
+  .node[data-variant="dashed"] .nodeShape {
+    fill: var(--squonk-components-network-graph-canvas);
+    stroke: var(--network-graph-node-color);
+    stroke-width: 1.5px;
+    stroke-dasharray: 3 3;
+  }
+
+  /* A kind's icon, in the canvas colour over the filled shape. On a dashed
+     node the shape is hollow, so the icon takes the node's colour. */
+  .nodeIcon {
+    color: var(--squonk-components-network-graph-canvas);
+    pointer-events: none;
+  }
+
+  .node[data-variant="dashed"] .nodeIcon {
+    color: var(--network-graph-node-color);
+  }
+
+  .nodeLabel {
+    font-size: var(--squonk-roles-type-fine);
+    fill: var(--squonk-roles-color-text);
+    text-anchor: middle;
+    pointer-events: none;
+    paint-order: stroke;
+    stroke: var(--squonk-components-network-graph-canvas);
+    stroke-width: 4px;
+    stroke-linejoin: round;
+  }
+
+  .node[data-variant="dashed"] .nodeLabel {
+    fill: var(--squonk-roles-color-text-supporting);
+  }
+
+  .node[data-draggable] {
+    cursor: grab;
+  }
+
+  /* An image in a circle, ringed in the node's colour. */
+  .nodeImageRing {
+    fill: var(--network-graph-node-color);
+    stroke: var(--squonk-components-network-graph-canvas);
+    stroke-width: 2px;
+  }
+
+  .node[data-variant="dashed"] .nodeImageRing {
+    fill: var(--squonk-components-network-graph-canvas);
+    stroke: var(--network-graph-node-color);
+    stroke-dasharray: 3 3;
+  }
+
+  .nodeImage {
+    pointer-events: none;
+  }
+
+  .node[data-variant="dashed"] .nodeImage {
+    opacity: var(--squonk-components-network-graph-dim-opacity);
+  }
+
+  .nodeCustom {
+    pointer-events: none;
+  }
+
+  /* A pinned node: a pin in text ink at its top right, so it never rests on colour alone. */
+  .pin {
+    color: var(--squonk-components-network-graph-canvas);
+    pointer-events: none;
+  }
+
+  .pin circle {
+    fill: var(--squonk-roles-color-text);
+    stroke: var(--squonk-components-network-graph-canvas);
+    stroke-width: 1.5px;
+  }
+
+  /* Selection: a ring in text ink and a bold label, so it never rests on
+     colour alone. Focus: the theme's focus ring, outside the selection ring. */
+  .selectionRing,
+  .focusRing {
+    fill: none;
+    stroke: transparent;
+    pointer-events: none;
+  }
+
+  .node[data-selected] .selectionRing {
+    stroke: var(--squonk-roles-color-text);
+    stroke-width: 2px;
+  }
+
+  .node[data-selected] .nodeLabel {
+    font-weight: var(--squonk-roles-type-strong);
+  }
+
+  .node:focus-visible .focusRing {
+    stroke: var(--squonk-roles-color-focus-ring);
+    stroke-width: var(--squonk-roles-border-focus-width);
+  }
+
+  /* Outside the selected node's neighbourhood, or the structure lit around the node pointed at. */
+  /* Setting back eases in and out with Motion.Shift. */
+  .node,
+  .link {
+    --motion-property: opacity;
+  }
+
+  .node[data-dimmed],
+  .link[data-dimmed],
+  .linkLabel[data-dimmed] {
+    opacity: var(--squonk-components-network-graph-dim-opacity);
+  }
+
+  .controls {
+    position: absolute;
+    inset-block-end: var(--squonk-components-network-graph-controls-inset);
+    inset-inline-end: var(--squonk-components-network-graph-controls-inset);
+    display: flex;
+    gap: var(--squonk-roles-space-adjoining);
+  }
+
+  /* Full screen: the whole window, so no rounded corners or frame. The box
+     itself is set inline, over any height the page gives the graph. */
+  .root[data-fullscreen] {
+    border: 0;
+    border-radius: 0;
+  }
+
+  /* A node that has left the graph, fading where it stood. It takes no pointer. */
+  .leaving {
+    pointer-events: none;
+  }
+
+  /* Full screen overlay: a toolbar across the top and an aside at the end,
+     kept clear of the zoom buttons. It comes last in the graph, so it draws
+     over the drawing without a layer of its own. Only its cards take the
+     pointer, so the graph between them still pans and zooms. */
+  .overlay {
+    position: absolute;
+    inset: var(--squonk-components-network-graph-controls-inset);
+    inset-block-end: var(--squonk-components-network-graph-controls-room);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--squonk-components-network-graph-overlay-gap);
+    pointer-events: none;
+  }
+
+  .overlayToolbar,
+  .overlayAside {
+    pointer-events: auto;
+    box-sizing: border-box;
+    padding: var(--squonk-roles-space-surface-inset);
+    color: var(--squonk-roles-color-text);
+    background-color: var(--squonk-roles-color-surface);
+    border: var(--squonk-roles-border-width) solid var(--squonk-roles-color-outline);
+    border-radius: var(--squonk-roles-radius-surface);
+    box-shadow: var(--squonk-roles-elevation-floating);
+  }
+
+  .overlayAside {
+    align-self: flex-end;
+    width: min(var(--squonk-components-network-graph-aside-width), 100%);
+    min-height: 0;
+    overflow: auto;
+  }
+
+  .empty {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--squonk-roles-space-surface-inset);
+    font-size: var(--squonk-roles-type-meta);
+    color: var(--squonk-roles-color-text-supporting);
+    text-align: center;
+  }
+
+  /* The same data as tables, for screen readers only. */
+  .visuallyHidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* ---- NetworkGraphLegend ---- */
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--squonk-roles-space-grouped) var(--squonk-components-network-graph-legend-gap);
+    min-width: 0;
+    font-family: var(--squonk-roles-type-font);
+    font-size: var(--squonk-roles-type-meta);
+    color: var(--squonk-roles-color-text);
+  }
+
+  .legendGroup {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--squonk-roles-space-adjoining) var(--squonk-roles-space-grouped);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .legendItem {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--squonk-roles-space-icon-gap);
+    padding: var(--squonk-roles-space-segment-gap) var(--squonk-roles-space-item-gap);
+    font: inherit;
+    line-height: var(--squonk-roles-type-tight-line-height);
+    color: inherit;
+    background: transparent;
+    border: 0;
+    border-radius: var(--squonk-roles-radius-control);
+  }
+
+  button.legendItem {
+    cursor: pointer;
+  }
+
+  .legendItem[data-hovered] {
+    background-color: var(--squonk-roles-color-hover);
+    color: var(--squonk-roles-color-on-hover);
+  }
+
+  .legendItem[data-focus-visible] {
+    outline: var(--squonk-roles-border-focus-width) solid var(--squonk-roles-color-focus-ring);
+    outline-offset: var(--squonk-roles-border-focus-offset);
+  }
+
+  /* A hidden kind: struck through and hollow, not only paler. */
+  .legendItem[data-kind-hidden] {
+    color: var(--squonk-roles-color-text-supporting);
+    text-decoration: line-through;
+  }
+
+  .legendItem[data-kind-hidden] .legendKey {
+    opacity: var(--squonk-components-network-graph-dim-opacity);
+  }
+
+  .legendKey {
+    flex: none;
+    display: block;
+    overflow: visible;
+  }
+
+  .legendKeyShape {
+    fill: var(--network-graph-key-color);
+  }
+
+  .legendKeyIcon {
+    color: var(--squonk-components-network-graph-canvas);
+  }
+
+  .legendKeyLine {
+    fill: none;
+    stroke: var(--network-graph-key-color, var(--squonk-components-network-graph-link));
+    stroke-width: 1.5px;
+    stroke-linecap: round;
+  }
+
+  .legendKey[data-variant="dashed"] .legendKeyLine {
+    stroke-dasharray: 3 3;
+  }
+
+  .legendKeyArrow {
+    fill: var(--network-graph-key-color, var(--squonk-components-network-graph-link));
+  }
+
+  .legendCount {
+    color: var(--squonk-roles-color-text-supporting);
+    font-variant-numeric: tabular-nums;
+  }
+}

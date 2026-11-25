@@ -1,0 +1,141 @@
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--squonk-colors-background-surface);
+  font-family: var(--squonk-typography-fonts-base);
+  color: var(--squonk-colors-text-primary);
+}
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--squonk-spacing-md);
+  padding-inline: var(--squonk-spacing-md);
+}
+
+.brandRow,
+.tools {
+  display: flex;
+  align-items: center;
+  gap: var(--squonk-spacing-xs);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--squonk-spacing-sm);
+  font-weight: var(--squonk-typography-weights-bold);
+}
+
+.mark {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--squonk-roles-radius-control);
+  background-color: var(--squonk-roles-color-accent);
+  color: var(--squonk-roles-color-on-accent);
+}
+
+.badgeAnchor {
+  position: relative;
+  display: inline-flex;
+}
+
+.count {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  box-sizing: border-box;
+  border-radius: var(--squonk-borders-radius-full);
+  background-color: var(--squonk-colors-error);
+  color: var(--squonk-colors-contrast-error);
+  font-size: 10px;
+  font-weight: var(--squonk-typography-weights-bold);
+  line-height: 16px;
+  text-align: center;
+  pointer-events: none;
+}
+
+.notifications {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--squonk-spacing-sm);
+}
+
+.body {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+/* Mobile first: the sidebar is hidden and the menu button opens the
+   Drawer; from the tablet breakpoint (768px) the sidebar shows. */
+.sidebar { display: none; }
+
+@media (min-width: 768px) {
+  .sidebar { display: block; }
+  .menuButton { display: none; }
+}
+
+.business {
+  display: grid;
+  gap: var(--squonk-spacing-xxs);
+  padding: var(--squonk-spacing-md);
+  border-bottom: var(--squonk-borders-width) solid var(--squonk-colors-border-default);
+}
+
+/* The side navigation: the library's NavList, inset from the sidebar's edges. */
+.nav {
+  padding: var(--squonk-spacing-sm);
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  padding-block: var(--squonk-spacing-lg) var(--squonk-spacing-xxl);
+}
+
+.pageHeader {
+  display: grid;
+  gap: var(--squonk-spacing-sm);
+  margin-bottom: var(--squonk-spacing-lg);
+}
+
+.titleRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--squonk-spacing-md);
+}
+
+.titles {
+  display: grid;
+  gap: var(--squonk-spacing-xxs);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--squonk-spacing-sm);
+}
+
+.stat {
+  display: grid;
+  gap: var(--squonk-spacing-xxs);
+  justify-items: start;
+}
+
+.statValue {
+  font-size: var(--squonk-typography-sizes-xl);
+  font-weight: var(--squonk-typography-weights-bold);
+  font-variant-numeric: tabular-nums;
+}

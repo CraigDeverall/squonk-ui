@@ -1,0 +1,116 @@
+@layer dt.components {
+  /* Matches TextField: the group carries the input's box, border and focus
+     ring, so a currency code can sit inside it. */
+  .root {
+    display: inline-flex;
+    flex-direction: column;
+    gap: var(--squonk-roles-space-field-gap);
+    width: 100%;
+    font-family: var(--squonk-roles-type-font);
+    color: var(--squonk-roles-color-text);
+  }
+
+  .fit { width: fit-content; }
+
+  .label {
+    font-size: var(--squonk-roles-type-label);
+    font-weight: var(--squonk-roles-type-strong);
+    color: var(--squonk-roles-color-label);
+  }
+
+  .group {
+    --field-accent: var(--squonk-roles-color-field-border-focus);
+    display: flex;
+    align-items: center;
+    gap: var(--squonk-roles-space-icon-gap);
+    width: 100%;
+    box-sizing: border-box;
+    height: var(--squonk-presentation-control-height-default);
+    padding: 0 var(--squonk-roles-control-padding-inline-default);
+    font-size: var(--squonk-roles-control-font-size-default);
+    font-family: var(--squonk-roles-type-font);
+    line-height: var(--squonk-roles-type-tight-line-height);
+    color: var(--squonk-roles-color-field-text);
+    background-color: var(--squonk-roles-color-field-background);
+    border: var(--squonk-roles-border-width) solid var(--squonk-roles-color-field-border);
+    border-width: var(--squonk-roles-control-field-border);
+    background-image: var(--squonk-roles-relief-well-fill);
+    background-blend-mode: var(--squonk-roles-relief-blend);
+    box-shadow: var(--squonk-roles-relief-well-edge), var(--squonk-roles-elevation-field);
+    border-radius: var(--squonk-roles-radius-control);
+    outline: none;
+  }
+
+  .group[data-register="compact"] {
+    height: var(--squonk-presentation-control-height-compact);
+    padding: 0 var(--squonk-roles-control-padding-inline-compact);
+    font-size: var(--squonk-roles-control-font-size-compact);
+  }
+  .group[data-register="large"] {
+    height: var(--squonk-presentation-control-height-large);
+    padding: 0 var(--squonk-roles-control-padding-inline-large);
+    font-size: var(--squonk-roles-control-font-size-large);
+  }
+  .group[data-register="hero"] {
+    height: var(--squonk-presentation-control-height-hero);
+    padding: 0 var(--squonk-roles-control-padding-inline-hero);
+    font-size: var(--squonk-roles-control-font-size-hero);
+  }
+
+  .input {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    padding: 0;
+    font: inherit;
+    font-variant-numeric: tabular-nums;
+    color: inherit;
+    background: transparent;
+    border: 0;
+    outline: none;
+  }
+
+  .input::placeholder { color: var(--squonk-roles-color-placeholder); }
+
+  .code {
+    flex: none;
+    font-size: var(--squonk-roles-type-hint);
+    color: var(--squonk-roles-color-hint);
+  }
+
+  .group:hover:not([data-disabled]) { border-color: var(--squonk-roles-color-field-border-hover); }
+
+  /* Focus: accent border plus the theme's field halo, as on TextField. */
+  .group[data-focus-within] {
+    border-color: var(--field-accent);
+    box-shadow:
+      0 0 0 var(--squonk-roles-interaction-field-focus-halo) color-mix(in srgb, var(--field-accent) var(--squonk-roles-interaction-field-focus-strength), transparent),
+      inset 0 var(--squonk-roles-interaction-field-focus-underline) 0 var(--field-accent),
+      var(--squonk-roles-relief-well-edge),
+      var(--squonk-roles-elevation-field);
+  }
+
+  .group[data-invalid],
+  .group[data-invalid]:hover:not([data-disabled]) {
+    --field-accent: var(--squonk-roles-color-invalid);
+    border-color: var(--squonk-roles-color-invalid);
+  }
+
+  .group[data-invalid][data-focus-within] { border-color: var(--field-accent); }
+
+  .group[data-disabled] {
+    opacity: var(--squonk-roles-state-disabled-opacity);
+    cursor: not-allowed;
+    background-color: var(--squonk-roles-color-field-background-disabled);
+    background-image: none;
+  }
+
+  .group[data-disabled] .input { cursor: not-allowed; }
+
+  .message {
+    font-size: var(--squonk-roles-type-hint);
+    color: var(--squonk-roles-color-hint);
+  }
+
+  .message[slot="errorMessage"] { color: var(--squonk-roles-color-invalid); }
+}

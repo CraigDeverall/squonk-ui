@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Squonk UI Theme Devtools",
+  "version": "0.1.0",
+  "description": "Edit the theme of any site built with Squonk UI, live, from a side panel.",
+  "minimum_chrome_version": "116",
+  "permissions": ["sidePanel"],
+  "action": { "default_title": "Open the Squonk UI theme panel" },
+  "side_panel": { "default_path": "sidepanel.html" },
+  "background": { "service_worker": "background.js", "type": "module" },
+  "content_scripts": [
+    { "matches": ["http://*/*", "https://*/*"], "js": ["content.js"], "run_at": "document_idle" }
+  ]
+}

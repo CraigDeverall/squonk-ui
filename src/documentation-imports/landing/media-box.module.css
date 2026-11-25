@@ -1,0 +1,19 @@
+/* The Introduction page's one media box: the well every spot illustration
+   and every device preview sits in. The same in every theme: the well
+   colour and its relief, so it reads recessed where the theme has relief
+   and flat where it doesn't. */
+.box {
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  background-color: var(--squonk-roles-color-well);
+  background-image: var(--squonk-roles-relief-well-fill);
+  background-blend-mode: var(--squonk-roles-relief-blend);
+  box-shadow: var(--squonk-roles-relief-well-edge);
+  /* Concentric with whatever it's inset in: a parent sets --media-inset to
+     its padding (see landing.module.css .card). */
+  border-radius: max(
+    var(--squonk-roles-radius-item),
+    calc(var(--squonk-roles-radius-surface) - var(--media-inset, 0px))
+  );
+}

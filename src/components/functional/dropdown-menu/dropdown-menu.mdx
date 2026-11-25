@@ -1,0 +1,111 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as DropdownMenuStories from "./dropdown-menu.stories.tsx";
+import meta from "./dropdown-menu.stories.tsx";
+import { DropdownMenu } from "./dropdown-menu.tsx";
+import { Avatar } from "../avatar/avatar.tsx";
+import { Button } from "../button/button.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# DropdownMenu
+
+<ResizableCanvas of={DropdownMenuStories.Open} />
+
+`DropdownMenu` is a trigger button with an attached menu of actions — the
+primitive behind user menus, row-action menus, and "…" overflow menus. It owns
+the open/close behaviour (click, outside-press, `Escape`) unless you control
+it via `open` / `onOpenChange`, and implements the WAI-ARIA menu-button
+keyboard pattern.
+
+Use it for a small set of *actions* attached to a control. For picking
+one-of-many *values* in a form, use `Select` instead.
+
+<Controls />
+
+## Entries
+
+Each entry is a `DropdownMenuItem` — `key`, `label`, `onSelect`, plus optional
+`icon`, `disabled`, and `tone: "danger"` for destructive actions. The literal
+string `"separator"` draws a divider between groups.
+
+<InlineCodeExample>
+  <DropdownMenu
+    trigger={<Button as="span">Actions ▾</Button>}
+    items={[
+      { key: "edit", label: "Edit" },
+      { key: "duplicate", label: "Duplicate", disabled: true },
+      "separator",
+      { key: "delete", label: "Delete", tone: "danger" },
+    ]}
+  />
+</InlineCodeExample>
+
+## Alignment
+
+`align="start"` (default) hangs the panel from the trigger's left edge;
+`align="end"` from the right — use `end` for menus near the right edge of the
+viewport, like a header's user menu.
+
+## Avatar trigger — a user menu
+
+Compose with `Avatar` for the classic header user badge. The trigger renders
+inside a real `<button>`, so pass `triggerLabel` to give the control an
+accessible name when the trigger has no visible text.
+
+<InlineCodeExample>
+  <div style={{ display: "flex", justifyContent: "flex-end" }}>
+    <DropdownMenu
+      trigger={<Avatar name="Ada Lovelace" />}
+      triggerLabel="Account menu"
+      align="end"
+      items={[
+        { key: "settings", label: "Settings" },
+        "separator",
+        { key: "sign-out", label: "Sign out", tone: "danger" },
+      ]}
+    />
+  </div>
+</InlineCodeExample>
+
+## Controlled open state
+
+Pass `open` + `onOpenChange` to own the state (e.g. to close on route change).
+Uncontrolled usage can seed the initial state with `defaultOpen`.
+
+## Accessibility
+
+- The trigger is a real `<button>` with `aria-haspopup="menu"` /
+  `aria-expanded`; the panel is `role="menu"` with `role="menuitem"` children.
+- `Enter` / `Space` / `ArrowDown` open the menu and focus the first item;
+  `ArrowUp` opens and focuses the last. Arrows move focus between items,
+  typing jumps to a matching item, `Home` / `End` jump, `Enter` activates,
+  `Escape` and `Tab` close, and closing refocuses the trigger.
+- Focus moves onto each item (roving focus), so screen readers announce items
+  as you move. Disabled items are skipped. Opened by pointer, the menu itself
+  takes focus and items follow the pointer; the first arrow key focuses the
+  first item.
+- The panel fades and scales in and out; reduced-motion users get no
+  animation.
+
+## Pitfalls
+
+- Don't nest another `<button>` inside `trigger` — the trigger already renders
+  one. Use `<Button as="span">` if you want button styling inside it.
+- The panel opens below the trigger and flips or shifts to stay inside the
+  viewport. It renders in a portal on `<body>`, so an ancestor with
+  `overflow: hidden` never clips it.
+
+## Placement contract
+
+The menu renders in a portal on `<body>` and is positioned against its trigger, with `align` choosing the start or end edge (following writing direction). It flips and shifts around viewport collisions, and overflow ancestors can't clip it.
+
+## UX guidance
+
+- [Overlays and disclosures](?path=/docs/patterns-overlays-and-disclosures--docs)
+- [Focus management](?path=/docs/patterns-focus-management--docs)
+- [Destructive actions](?path=/docs/patterns-destructive-actions--docs)

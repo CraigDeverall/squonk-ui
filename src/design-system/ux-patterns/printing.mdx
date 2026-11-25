@@ -1,0 +1,56 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../documentation-imports/index.ts";
+
+<Meta title="Patterns/Printing" />
+
+<HideSbBar />
+
+# Printing
+
+Some pages are printed: statements, receipts, sighting reports, newsletters, a plan to sign.
+The library prints every page well without any work: ink on white, no shadows
+or motion, no buttons, tables in full and link addresses shown. For a page
+people print on purpose, decide what belongs on paper with
+[Printable, NotPrintable and PrintOnly](?path=/docs/style-printable--docs).
+
+## The rules
+
+- **Mark the record, not the rest.** Wrap what someone prints the page for in
+  `Printable`: the statement, the receipt, the schedule. Everything else is left
+  off without listing it.
+- **Leave the screen's machinery off.** Navigation, filters, actions and help
+  that only work on screen go in `NotPrintable` when the whole page prints.
+- **Say on paper what the screen said another way.** A reference number, the
+  date and time printed, who it's for, or a line replacing a control ("Pay
+  online at …") go in `PrintOnly`.
+- **Keep what belongs together on one page** with `keepTogether`, and start a
+  new section on a fresh page with `breakBefore`.
+- **Never print secrets the screen masked**: a printed page leaves your app's
+  control.
+
+## Choosing a mark
+
+| You want to | Use |
+| --- | --- |
+| Print only part of the page | `Printable` around that part |
+| Print the page without something | `NotPrintable` around that thing |
+| Add something only to the printout | `PrintOnly` |
+| Start a section on a new page | `<Printable breakBefore>` |
+| Stop a block splitting across pages | `<Printable keepTogether>` |
+| Mark part of a sentence | Any of them with `inline` |
+
+## The theme on paper
+
+The theme decides how paper looks. Its `printBackgrounds` switch keeps the
+theme's own colours and backgrounds (for a branded receipt, say); left off, a
+page prints in ink on white, whatever the theme or mode. `printLinkUrls`
+(on by default) prints each web or email link's address after its text. The
+colours paper uses are purpose tokens under `roles.print`, which a theme can
+re-point one by one. See [Theme](?path=/docs/foundations-theme--docs).
+
+## What your app owns
+
+The browser owns the page size, the margins it offers, and the header and
+footer it prints (the title, the address and page numbers), which readers can
+turn off. Test a real printout or its PDF, in more than one browser, for any
+page people rely on printing.

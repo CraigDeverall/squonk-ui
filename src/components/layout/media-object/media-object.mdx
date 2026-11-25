@@ -1,0 +1,118 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as MediaObjectStories from "./media-object.stories.tsx";
+import meta from "./media-object.stories.tsx";
+import { MediaObject } from "./media-object.tsx";
+import { Avatar } from "../../functional/avatar/avatar.tsx";
+import { Heading } from "../../functional-primitive/heading/heading.tsx";
+import { Text } from "../../functional-primitive/text/text.tsx";
+import { VStack } from "../../layout-primitive/vstack/vstack.tsx";
+import { Centered } from "../../layout-primitive/centered/centered.tsx";
+import { Block } from "../../layout-primitive/block/block.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# MediaObject
+
+<ResizableCanvas of={MediaObjectStories.ProfileRow} />
+
+`MediaObject` is the canonical "image-on-the-left, content-on-the-right" shape — list items, comment rows, profile cards, file rows. The media slot stays fixed-size; the content area takes whatever width remains and wraps cleanly. Reach for `MediaObject` whenever you'd otherwise write `<HStack>` with one fixed-width item and a `VStack` beside it — the named component encodes the recurring pattern.
+
+## Profile row
+
+`align="start"` (default) tops the media to the first line of content — the natural shape for two-line items.
+
+<InlineCodeExample>
+  <MediaObject media={<Avatar name="Ada Lovelace" />}>
+    <Heading level={4}>Ada Lovelace</Heading>
+    <Text tone="secondary">Mathematician, first programmer</Text>
+  </MediaObject>
+</InlineCodeExample>
+
+## Single-line list item
+
+`align="center"` for a one-line item where the avatar should sit in the vertical middle.
+
+<InlineCodeExample>
+  <MediaObject media={<Avatar name="Grace Hopper" />} align="center">
+    <Text>
+      <strong>Grace Hopper</strong> shipped the first COBOL compiler.
+    </Text>
+  </MediaObject>
+</InlineCodeExample>
+
+## Comment
+
+A multi-line "author + body + timestamp" stack — the comment-thread shape.
+
+<InlineCodeExample>
+  <MediaObject media={<Avatar name="Linus Torvalds" />}>
+    <Heading level={5}>Linus Torvalds</Heading>
+    <Text>
+      I really appreciate this PR. Let's get it reviewed and merged this week.
+    </Text>
+    <Text tone="muted">2 hours ago</Text>
+  </MediaObject>
+</InlineCodeExample>
+
+## File row
+
+Any fixed-size thing can be the media — an icon, a thumbnail, a spinner.
+
+<InlineCodeExample>
+  <MediaObject
+    align="center"
+    media={
+      <Block width="40px" background="subtle" radius="base">
+        <Centered minHeight="40px">
+          <span style={{ fontSize: 20 }}>📄</span>
+        </Centered>
+      </Block>
+    }
+  >
+    <Text weight="bold">invoice-2026-05.pdf</Text>
+    <Text tone="muted">128 KB · uploaded 4 minutes ago</Text>
+  </MediaObject>
+</InlineCodeExample>
+
+## List of them
+
+Stack `MediaObject`s in a `VStack` for the canonical activity feed / inbox shape.
+
+<InlineCodeExample>
+  <VStack gap="md">
+    <MediaObject media={<Avatar name="Ada Lovelace" />}>
+      <Text><strong>Ada Lovelace</strong> commented on <strong>checkout-flow</strong></Text>
+      <Text tone="muted">3 minutes ago</Text>
+    </MediaObject>
+    <MediaObject media={<Avatar name="Grace Hopper" />}>
+      <Text><strong>Grace Hopper</strong> approved <strong>release v3.2.0</strong></Text>
+      <Text tone="muted">12 minutes ago</Text>
+    </MediaObject>
+    <MediaObject media={<Avatar name="Margaret Hamilton" />}>
+      <Text><strong>Margaret Hamilton</strong> opened <strong>build-tests-flaky</strong></Text>
+      <Text tone="muted">1 hour ago</Text>
+    </MediaObject>
+  </VStack>
+</InlineCodeExample>
+
+## Accessibility
+
+- Renders a plain row — semantics come from what you put in the slots. For a list of MediaObjects, wrap in a `<ul>` and each row in an `<li>` so screen-reader users can navigate the list.
+- The media slot doesn't get any special role; an `<Avatar>` inside already carries `role="img"` + `aria-label`.
+- For interactive rows (clickable comments, file links), wrap the whole MediaObject in a `Link` or `InteractiveCard` so the entire row is one focus stop, not two.
+
+## Common pitfalls
+
+- **Don't put a wide media item in the media slot.** It's meant for fixed-size icons/avatars (typically 24–64px). A 200px-wide thumbnail breaks the pattern — use a `Split` or `Grid` instead.
+- **Don't use `align="center"` for multi-line content.** Centering pushes the avatar to the vertical middle, which looks lopsided when the content is 3+ lines. Use `align="start"`.
+- **Don't ship MediaObject rows without any vertical separator in a long list.** A `VStack gap="md"` is the minimum; a `Divider` between rows is often better for scannability.
+- **Don't reproduce MediaObject manually with HStack + VStack.** That's literally what it is — the named component makes the pattern obvious.
+
+## Slot containment
+
+The media slot does not shrink. The content slot grows into the remaining width and wraps long unbroken text. Keep media appropriately sized for the narrowest parent: the layout cannot fit a fixed media item wider than the row. `gap` separates the two slots and the surrounding layout owns spacing between rows.

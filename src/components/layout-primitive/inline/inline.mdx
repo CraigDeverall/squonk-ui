@@ -1,0 +1,85 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as InlineStories from "./inline.stories.tsx";
+import meta from "./inline.stories.tsx";
+import { Inline } from "./inline.tsx";
+import { Kbd } from "../../functional-primitive/kbd/kbd.tsx";
+import { Text } from "../../functional-primitive/text/text.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Inline
+
+<ResizableCanvas of={InlineStories.Default} />
+
+`Inline` is an `inline-flex` group — it sits **in text flow** without breaking the line. Use it for label-with-icon, chip-with-badge, text-with-trailing-action, keyboard combinations, and anywhere a small horizontal group needs to participate in its surrounding prose. `align` defaults to `baseline` so the group aligns with the text baseline of the container. For block-level horizontal groups (own row, not flowing with text), use `HStack`.
+
+<Controls />
+
+## Inside a sentence
+
+The typical use — a tiny inline group inside body copy without breaking the line.
+
+<InlineCodeExample>
+  <Text>
+    Press{" "}
+    <Inline gap="xxs">
+      <Kbd>⌘</Kbd>
+      <Kbd>K</Kbd>
+    </Inline>
+    {" "}to open the command palette.
+  </Text>
+</InlineCodeExample>
+
+## Icon + label
+
+For a small icon-plus-text token — favorites, status, badges, "powered by" lockups. Use `align="center"` when there's no surrounding text to align against.
+
+<InlineCodeExample>
+  <Inline gap="xxs" align="center">
+    <span aria-hidden style={{ fontSize: 16 }}>★</span>
+    <span>Featured</span>
+  </Inline>
+</InlineCodeExample>
+
+## Trailing micro-action
+
+A short label with a chevron, "more →", or close button — Inline keeps them on one baseline.
+
+<InlineCodeExample>
+  <Text>
+    Read more about the upgrade:{" "}
+    <Inline gap="xxs">
+      <a href="#">v3 release notes</a>
+      <span aria-hidden>→</span>
+    </Inline>
+  </Text>
+</InlineCodeExample>
+
+## Polymorphic
+
+`Inline` defaults to `<span>` so it nests inside `<p>` / `<li>` without invalidating HTML. Use `as="div"` only if you specifically need block-level behavior — at which point you probably want `HStack`.
+
+<InlineCodeExample>
+  <Inline as="span" gap="xs" align="center">
+    <Kbd>?</Kbd>
+    <span>for help</span>
+  </Inline>
+</InlineCodeExample>
+
+## Accessibility
+
+- Renders an inline `<span>` so it doesn't disrupt the surrounding paragraph or list semantics.
+- Children supply their own semantics — `Kbd`, `<a>`, icons with `aria-hidden`.
+- `align="baseline"` is the default because Inline is typically used inside prose; the baseline alignment keeps the group visually anchored to the text.
+
+## Common pitfalls
+
+- **Don't use Inline for layouts that take their own row.** Use `HStack` — it's `display: flex` and gives the row its own block-flow context.
+- **`align="baseline"` is the default.** Override to `align="center"` only when there's no surrounding text to align against.
+- **Don't put block-level children inside Inline.** A `<p>` or `<div>` inside an inline-flex span breaks the inline flow. Stick to spans, anchors, icons, and `Kbd`.
+- **Don't nest Inlines deeply.** One level for a small group is the intent; nested Inlines turn into a debugging puzzle.

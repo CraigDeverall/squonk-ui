@@ -1,0 +1,99 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as BlockStories from "./block.stories.tsx";
+import meta from "./block.stories.tsx";
+import { Block } from "./block.tsx";
+import { VStack } from "../vstack/vstack.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Block
+
+<ResizableCanvas of={BlockStories.Default} />
+
+`Block` is the universal styling primitive — a polymorphic `<div>` with theme-driven props for padding, background, radius, width, and border. Reach for it when you need a styled wrapper that doesn't earn its own named `Layout` component — the "give me a themed div" escape hatch that keeps consumer code free of `styled-components`. It does **not** arrange children — for that, compose a `VStack`, `HStack`, or `Grid` inside.
+
+<Controls />
+
+## Themed surface
+
+The everyday use — a padded, bordered, rounded surface to contain related content.
+
+<InlineCodeExample>
+  <Block padding="lg" background="surface" radius="md" bordered>
+    A quiet content container with token-driven chrome.
+  </Block>
+</InlineCodeExample>
+
+## Sized to content
+
+`width="fit"` collapses the Block to its content's intrinsic width — useful for chips, inline badges, and any wrapper that shouldn't span the row.
+
+<InlineCodeExample>
+  <Block padding="sm" background="subtle" radius="base" width="fit">
+    Fit-content wrapper
+  </Block>
+</InlineCodeExample>
+
+## Asymmetric padding
+
+When inline and block padding need to differ — typical of toolbars or callout strips — pass `paddingInline` and `paddingBlock`.
+
+<InlineCodeExample>
+  <Block paddingInline="lg" paddingBlock="sm" background="surface" radius="base" bordered>
+    Toolbar shell — tall enough for controls, but narrow horizontal inset.
+  </Block>
+</InlineCodeExample>
+
+## Background tones
+
+Three tones map to the theme's surface colors: `default` (page bg), `surface` (raised paper), `subtle` (deepest tint).
+
+<InlineCodeExample>
+  <VStack gap="sm">
+    <Block padding="md" background="default" bordered>Default — page background</Block>
+    <Block padding="md" background="surface" bordered>Surface — raised paper</Block>
+    <Block padding="md" background="subtle" bordered>Subtle — deepest tint</Block>
+  </VStack>
+</InlineCodeExample>
+
+## Constrained widths
+
+`maxWidth` and `minWidth` accept any CSS length — for capping content to a readable line length or floor-stopping a flex child.
+
+<InlineCodeExample>
+  <Block padding="md" background="surface" maxWidth="320px" bordered>
+    Capped to 320px so the line length stays comfortable for reading.
+  </Block>
+</InlineCodeExample>
+
+## Polymorphic
+
+`Block` defaults to `<div>` but accepts `as` for any semantic element — `<section>`, `<aside>`, `<header>`, `<nav>`.
+
+<InlineCodeExample>
+  <Block as="section" padding="md" background="surface" radius="base" bordered>
+    Semantic section wrapped in Block's chrome.
+  </Block>
+</InlineCodeExample>
+
+## Accessibility
+
+- Renders a plain `<div>` by default — pass `as` for a semantic element when the block represents a landmark (`section`, `aside`, `nav`, `header`, `footer`).
+- Background/border tokens are picked so every combination meets WCAG AA on both themes.
+- Block adds no roles or ARIA on its own; if it represents a region, set `aria-labelledby` on the element via `as` + a child heading.
+
+## Common pitfalls
+
+- **Don't use Block to lay out children.** Padding and background, yes — direction, gap, and alignment, no. Wrap a `VStack` / `HStack` / `Grid` inside.
+- **Don't add outer margin to the outermost Block.** Spacing between siblings belongs to the parent (a `VStack` `gap`, a `Grid` `gap`).
+- **Width defaults to `auto`.** Set `width="full"` if you want it to span the row; set `width="fit"` to collapse to its content.
+- **Don't reach for Block when a named Layout exists.** A `Card` is a Block with curated chrome; a `Container` is a Block with width capping. Use the named component when one fits.
+
+## Width includes chrome
+
+`width` and `maxWidth` include the Block’s padding and borders. For example, `width="full" padding="md" bordered` fits its parent without requiring a global `box-sizing` reset. Consumers that previously compensated for content-box sizing should remove that compensation.

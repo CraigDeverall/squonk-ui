@@ -1,0 +1,80 @@
+@layer dt.components {
+  .root {
+    --stat-value-size: var(--squonk-components-stat-value-size-default);
+    display: block;
+    width: 100%;
+    min-width: 0;
+    font-family: var(--squonk-roles-type-font);
+    color: var(--squonk-roles-color-text);
+  }
+
+  .root[data-register="compact"] { --stat-value-size: var(--squonk-components-stat-value-size-compact); }
+  .root[data-register="large"] { --stat-value-size: var(--squonk-components-stat-value-size-large); }
+  .root[data-register="hero"] { --stat-value-size: var(--squonk-components-stat-value-size-hero); }
+
+  .list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--squonk-components-stat-gap);
+    margin: 0;
+  }
+
+  .list > dd {
+    margin: 0;
+  }
+
+  .label {
+    font-size: var(--squonk-roles-type-meta);
+    color: var(--squonk-roles-color-text-supporting);
+  }
+
+  /* Proportional figures: a standalone number, not a column to align. */
+  .value {
+    font-size: var(--stat-value-size);
+    font-weight: var(--squonk-roles-type-strong);
+    line-height: var(--squonk-roles-type-tight-line-height);
+    overflow-wrap: anywhere;
+  }
+
+  .change {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--squonk-roles-space-text-gap) var(--squonk-roles-space-icon-gap);
+    font-size: var(--squonk-roles-type-meta);
+    color: var(--squonk-roles-color-text-supporting);
+  }
+
+  /* Status colours are reserved for good and bad news; the arrow and sign
+     carry direction, so colour never stands alone. */
+  .change[data-tone="good"] .changeValue,
+  .change[data-tone="good"] .arrow { color: var(--squonk-colors-status-text-success); }
+  .change[data-tone="bad"] .changeValue,
+  .change[data-tone="bad"] .arrow { color: var(--squonk-colors-status-text-error); }
+
+  .changeValue {
+    font-weight: var(--squonk-roles-type-strong);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .trend {
+    display: block;
+    padding-block-start: var(--squonk-components-stat-gap);
+  }
+
+  .sparkline {
+    width: 100%;
+  }
+
+  .visuallyHidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}

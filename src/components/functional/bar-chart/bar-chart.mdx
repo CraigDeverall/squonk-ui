@@ -1,0 +1,202 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as BarChartStories from "./bar-chart.stories.tsx";
+import meta from "./bar-chart.stories.tsx";
+import { BarChart } from "./bar-chart.tsx";
+import { Heading } from "../../functional-primitive/heading/heading.tsx";
+import { Text } from "../../functional-primitive/text/text.tsx";
+import { Card } from "../../layout/card/card.tsx";
+import { Block } from "../../layout-primitive/block/block.tsx";
+import { VStack } from "../../layout-primitive/vstack/vstack.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# BarChart
+
+<ResizableCanvas of={BarChartStories.Default} defaultRecipe="block" defaultHeight={380} />
+
+`BarChart` compares magnitudes across categories: dues invoiced by quarter, sightings logged by chapter, sightings under review by sighting type. Bars grow from one baseline at zero, so their lengths compare honestly; hover, or (for vertical bars) focus the plot and use the arrow keys, to read each value, and the "Table view" toggle lists them all. For a continuous trend over many points in time, a [LineChart](?path=/docs/functional-line-chart--docs) reads better; for two to five parts of one whole where the share is the point, a [DonutChart](?path=/docs/functional-donut-chart--docs); for a single value against a range, a [Meter](?path=/docs/functional-meter--docs).
+
+<Controls />
+
+## Data and series
+
+Pass one row per category, in the order to draw them. `xKey` names the category field and each entry in `series` names a numeric field and its `label`, shown in the legend, tooltip and table. `xLabel` heads the first table column; `formatValue` gives values their unit in the tooltip, table and value axis.
+
+<InlineCodeExample>
+  <Block width="640px">
+    <BarChart
+      title="Dues invoiced and collected"
+      description="NZD thousands, 2026"
+      data={[
+        { quarter: "Q1", assessed: 182, paid: 164 },
+        { quarter: "Q2", assessed: 205, paid: 171 },
+        { quarter: "Q3", assessed: 194, paid: 188 },
+        { quarter: "Q4", assessed: 231, paid: 202 },
+      ]}
+      xKey="quarter"
+      xLabel="Quarter"
+      series={[
+        { key: "assessed", label: "Invoiced" },
+        { key: "paid", label: "Collected" },
+      ]}
+      formatValue={(v) => `$${v}k`}
+    />
+  </Block>
+</InlineCodeExample>
+
+Two or more series draw grouped bars, side by side in each category, with a legend. Keep groups to two or three series; past that, each bar gets thin and the eye can't hold the pattern.
+
+## Orientation
+
+`orientation="vertical"` (the default) draws columns rising from the baseline. Use it for a few categories with a natural order, such as quarters or years. `horizontal` draws bars across the plot. Use it for ranked lists and for long category names, which sit on their own line instead of colliding under columns. Sort ranked data largest first before you pass it; the chart draws rows in the order given.
+
+<InlineCodeExample>
+  <Block width="640px">
+    <BarChart
+      title="Sightings logged by chapter"
+      description="Ranked, 2026-27 season"
+      orientation="horizontal"
+      data={[
+        { chapter: "Auckland", sightings: 48210 },
+        { chapter: "Wellington", sightings: 21940 },
+        { chapter: "Canterbury", sightings: 19870 },
+        { chapter: "Waikato", sightings: 14320 },
+        { chapter: "Bay of Plenty", sightings: 11650 },
+      ]}
+      xKey="chapter"
+      xLabel="Chapter"
+      series={[{ key: "sightings", label: "Sightings" }]}
+    />
+  </Block>
+</InlineCodeExample>
+
+## Stacked
+
+`stacked` piles the series into one bar per category, so the bar's length is the total and each segment is a part. Use it when the parts add up to something people care about: verified and under-review sightings making up all sightings. Only the first segment sits on the baseline, so the others are hard to compare across categories; put the part that matters most first. Segments are parted by a surface-coloured gap, not an outline.
+
+<InlineCodeExample>
+  <Block width="640px">
+    <BarChart
+      title="Verified and under-review sightings by chapter"
+      stacked
+      data={[
+        { chapter: "Auckland", verified: 45090, pending: 3120 },
+        { chapter: "Wellington", verified: 20680, pending: 1260 },
+        { chapter: "Canterbury", verified: 18390, pending: 1480 },
+        { chapter: "Waikato", verified: 13130, pending: 1190 },
+      ]}
+      xKey="chapter"
+      xLabel="Chapter"
+      series={[
+        { key: "verified", label: "Verified" },
+        { key: "pending", label: "Under review" },
+      ]}
+    />
+  </Block>
+</InlineCodeExample>
+
+## Bar shape and the baseline
+
+The mark geometry is fixed so every bar chart in an app looks alike. Bars are at most 24px thick, so a chart with few categories doesn't turn into blocks. The data end of each bar has a 4px rounded corner and the baseline end stays square; in a stack only the outermost segment is rounded. The value axis always starts at zero, because a bar's length is its value and a cut axis exaggerates differences.
+
+Negative values grow down (or left) from the same zero baseline, and the rounding stays on the far end, so a bar of −$12k still reads as a bar ending at −$12k. Use this for credits against payments, or a change from the previous year.
+
+<InlineCodeExample>
+  <Block width="640px">
+    <BarChart
+      title="Change in dues collected from 2025"
+      description="NZD thousands"
+      data={[
+        { quarter: "Q1", change: 14 },
+        { quarter: "Q2", change: -9 },
+        { quarter: "Q3", change: 22 },
+        { quarter: "Q4", change: -4 },
+      ]}
+      xKey="quarter"
+      xLabel="Quarter"
+      series={[{ key: "change", label: "Change" }]}
+      formatValue={(v) => (v < 0 ? `−$${Math.abs(v)}k` : `$${v}k`)}
+    />
+  </Block>
+</InlineCodeExample>
+
+## Colours and slots
+
+Series take the eight palette slots in order. Pin a series with `slot` so it keeps its colour when a filter removes others; a single "Collected" series shown on its own should still be slot 2 if that's its colour beside "Assessed". More than eight series draws only the first eight, with a console warning. Don't colour individual bars to tell categories apart: the category axis already names them.
+
+## Height, loading and empty
+
+The plot height follows the [Presentation](?path=/docs/style-presentation--docs) register: 160px `compact`, 240px `default`, 320px `large`, 400px `hero`. A horizontal chart with many categories needs a taller register, or the bars crowd. `loading` holds the height with a skeleton and marks the figure `aria-busy`; with no rows the plot shows "No data to show", or your `empty` message.
+
+## In a card
+
+Let the card carry the heading, and set `hideTitle`. Keep `title`: it still names the chart for screen readers and captions the table view.
+
+<InlineCodeExample>
+  <Block width="640px">
+    <Card>
+      <VStack gap="md">
+        <VStack gap="xs">
+          <Heading level={3}>Dues collection</Heading>
+          <Text tone="secondary">89% of dues invoiced in 2026 have been collected.</Text>
+        </VStack>
+        <BarChart
+          title="Dues invoiced and collected by quarter"
+          hideTitle
+          data={[
+            { quarter: "Q1", assessed: 182, paid: 164 },
+            { quarter: "Q2", assessed: 205, paid: 171 },
+            { quarter: "Q3", assessed: 194, paid: 188 },
+            { quarter: "Q4", assessed: 231, paid: 202 },
+          ]}
+          xKey="quarter"
+          xLabel="Quarter"
+          series={[
+            { key: "assessed", label: "Invoiced" },
+            { key: "paid", label: "Collected" },
+          ]}
+          formatValue={(v) => `$${v}k`}
+        />
+      </VStack>
+    </Card>
+  </Block>
+</InlineCodeExample>
+
+## Customising
+
+The chart reads these custom properties from its root `<figure>`. Set them on the chart itself through `style` or `className`; a parent can't override them because the figure defines its own defaults.
+
+| Variable | Controls | Default |
+| --- | --- | --- |
+| `--chart-series-1` … `--chart-series-8` | The colour of each palette slot: bars, legend and tooltip keys | `--squonk-roles-color-data-series1` … `8` |
+| `--chart-mark-gap` | The gap between stacked segments | `--squonk-components-chart-mark-gap` (the default background) |
+| `--chart-area-opacity` | The wash under an area (AreaChart only) | `--squonk-components-chart-area-opacity` (0.12) |
+| `--chart-gridline` | Gridlines across the value axis | `--squonk-components-chart-gridline` (default border) |
+| `--chart-axis-line` | Axis lines | `--squonk-components-chart-axis-line` (strong border) |
+| `--chart-cursor` | The band behind the hovered category | `--squonk-components-chart-cursor` (subtle background) |
+
+On a surface other than the default background, such as a `filled` Card, set `--chart-mark-gap` to that surface (`var(--squonk-roles-color-page)` for `filled`) or the gaps between stacked segments show as white stripes. Prefer `slot` to overriding `--chart-series-*`; the palette is validated for colour-vision deficiency in light and dark mode.
+
+## Accessibility
+
+- The chart is a `<figure>` named by `title` and described by `description`. `title` is required; `hideTitle` hides it visually only.
+- The "Table view" toggle button (`aria-pressed`) swaps the plot for a table of every value, captioned with `title`: the dependable way to read exact values with a keyboard, screen reader or magnifier.
+- With vertical bars the plot is focusable (`role="application"`); focus shows the first category and the left and right arrow keys step through the rest. With `orientation="horizontal"` the plot isn't a focus stop, because the arrow keys can't step through it; keyboard users read the values from the table view.
+- Colour never works alone: two or more series get a legend, the tooltip names each series, and the table labels each column. Light-mode slots 3 to 5 are under 3:1 contrast on white, which is why the legend and table view are always present.
+- Text never takes a series colour; legend labels, ticks and tooltip values stay in text colours.
+
+## Common pitfalls
+
+- **A cut value axis.** Bars always start at zero; don't try to "zoom in" by offsetting data. If the differences are small, show the change itself (as in the negative-values example) or use a LineChart.
+- **Two value axes.** There is no dual-axis option. Chart dollars and counts separately.
+- **A colour per category.** A rainbow of bars adds a legend's worth of decoding for nothing; the axis names each bar. Use one series colour and let length do the work.
+- **More than eight series.** Only the first eight are drawn. Fold the small ones into "Other", or use small multiples.
+- **Vertical columns with long names.** Labels collide or get skipped. Switch to `orientation="horizontal"`.
+- **Unsorted rankings.** A ranked horizontal chart is read top-down; sort the rows largest first.
+- **Stacking parts that don't add up.** The bar's length becomes a meaningless total. Group them instead.
+- **A pie of many parts drawn as a donut.** Past five parts, a sorted horizontal BarChart compares them far better.

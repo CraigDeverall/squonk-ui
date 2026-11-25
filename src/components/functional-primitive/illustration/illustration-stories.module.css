@@ -1,0 +1,19 @@
+/* Docs-only layout for the illustration gallery. */
+.gallery {
+  /* The story wrapper centres its content; take the width a gallery needs. */
+  inline-size: min(60rem, 100vw - 4rem);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+  gap: var(--squonk-roles-space-distinct);
+}
+
+.item {
+  display: grid;
+  justify-items: center;
+  gap: var(--squonk-roles-space-grouped);
+  margin: 0;
+  min-inline-size: 0;
+  text-align: center;
+  /* Long names wrap rather than run into their neighbours. */
+  overflow-wrap: anywhere;
+}

@@ -1,0 +1,85 @@
+@layer dt.components {
+  /* A pale wash in light mode; a deep tint in dark mode so the alert sits
+     with the dark surface instead of glaring against it. */
+  .root {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--squonk-roles-space-surface-gap);
+    padding: var(--squonk-roles-space-surface-inset);
+    width: 100%;
+    box-sizing: border-box;
+    background-color: var(--tone-wash);
+    color: var(--tone-on-wash);
+    border: var(--squonk-roles-border-width) solid var(--tone-wash-border);
+    border-left: 4px solid var(--tone-solid);
+    border-radius: var(--squonk-roles-radius-surface);
+    font-family: var(--squonk-roles-type-font);
+    font-size: var(--squonk-components-alert-text-size);
+    line-height: var(--squonk-roles-type-body-line-height);
+  }
+
+  /* Tinted: the wash alone, with no accent edge and no border. */
+  .root[data-variant="tinted"] { border: none; }
+
+  /* A colour the theme added (data-tone="custom") sets the same --tone-*
+     properties inline (src/theme/tone.ts), so the rules above cover it. */
+  .root[data-tone="success"] {
+    --tone-solid: var(--squonk-colors-tone-success-solid);
+    --tone-wash: var(--squonk-colors-tone-success-wash);
+    --tone-on-wash: var(--squonk-colors-tone-success-on-wash);
+    --tone-wash-border: var(--squonk-colors-tone-success-wash-border);
+  }
+  .root[data-tone="warning"] {
+    --tone-solid: var(--squonk-colors-tone-warning-solid);
+    --tone-wash: var(--squonk-colors-tone-warning-wash);
+    --tone-on-wash: var(--squonk-colors-tone-warning-on-wash);
+    --tone-wash-border: var(--squonk-colors-tone-warning-wash-border);
+  }
+  .root[data-tone="error"] {
+    --tone-solid: var(--squonk-colors-tone-error-solid);
+    --tone-wash: var(--squonk-colors-tone-error-wash);
+    --tone-on-wash: var(--squonk-colors-tone-error-on-wash);
+    --tone-wash-border: var(--squonk-colors-tone-error-wash-border);
+  }
+  .root[data-tone="info"] {
+    --tone-solid: var(--squonk-colors-tone-info-solid);
+    --tone-wash: var(--squonk-colors-tone-info-wash);
+    --tone-on-wash: var(--squonk-colors-tone-info-on-wash);
+    --tone-wash-border: var(--squonk-colors-tone-info-wash-border);
+  }
+
+  .body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--squonk-roles-space-text-gap);
+    min-width: 0;
+  }
+
+  .title {
+    font-weight: var(--squonk-roles-type-strong);
+    font-size: var(--squonk-roles-type-callout-title);
+  }
+
+  .dismiss {
+    display: inline-flex;
+    appearance: none;
+    background: transparent;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    padding: var(--squonk-roles-space-close-inset);
+    margin-inline-start: auto;
+    font-size: var(--squonk-components-alert-dismiss-size);
+    line-height: 1;
+    border-radius: var(--squonk-roles-radius-item);
+    flex-shrink: 0;
+  }
+
+  .dismiss:focus-visible {
+    outline: var(--squonk-roles-border-focus-width) solid var(--squonk-roles-color-focus-ring);
+    outline-offset: var(--squonk-roles-border-focus-offset);
+  }
+
+  .dismiss:hover { opacity: 0.7; }
+}

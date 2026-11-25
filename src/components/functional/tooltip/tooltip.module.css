@@ -1,0 +1,45 @@
+@layer dt.components {
+  /* 240px keeps a hint to a few short lines; tuned for reading, not the
+     spacing scale. Ink on paper inverts in dark mode with the tokens. */
+  .content {
+    --arrow-size: 8px;
+    --arrow-background: var(--squonk-roles-color-inverse-surface);
+    max-width: 240px;
+    box-sizing: border-box;
+    padding: var(--squonk-components-tooltip-inset-block) var(--squonk-components-tooltip-inset-inline);
+    font-family: var(--squonk-roles-type-font);
+    font-size: var(--squonk-components-tooltip-text-size);
+    font-weight: var(--squonk-roles-type-regular);
+    line-height: var(--squonk-roles-type-body-line-height);
+    color: var(--squonk-roles-color-on-inverse-surface);
+    background-color: var(--squonk-roles-color-inverse-surface);
+    border-radius: var(--squonk-roles-radius-chip);
+    box-shadow: var(--squonk-roles-elevation-raised);
+    overflow-wrap: break-word;
+    /* React Aria sets an inline z-index; the token wins. */
+    z-index: var(--squonk-roles-layer-tooltip) !important;
+    transform-origin: var(--trigger-anchor-point);
+  }
+
+  /* React Aria puts the arrow box against the edge facing the trigger; the
+     tip is a square centred on that edge, rotated so one corner points out. */
+  .arrow { width: 0; height: 0; }
+
+  .arrowTip {
+    position: absolute;
+    top: calc(var(--arrow-size) / -2);
+    left: calc(var(--arrow-size) / -2);
+    width: var(--arrow-size);
+    height: var(--arrow-size);
+    background: var(--arrow-background);
+    rotate: 45deg;
+  }
+
+  .arrow[data-placement="top"] .arrowTip { rotate: 225deg; }
+  .arrow[data-placement="left"] .arrowTip { rotate: 135deg; }
+  .arrow[data-placement="right"] .arrowTip { rotate: -45deg; }
+
+  @media print {
+    .content { display: none; }
+  }
+}

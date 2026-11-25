@@ -1,0 +1,90 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as ContainerStories from "./container.stories.tsx";
+import meta from "./container.stories.tsx";
+import { Container } from "./container.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Container
+
+<ResizableCanvas of={ContainerStories.Desktop} />
+
+`Container` caps content width and centers it horizontally. Use it once near the top of a page (inside `Header`, the main content area, and `Footer`) so long-form content doesn't sprawl across a wide monitor. `size` maps to a breakpoint token, so the value of "max" stays consistent if breakpoint primitives are tuned later.
+
+<Controls />
+
+## Default
+
+`size="desktop"` is the everyday choice for an article or dashboard.
+
+<InlineCodeExample>
+  {`<Container>
+  <VStack gap="lg">
+    <Heading level={1}>Quarterly roadmap</Heading>
+    <Text>Shipping in Q3 — auth rotation, audit log v2, new billing UI.</Text>
+  </VStack>
+</Container>`}
+</InlineCodeExample>
+
+## Narrower for reading
+
+For prose-heavy pages, drop to `tablet` so line length stays comfortable (45–75 chars is the sweet spot).
+
+<InlineCodeExample>
+  {`<Container size="tablet">
+  <article>{markdownContent}</article>
+</Container>`}
+</InlineCodeExample>
+
+## Wide for dashboards
+
+`wide` for data-dense layouts (tables, multi-column dashboards) that benefit from the extra horizontal room on large monitors.
+
+<InlineCodeExample>
+  {`<Container size="wide">
+  <Grid columns={3} gap="md">
+    {metrics.map(m => <Card key={m.id}>{m.name}</Card>)}
+  </Grid>
+</Container>`}
+</InlineCodeExample>
+
+## Without gutters
+
+Set `gutters={false}` when nesting a `Container` inside something that already pads — e.g. a `Header` with its own inset.
+
+<InlineCodeExample>
+  {`<Header>
+  <Container gutters={false}>
+    <Logo />
+  </Container>
+</Header>`}
+</InlineCodeExample>
+
+## Custom max-width
+
+For marketing surfaces where the precise width isn't a breakpoint, use `maxWidth` (it wins over `size`).
+
+<InlineCodeExample>
+  {`<Container maxWidth="1180px">
+  <VStack align="center">
+    <SectionHeading headline="What's new" />
+  </VStack>
+</Container>`}
+</InlineCodeExample>
+
+## Accessibility
+
+- Renders a plain `<div>` — no roles or ARIA. It's a layout primitive only.
+- Use `as` to render a semantic element when the container *is* the landmark (`as="main"`, `as="article"`); otherwise let the surrounding `Page` / `Section` carry the semantics.
+
+## Common pitfalls
+
+- **Don't nest Containers.** One sets the max width; nesting a second adds nothing but an indent. If you need an inner narrower column, drop a `Block maxWidth=...` inside.
+- **Don't use Container for fixed-width components.** It's a *page-level* layout. A card inside a `VStack` doesn't need its own Container.
+- **Don't disable gutters on the outermost Container.** Without horizontal padding, content runs to the edge of the viewport on mobile.
+- **Don't pick `wide` by default.** Most reading content benefits from `desktop` or `tablet`; `wide` is for explicit data layouts.

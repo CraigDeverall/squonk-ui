@@ -1,0 +1,85 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as IconButtonStories from "./icon-button.stories.tsx";
+import meta from "./icon-button.stories.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# IconButton
+
+<ResizableCanvas of={IconButtonStories.Default} defaultRecipe="centered" defaultHeight={140} />
+
+`IconButton` is a square button that shows only an icon: toolbar actions, row
+actions in a table, a close button, a "more" menu trigger. Its `label` is the
+button's accessible name and, by default, appears in a tooltip, so nobody has to
+guess what the icon means.
+
+```tsx
+import { IconButton } from "@squonk/ui/icon-button";
+import { DeleteIcon } from "@squonk/ui/icon";
+
+<IconButton icon={<DeleteIcon />} label="Delete draft" onClick={remove} />
+```
+
+Use a `Button` with text when there is room. An icon alone is only clear for a few
+well-known actions (close, more, edit, delete, download); everything else reads
+faster as a word.
+
+<Controls />
+
+## Variants
+
+The same variants as `Button`. The default is `ghost`, which suits toolbars and
+table rows where many icon buttons sit together. Use `secondary` beside other
+secondary buttons, and `danger` sparingly for a destructive action that is still
+confirmed.
+
+<ResizableCanvas of={IconButtonStories.Variants} defaultRecipe="centered" defaultHeight={140} />
+
+## Shapes
+
+`rounded` (the default) uses the theme's base radius; `pill` makes a circle.
+
+<ResizableCanvas of={IconButtonStories.Shapes} defaultRecipe="centered" defaultHeight={140} />
+
+## Size
+
+An IconButton is a square as tall as a `Button` in the same `Presentation`
+register (28, 40, 48 or 56px), and the icon follows the register's icon size, so
+the two line up in a row.
+
+<ResizableCanvas of={IconButtonStories.Registers} defaultRecipe="centered" defaultHeight={300} />
+
+## In a toolbar
+
+Group related actions, keep the destructive one apart, and give the group a
+`role="toolbar"` and a name when it acts on one thing.
+
+<ResizableCanvas of={IconButtonStories.Toolbar} defaultRecipe="centered" defaultHeight={140} />
+
+## Accessibility
+
+- `label` is required and becomes `aria-label`. Describe the action and its object
+  ("Delete draft", not "Trash"), especially when a row repeats the same icon.
+- The icon is decorative (`aria-hidden`).
+- The tooltip opens on hover and keyboard focus and is announced as a description.
+  Set `tooltip={false}` when the label is already visible nearby, or when you wrap
+  the button in your own `Tooltip` with longer text.
+- Defaults to `type="button"`, so it never submits a form by accident.
+
+## Common pitfalls
+
+- **Don't disable an IconButton to explain something.** A disabled button gets no
+  hover or focus, so its tooltip never shows. Hide the action or explain nearby.
+- **Don't use an obscure icon to save space.** If people need the tooltip to know
+  what it does, use a text `Button` instead.
+- **Don't wrap an IconButton in another Tooltip without `tooltip={false}`,** or two
+  hints compete.
+
+## UX guidance
+
+- [Destructive actions](?path=/docs/patterns-destructive-actions--docs)
+- [Focus management](?path=/docs/patterns-focus-management--docs)

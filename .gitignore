@@ -1,0 +1,29 @@
+node_modules
+.DS_Store
+dist
+storybook-static/
+.env
+
+# Playwright
+/test-results/
+/playwright-report/
+
+# Playwright
+/blob-report/
+
+# Playwright
+/test-setup/.cache/
+
+
+# Root-level screenshot scratch from interactive design sessions —
+# tracked screenshots live under each component's test-snapshots dir
+/*.png
+
+# eslint
+.eslintcache
+
+
+# Squonk: CI and agent scratch
+.claude/worktrees/
+.docker-ci/
+.playwright-mcp/

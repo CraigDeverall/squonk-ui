@@ -1,0 +1,406 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { LiveThemeViewer } from "../../.storybook/addons/theme-controller/live-theme-viewer.tsx";
+import { HideSbBar } from "../documentation-imports";
+import { InlineCodeExample } from "../utils/blocks.tsx";
+import { Button, HStack, TextField, ThemeModifier, VStack } from "../components";
+import { Specimen } from "../design-system/foundations/foundation-blocks.tsx";
+
+<Meta title="Foundations/Theme" />
+<HideSbBar />
+
+# Theme
+
+The theme has three layers:
+
+1. **Primitives:** a few raw inputs, such as `spacingPx: 8`, `fontPx: 16`,
+   `controlRadiusPx`, the light and dark colour palettes, and the light and
+   relief settings (`lightAngle`, `reliefDepth`, `reliefSheen`,
+   `reliefProfile`, `reliefBlend`).
+2. **Raw tokens:** scales derived from the primitives (`spacing.md`,
+   `typography.sizes.sm`, `colors.text.secondary`). Each is a getter, so changing a
+   primitive changes every token derived from it.
+3. **Purpose tokens:** what each value is for (`roles.space.fieldGap`,
+   `roles.color.hint`). Components read only these. See
+   [Purpose tokens](?path=/docs/foundations-purpose-tokens--docs).
+
+<InlineCodeExample>
+{`<SquonkThemeProvider
+  primitives={{ spacingPx: 10, colors: { primary: "#0b7a5c" } }}  // scale everything
+  roleBindings={{ "roles.space.questionGap": "spacing.xl" }}        // change one decision
+>`}
+</InlineCodeExample>
+
+## Example themes
+
+Pick a theme from the **Theme** menu in the toolbar, the introduction or the
+Theme panel to see every story and docs page in it: Squonk (the default),
+Kauri, Fieldbook, Tidepool, Meridian, Monolith, Wayfinder and Aurora. Each
+changes only the theme (palette in both modes, type, density, shape, borders,
+depth, relief, motion, selection and purpose decisions), so you can
+see how far the same components go. Try a button and a field in each: they
+behave differently too. [Theme showcase](?path=/story/examples-theme-showcase--every-theme)
+puts their buttons, fields and figures side by side, with the purpose decisions
+each one makes.
+
+| To change | Re-point |
+| --- | --- |
+| How far a lifted button rises on hover | `roles.interaction.hoverLift` (`0px` keeps it flat) |
+| How much a button squeezes when pressed | `roles.interaction.pressScale` (`0.96` for a soft squeeze) |
+| A glow beside a focused button's ring | `roles.interaction.focusGlow` (a box-shadow) |
+| A shadow under the primary or a secondary button | `components.button.primary.shadow`, `components.button.secondary.shadow` |
+| Outlined or filled secondary buttons | `components.button.secondary.background`, `.border`, `.text` |
+| A focused field's halo and its strength | `roles.interaction.fieldFocusHalo`, `roles.interaction.fieldFocusStrength` |
+| An underline on a focused field | `roles.interaction.fieldFocusUnderline` (`-2px`) |
+| Boxed, underlined or borderless fields | `roles.control.fieldBorder` (`0 0 1px` underlines, `0` for none) |
+| Filled fields | `roles.color.fieldBackground` (`colors.background.subtle` for a filled well) |
+| A shadow under fields | `roles.elevation.field` (an inset recesses them; a hard offset prints them) |
+| Button label case and spacing | `roles.type.buttonCase`, `roles.type.buttonTracking` |
+| Raised controls and recessed fields | The `reliefDepth` and `reliefSheen` primitives; see Light and relief in [Shape and elevation](?path=/docs/foundations-shape-and-elevation--docs) |
+| One posture's relief profile | `roles.relief.control.fill` and `.edge` (or `surface`, `chrome`, `well`, `pressed`) to `relief.glass.raised.fill` and so on |
+
+The Theme panel's edits sit on top of the chosen theme. The same screen in
+every theme is at the end of [Purpose tokens](?path=/docs/foundations-purpose-tokens--docs).
+They're examples for the docs, not exports: write your app's own theme with
+`SquonkThemeProvider`.
+
+## Changing part of a page
+
+`ThemeModifier` changes the theme for a subtree. Here the second row re-points
+the control radius purpose, so its controls are square:
+
+<Specimen>
+  <VStack gap="md">
+    <HStack gap="sm" wrap align="end">
+      <TextField label="Reference" defaultValue="DUES-0042" fullWidth={false} />
+      <Button variant="primary" shape="rounded">Find</Button>
+    </HStack>
+    <ThemeModifier override={{ roleBindings: { "roles.radius.control": "borders.radius.none" } }}>
+      <HStack gap="sm" wrap align="end">
+        <TextField label="Reference" defaultValue="DUES-0042" fullWidth={false} />
+        <Button variant="primary" shape="rounded">Find</Button>
+      </HStack>
+    </ThemeModifier>
+  </VStack>
+</Specimen>
+
+| Need | Use | Scope |
+| --- | --- | --- |
+| The app's primitives, purposes and mode | `SquonkThemeProvider` | The whole app (or a new scope when nested) |
+| A region's control size | `Presentation` (`compact` to `hero`) | Component metrics only |
+| A denser or display-scaled region, or the opposite mode | `ThemeStyleBlock` | Rebuilds from the root primitives |
+| Specific values for part of a page | `ThemeModifier` | Explicit overrides, kept across later rebuilds |
+
+Some purposes are worked out from others, so they keep up without being
+re-pointed themselves. `roles.radius.list` and `roles.radius.listItem`, the
+corners of a menu or listbox and of its rows, follow `roles.radius.surface`,
+the list's inset and its row size, so rows stay nested in their panel in any
+theme. Re-point either one directly to set it yourself.
+
+Keep density separate from global primitives: a compact admin table doesn't
+justify shrinking the whole app. `ThemeStyleBlock` is not a uniform zoom: unitless
+line heights, icon proportions and some fixed component geometry (avatars,
+spinners, switch tracks) stay as they are.
+
+## Colours on painted surfaces
+
+Library surfaces recompute their text colours for their own background, so text
+stays readable on cards, wells and inverted sections. Explicit tones, browser-only
+colour expressions (`var()`, `currentColor`, `color-mix()`), translucency and
+images can't be checked in JavaScript; check those in the rendered page.
+
+## Binding through meaning
+
+Purposes bind through a middle tier of shared decisions, so one change reaches
+everything that shares a meaning, while any single purpose can still be
+re-pointed on its own:
+
+| Tier | Tokens | What binds to it |
+| --- | --- | --- |
+| Proximity | `roles.space.adjoining`, `related`, `grouped`, `separated`, `distinct` | Every gap, by how related the things it separates are: a label and its field are `related`, buttons in a bar `grouped`, one question and the next `distinct` |
+| Text size | `roles.type.fine`, `small`, `body`, `large` | Hints and tooltips (`fine`); labels, meta and list items (`small`); legends and callout titles (`body`); panel titles (`large`); icons match the text they sit beside |
+| Edges | `roles.color.edge`, `edgeStrong` | Dividers, outlines, field borders, floating panels, switch tracks, chart gridlines; hovered outlines and axis lines |
+| Surfaces | `roles.color.surface`, `page`, `well` | Headers, switch thumbs and chart gaps; secondary buttons and footers; hovers, stripes and disabled fields |
+
+```tsx
+// Airier forms: every "related" gap (label to field, icon to text) opens up.
+<SquonkThemeProvider roleBindings={{ "roles.space.related": "spacing.sm" }}>
+// Only the field gap, nothing else:
+<SquonkThemeProvider roleBindings={{ "roles.space.fieldGap": "spacing.sm" }}>
+```
+
+## A purpose for each colour mode
+
+A binding is one value for both colour modes, or `{ light, dark }` with one for
+each. Each side takes what a single value takes: a token path, another purpose
+or a CSS value. Token paths already follow the mode, so use a pair only where
+the two modes make different decisions.
+
+```tsx
+// Navy headings on the light page, cream ones on the dark page.
+<SquonkThemeProvider
+  roleBindings={{ "roles.color.heading": { light: "#1d3557", dark: "#f1faee" } }}
+>
+```
+
+A pair has both modes and nothing else. A theme file with a mode missing or
+another field is rejected; in code such a pair is ignored and the default
+stays. Inside `ThemeStyleBlock invertMode` the other side applies. Check the
+contrast of a colour pair in both modes.
+
+## Page background image
+
+`components.page.backgroundImage` paints an image over the page colour: a
+gradient or wash behind the whole page. It is `none` by default. `Page` paints
+it, and so does the document body when the provider has `withGlobalStyles`. It
+is held to the screen while the page scrolls and doesn't repeat, so a gradient
+covers the viewport once.
+
+```tsx
+<SquonkThemeProvider
+  withGlobalStyles
+  roleBindings={{
+    "components.page.backgroundImage": {
+      light: "linear-gradient(180deg, #ffffff, #eef2ff)",
+      dark: "radial-gradient(circle at top, #1e1b4b, #020617)",
+    },
+  }}
+>
+```
+
+Text on the page is still picked to read on the page colour, so keep the image
+close to that colour, and check the page in both modes.
+
+## Quiet tones
+
+A tone's soft fills (a subtle badge, an alert's wash, the tinted current item)
+are a light version of the tone in light mode and a deep version in dark mode.
+Set `softToneStrength` between 0 and 1 to make them a quiet tint instead: the
+surface colour with that share of the tone mixed in. 0.1 to 0.2 keeps tinted
+blocks close to the surface in both modes. The text on them is still computed
+to stay readable. 0, the default, keeps the built-in fills.
+
+```tsx
+<SquonkThemeProvider primitives={{ softToneStrength: 0.12 }}>
+```
+
+## Neutral tint
+
+The greys (page, surfaces, wells, text and borders) can lean towards the primary
+colour's hue. Set `neutralTint` between 0 and 1: 0 keeps the neutrals as written,
+0.3 to 0.7 gives the whole interface a tinge of the brand. Aurora uses 0.6, so
+change its primary to teal and its surround turns teal too.
+
+```tsx
+<SquonkThemeProvider primitives={{ neutralTint: 0.5, colors: { primary: "#0e7c86" } }}>
+```
+
+Each neutral keeps its lightness, so contrast holds, and the tint is strongest in
+the mid-tones, fading out at white and black, as hand-tinted greys do. A primary
+that is itself grey leaves the neutrals alone.
+
+## Light text on fills
+
+`lightTextBalance` (0 to 100, default 50) decides when text on a coloured fill
+(primary buttons, solid badges, ticked boxes) turns light, and how far the fill
+deepens to carry it. Higher turns text light on brighter fills and deepens them
+further, for richer fills and crisper white text; lower keeps dark text on more
+fills and deepens them only to AA. Every pairing still meets AA, whatever the
+setting.
+
+| Balance | Light text from | Fill deepened to |
+| --- | --- | --- |
+| 0 | Fills white already reads on at 4.5:1, and dark text otherwise wherever it scores higher | 4.5:1 |
+| 50 (default) | 3:1 | 4.6:1 |
+| 100 | 1.4:1, so even a bright brand colour carries white text | 7:1 |
+
+`textOnFillStrength` (0 to 100, default 50) sets how far that text stands
+apart from its fill: at 100 it is pure white or black; at 0 it is a light or dark
+tint of the fill itself, just strong enough to read at AA (4.5:1), for quiet,
+tonal buttons and badges. The default reads at 7:1.
+
+```tsx
+<SquonkThemeProvider primitives={{ lightTextBalance: 80, textOnFillStrength: 100 }}>
+```
+
+## Switches
+
+Some theme decisions are yes or no. Each switch sets one or more purposes, so
+components follow it without knowing it exists, and a theme can still re-point
+any of those purposes on its own.
+
+| Switch | Off (default) | On |
+| --- | --- | --- |
+| `deriveFromPrimary` | Link, focus ring and accent as written | Computed from the primary, moved only as far as their contrast needs (4.5:1 for links, 3:1 for the focus ring), so changing the primary carries the whole brand |
+| `primaryGradient` | The primary button in the solid primary | Filled with a gradient from `primaryGradientStart` to the primary at `primaryGradientAngle` (`roles.fill.accent*`), its label picked to read on both ends |
+| `uppercaseControls` | Button labels as written | Capitals with a little open tracking (`roles.type.buttonCase`, `buttonTracking`) |
+| `underlineLinks` | Links underlined when pointed at | Underlined at rest too (`roles.type.linkDecoration`); a `Link` with its own `underline` prop keeps it |
+| `filledFields` | Fields on the surface colour | Filled with the well colour (`roles.color.fieldBackground`); their borders stay |
+| `printBackgrounds` | Printed in ink on white | Printed in the theme's own colours (`roles.print.*`) |
+| `printLinkUrls` (on by default) | No addresses on paper | Web and email links print their address after the text (`roles.print.linkUrls`) |
+| `brandHeadings` | Headings in the text colour | Headings in the brand's readable tone (`roles.color.heading` → `roles.color.link`) |
+| `pillControls` | Controls and tags on the radius primitives | Fully rounded (`roles.radius.control`, `roles.radius.chip`) |
+| `underlinedFields` | Boxed fields with a focus halo | A single line under each field on the background behind it, and an accent underline on focus |
+| `outlinedSecondary` | A quiet neutral secondary button | Outlined in the accent with brand-coloured text and no fill |
+| `liftOnHover` (on by default) | Every button stays flat | Lifted buttons rise under the pointer (`roles.interaction.hoverLift`) |
+| `squeezeOnPress` | Buttons keep their size when pressed | Buttons shrink a little while pressed (`roles.interaction.pressScale`) |
+| `inkShadows` | Soft shadows | Hard offset shadows in the text colour under buttons and fields, falling away from `lightAngle` |
+| `strongFocus` | A focus ring two borders wide | A heavier ring (`roles.border.focusWidth`) |
+
+The switches in the second group set purpose bindings directly, the same ones a
+theme could write in `roleBindings`, and point them at other purposes where one
+fits: `brandHeadings` follows a theme's links wherever they go. A theme's own
+`roleBindings` win over a switch, so take a switch and adjust one purpose it sets.
+
+```tsx
+<SquonkThemeProvider primitives={{ uppercaseControls: true, underlineLinks: true }}>
+```
+
+The default Squonk theme turns on `pillControls`, `squeezeOnPress` and
+`primaryGradient`. Kauri turns on `underlineLinks`, `brandHeadings` and
+`outlinedSecondary`; Fieldbook `uppercaseControls`, `filledFields` and
+`strongFocus`; Tidepool `pillControls`, `filledFields`, `squeezeOnPress` and
+`primaryGradient`; Monolith `uppercaseControls`, `underlinedFields` and
+`strongFocus`; Wayfinder `underlineLinks` and `strongFocus`; and Aurora
+`primaryGradient`. Kauri, Fieldbook, Monolith and Wayfinder turn off
+`liftOnHover`. Meridian derives its link, focus ring and accent from its
+primary; the others write their own.
+
+A brand drawn as a gradient takes `primaryGradient`. Give the start colour for
+each mode; the primary is the end, and the solid primary stays underneath, so
+anything that reads `roles.color.accent` (ticked boxes, the active tab) keeps
+the solid colour. The label colour is checked against both ends, but check
+your own pair too: two ends far apart in lightness leave no colour that reads
+well on both.
+
+```tsx
+<SquonkThemeProvider
+  primitives={{
+    primaryGradient: true,
+    primaryGradientAngle: 90,
+    colors: { primary: "#6d28d9", primaryGradientStart: "#0f766e" },
+    darkColors: { primary: "#a78bfa", primaryGradientStart: "#2dd4bf" },
+  }}
+>
+```
+
+With `deriveFromPrimary` and `neutralTint` together, a theme's whole palette
+follows one colour: set the primary and the links, focus ring, accent and greys
+come with it. For printing, see [Printing](?path=/docs/patterns-printing--docs).
+
+## Navigation indicators
+
+How navigation marks the current page and the item under the pointer is a
+theme decision, so every `NavList` in an app agrees. `indicatorStyle` picks one
+of `bar` (the default: a bar along the start edge on a quiet fill), `fill`,
+`underline`, `ring` (a ring standing off the fill by a gap), `quiet` or `tint`
+(a tint of the primary with text to match, and no mark). Each is
+a set of `roles.indicator.*` tokens: for the current item and under the
+pointer, a background, text colour and mark colour, and the widths of a bar, an
+underline and a ring, with the gap between ring and fill. Components draw the
+mark from those parts, so any combination is a few values.
+
+```tsx
+// A pill-shaped border with a gap around the current page.
+<SquonkThemeProvider
+  primitives={{ indicatorStyle: "ring" }}
+  roleBindings={{ "roles.indicator.radius": "borders.radius.full", "roles.indicator.current.gap": "3px" }}
+>
+```
+
+Squonk and Tidepool tint, Kauri underlines, Fieldbook stays quiet, Meridian and Wayfinder draw a bar, Monolith fills and Aurora rings.
+
+## What people select
+
+Everything a person chooses or highlights is themed through purposes, so a
+theme decides how a choice looks as well as how it moves:
+
+- `roles.color.selected` and `roles.color.onSelected`: the fill and text of a
+  chosen option in a select, and of a selected table row.
+- `roles.color.selectedMark`: the tick beside the chosen option.
+- `roles.type.selected`: the weight of the chosen option, so the choice reads
+  without colour.
+- `roles.color.textSelection` and `roles.color.onTextSelection`: the highlight
+  behind text selected on the page (`::selection`), written by
+  `SquonkThemeProvider` with its global styles.
+
+```tsx
+<SquonkThemeProvider
+  roleBindings={{
+    "roles.color.selected": "colors.primary",
+    "roles.color.onSelected": "colors.contrastPrimary",
+    "roles.color.textSelection": { light: "#efe0b4", dark: "#4a3f1e" },
+  }}
+>
+```
+
+Fieldbook inverts a chosen row to amber, like a terminal; Monolith fills it
+black; Kauri marks it in brass and selects text in a pale brass wash.
+
+## Colours of your own
+
+`addedColorPrimitives` (`addedPrimitives` in a theme file) adds a colour to the
+theme under a key you choose, with a light and a dark value:
+
+```tsx
+<SquonkThemeProvider
+  addedColorPrimitives={{ brandTeal: { light: "#0f766e", dark: "#5eead4" } }}
+  roleBindings={{ "roles.color.heading": "colors.added.brandTeal" }}
+>
+```
+
+Each added colour gets:
+
+- **A CSS variable** with its value for the current mode, the key in kebab
+  case: `--squonk-colors-added-brand-teal` (`theme.colors.added.brandTeal` in
+  TypeScript). A purpose can point at it, as `colors.added.brandTeal` above.
+- **A tone palette** like the built-in tones': `--squonk-colors-tone-brand-teal-solid`,
+  `-contrast`, `-subtle`, `-on-subtle`, `-outline-text`, `-wash`, `-on-wash` and
+  `-wash-border`, computed for the mode. Components that take a `tone` accept
+  the key, so `tone="brandTeal"` works where `tone="success"` does.
+
+A built-in tone's name (`neutral`, `primary`, `success`, `warning`, `error`,
+`info`) always means the built-in tone, so give an added colour another key.
+
+## Theme files
+
+The Theme panel exports and imports a theme as JSON (`version: 1`) with
+`primitives`, `bindings` (colour getters re-pointed at palette keys),
+`addedPrimitives` (custom colours, each with a light and a dark value) and
+`roleBindings` (purpose tokens re-pointed). Imports are validated as a whole
+before anything changes:
+
+- Colours must be concrete values that both colour parsers understand (hex, RGB,
+  HSL, named colours, `transparent`); `var()`, `currentColor` and `color-mix()` are
+  rejected because derived colours are computed in JavaScript.
+- Numbers must be finite and non-negative; font size, breakpoints and ratios above
+  zero; opacity, relief depth and relief sheen between zero and one; the light
+  angle below 360. Font families must be non-empty, and the relief profile and
+  blend one of their named values.
+- Unknown primitives and purposes are rejected. Role bindings must be a token path
+  or a CSS value without `;`, braces, angle brackets or comments, or a
+  `{ light, dark }` pair of those with both modes and no other field.
+
+Saved panel state is validated the same way on load; invalid parts fall back to
+the defaults, so Reset and import keep working.
+
+## Register scaling
+
+| Surface | Follows |
+| --- | --- |
+| Card, InteractiveCard, Header and Section padding | `presentation.*`, proportional to `spacingPx` |
+| Heading sizes | `presentation.headingSizes`, proportional to `fontPx` |
+| Control heights, padding and text | `presentation.controlHeight` and the control purposes |
+| Gaps, insets and radii | Space and radius purposes |
+| Line heights and letter spacing | Fixed ratios |
+
+## Every theme value
+
+The whole theme, layer by layer: the primitives, the raw scales computed from
+them, the colours derived for contrast, and the purpose and component tokens
+that components read. Each purpose shows what it's bound to (through any other
+purposes) and why it exists. Pick a layer or search by name or reason.
+
+It follows the Theme panel live, including re-pointed purposes; switch the mode
+in the toolbar to compare light and dark.
+
+<LiveThemeViewer />

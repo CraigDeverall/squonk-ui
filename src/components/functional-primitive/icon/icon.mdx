@@ -1,0 +1,80 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar, IconGallery } from "../../../documentation-imports/index.ts";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as IconStories from "./icon.stories.tsx";
+import meta from "./icon.stories.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Icon
+
+The library's curated icon set. Each icon is a named component — `SearchIcon`,
+`CloseIcon`, `WarningIcon` — named for what it means, not what it looks like, so
+the drawing behind a name can change without breaking your code. Import only the
+icons you use; the rest stay out of your bundle.
+
+```tsx
+import { SearchIcon, WarningIcon } from "@squonk/ui/icon";
+```
+
+<ResizableCanvas of={IconStories.Default} defaultRecipe="centered" />
+
+<Controls />
+
+## The set
+
+Search by name, choose whether to copy the JSX (`<CloseIcon />`) or the import
+line, then click an icon to copy it.
+
+<div className="sb-unstyled">
+  <IconGallery />
+</div>
+
+The glyphs come from [React Icons](https://react-icons.github.io/react-icons/),
+which bundles many icon families. We pick one house style — **Lucide**, an even
+outline at a consistent stroke — and add other families only for icons Lucide
+doesn't have (brand marks come from **Simple Icons**). Mixing families freely
+would make the interface look patchy, so the set is curated here rather than
+left to each app.
+
+## Size
+
+| `size` | Renders at | Use |
+| --- | --- | --- |
+| `inherit` (default) | `1em` — the surrounding text size | Icons next to words |
+| `sm` / `md` / `lg` | The type scale (14 / 16 / 20px by default) | Standalone icons |
+| `control` | The current register's control icon size | Icons inside buttons and inputs, so they grow with `Presentation` |
+
+<ResizableCanvas of={IconStories.InControls} />
+
+## Accessibility
+
+- An icon next to text is decorative: leave out `label` and it is hidden from
+  assistive technology (`aria-hidden`).
+- An icon that carries meaning on its own — a status mark with no text — needs a
+  `label`, which makes it `role="img"` with that name.
+- An icon-only button needs a name on the **button** (`aria-label`), not the icon.
+- Icons use `currentColor`, so they follow the text colour and dark mode.
+
+## Adding an icon
+
+1. Find it in [Lucide](https://lucide.dev/icons/) first. Use another family
+   only if Lucide has nothing suitable.
+2. The family must have a permissive licence (MIT, ISC, Apache 2.0 or CC0). The
+   allowed packs are listed in `icon-sources.test.ts`, which fails for any
+   other; CC BY, CC BY-SA, MPL and OFL packs are excluded.
+3. Add one line to `icon.tsx` with a semantic name:
+   `export const ArchiveIcon = /* @__PURE__ */ createIcon(LuArchive, "archive");`
+4. Name it for its meaning (`DeleteIcon`, not `TrashIcon`), check the gallery in
+   both modes, and run `npm run catalog:generate`.
+
+## Common pitfalls
+
+- **Don't import from `react-icons` in your app to add one-off icons.** Ask for
+  the icon in the library so it is reviewed and named once.
+- **Don't use an icon as the only label of a control** unless the control has an
+  `aria-label`, and prefer visible text for anything people must learn.
+- **Don't resize with CSS `font-size` tricks inside controls;** use
+  `size="control"`.

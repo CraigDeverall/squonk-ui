@@ -1,0 +1,22 @@
+@layer dt.components {
+  /* 2px bottom border: a deliberate key-cap bevel, thicker than the standard border width. */
+  .root {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.6em;
+    padding: 0 var(--squonk-components-kbd-padding-inline);
+    font-family: var(--squonk-roles-type-code-font);
+    font-size: 0.85em;
+    font-weight: var(--squonk-roles-type-strong);
+    line-height: 1.6;
+    color: var(--squonk-roles-color-on-surface);
+    background-color: var(--squonk-roles-color-surface);
+    border: var(--squonk-roles-border-width) solid var(--squonk-roles-color-outline);
+    border-bottom-width: 2px;
+    border-radius: var(--squonk-roles-radius-mark);
+    box-shadow: inset 0 -1px 0 var(--squonk-components-kbd-bevel);
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+}

@@ -1,0 +1,80 @@
+@layer dt.components {
+  /* A framed live example on a pattern page. */
+  .example {
+    display: grid;
+    gap: var(--squonk-roles-space-surface-gap);
+    margin: var(--squonk-roles-space-question-gap) 0;
+    padding: var(--squonk-roles-space-surface-inset);
+    border: var(--squonk-roles-border-width) solid var(--squonk-roles-color-divider);
+    border-radius: var(--squonk-roles-radius-surface);
+    background-color: var(--squonk-roles-color-surface);
+    color: var(--squonk-roles-color-on-surface);
+    font-family: var(--squonk-roles-type-font);
+    min-width: 0;
+    overflow-x: auto;
+  }
+
+  .caption {
+    margin: 0;
+    font-size: var(--squonk-roles-type-meta);
+    color: var(--squonk-roles-color-text-supporting);
+  }
+
+  /* Do and don't side by side; stacked on narrow screens. */
+  .pair {
+    display: grid;
+    gap: var(--squonk-roles-space-surface-gap);
+    margin: var(--squonk-roles-space-question-gap) 0;
+  }
+
+  @media (min-width: 768px) {
+    .pair { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  }
+
+  .verdict {
+    --verdict-tone: var(--squonk-colors-tone-success-solid);
+    --verdict-text: var(--squonk-colors-tone-success-outline-text);
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: var(--squonk-roles-space-surface-gap);
+    padding: var(--squonk-roles-space-surface-inset);
+    border: var(--squonk-roles-border-width) solid var(--squonk-roles-color-divider);
+    border-top: var(--squonk-roles-border-rule-width) solid var(--verdict-tone);
+    border-radius: var(--squonk-roles-radius-surface);
+    background-color: var(--squonk-roles-color-surface);
+    color: var(--squonk-roles-color-on-surface);
+    font-family: var(--squonk-roles-type-font);
+    min-width: 0;
+    margin: 0;
+  }
+
+  .verdict[data-verdict="dont"] {
+    --verdict-tone: var(--squonk-colors-tone-error-solid);
+    --verdict-text: var(--squonk-colors-tone-error-outline-text);
+  }
+
+  .label {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--squonk-roles-space-icon-gap);
+    font-size: var(--squonk-roles-type-label);
+    font-weight: var(--squonk-roles-type-strong);
+    color: var(--verdict-text);
+  }
+
+  /* Wide content scrolls inside its panel instead of widening the page. */
+  .stage {
+    display: grid;
+    align-content: start;
+    gap: var(--squonk-roles-space-surface-gap);
+    min-width: 0;
+    overflow-x: auto;
+  }
+}
+
+@layer dt.components {
+  /* Grid children default to min-width: auto, which lets a wide table widen
+     the frame; with 0 they shrink and the table scrolls inside itself. */
+  .example > *,
+  .stage > * { min-width: 0; }
+}

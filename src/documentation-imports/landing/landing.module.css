@@ -1,0 +1,299 @@
+/* The Introduction page. Docs-only layout, bound to purpose tokens. */
+
+/* The landing page uses the whole docs pane, not Storybook's reading column. */
+:global(.sbdocs-wrapper):has(.landing) {
+  padding-inline: 0;
+}
+
+:global(.sbdocs-content):has(.landing) {
+  max-width: none;
+}
+
+.landing {
+  position: relative;
+  /* The hero's glow reaches past the sides; clip it without a scrollbar
+     (vertically the wash still reaches up under the pane's padding). */
+  overflow-x: clip;
+  display: grid;
+  gap: 64px;
+  margin: 0 auto;
+  /* Generous side room that grows with the screen, so nothing sits against
+     the edges on a wide monitor. */
+  padding: 48px clamp(var(--squonk-roles-space-page-gutter), 6vw, 128px) 64px;
+  font-family: var(--squonk-roles-type-font);
+  color: var(--squonk-roles-color-text);
+}
+
+/* A watercolour wash behind the hero, fading into the page. The light wash
+   is painted on white and multiplied, the dark one on black and screened, so
+   either sits on any theme's page colour. */
+.wash {
+  position: absolute;
+  /* Up under the docs pane's top padding, so the wash starts at the top edge. */
+  inset: -96px 0 auto;
+  height: 1080px;
+  pointer-events: none;
+  background-size: cover;
+  background-position: center top;
+  mix-blend-mode: multiply;
+  opacity: 0.85;
+  mask-image: linear-gradient(to bottom, black 0, black 45%, transparent 100%);
+}
+
+.wash[data-mode="dark"] {
+  mix-blend-mode: screen;
+  opacity: 0.7;
+}
+
+.landing > :not(.wash) { position: relative; }
+
+.hero {
+  display: grid;
+  gap: 40px;
+  align-items: center;
+}
+
+@media (min-width: 1024px) {
+  .hero { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+}
+
+.heroText {
+  display: grid;
+  gap: var(--squonk-roles-space-overlay-gap);
+  justify-items: start;
+}
+
+.logo {
+  width: 220px;
+  height: auto;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--squonk-roles-type-heading-font);
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--squonk-roles-color-text);
+}
+
+.lead {
+  font-size: var(--squonk-roles-type-title);
+  color: var(--squonk-roles-color-text-supporting);
+  max-width: 34rem;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--squonk-roles-space-action-gap);
+}
+
+.command {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--squonk-roles-space-icon-gap);
+  max-width: 100%;
+  padding-left: var(--squonk-roles-space-surface-gap);
+  border: var(--squonk-roles-border-width) solid var(--squonk-roles-color-divider);
+  border-radius: var(--squonk-roles-radius-control);
+  background-color: var(--squonk-roles-color-well);
+}
+
+/* The setup command, with the theme picker beside it (below on narrow screens). */
+.setupRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--squonk-roles-space-overlay-gap) 32px;
+  width: 100%;
+}
+
+/* The theme select, with the light and dark switch beside it, lined up with
+   the select's control rather than its label. */
+.themePicker {
+  flex: 1 1 20rem;
+  max-width: 30rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--squonk-roles-space-related) var(--squonk-roles-space-distinct);
+}
+
+.themeSelect {
+  flex: 1 1 14rem;
+  max-width: 20rem;
+}
+
+/* Round, like the sidebar's toggle, and down past the select's label so it
+   sits beside the select's control. It takes the accent under the pointer. */
+.modeToggle {
+  margin-block-start: calc(var(--squonk-roles-type-label) * var(--squonk-roles-type-tight-line-height) + var(--squonk-roles-space-field-gap));
+  border-radius: var(--squonk-roles-radius-pill);
+}
+
+.modeToggle:hover {
+  background-color: var(--squonk-roles-color-accent);
+  border-color: var(--squonk-roles-color-accent);
+  color: var(--squonk-roles-color-on-accent);
+}
+
+.commandText {
+  background: none;
+  overflow-wrap: anywhere;
+}
+
+.section {
+  display: grid;
+  gap: var(--squonk-roles-space-overlay-gap);
+}
+
+.cards,
+.features {
+  display: grid;
+  gap: var(--squonk-roles-space-overlay-gap);
+  /* At most three across, so the sets of three and six make even rows. */
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(100%, max(280px, (100% - 2 * var(--squonk-roles-space-overlay-gap)) / 3)), 1fr)
+  );
+}
+
+/* Each card's grid cell (it carries the Reveal); the card fills it, so a
+   row's cards stay one height. */
+.cell {
+  display: grid;
+}
+
+.card {
+  display: grid;
+  gap: var(--squonk-roles-space-surface-gap);
+  align-content: start;
+  text-decoration: none;
+  color: inherit;
+  /* Its media box sits inset by the card's padding: keep its corners concentric. */
+  --media-inset: var(--card-padding, 0px);
+}
+
+.cardTitle,
+.featureTitle {
+  margin: 0;
+}
+
+.feature {
+  display: grid;
+  gap: var(--squonk-roles-space-surface-gap);
+  align-content: start;
+}
+
+.more { margin-top: var(--squonk-roles-space-surface-gap); }
+
+/* ── Real screens: each card shows its live screen in a device ──────────── */
+
+/* The device stands in the page's 16:10 media box (media-box.tsx). */
+.device {
+  position: relative;
+  display: block;
+  box-sizing: border-box;
+  /* Its own height, not the box's (AspectRatio stretches its child). */
+  height: auto;
+  background: linear-gradient(160deg, #3a3f46, #16181b 55%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.18),
+    0 18px 36px -12px rgb(0 0 0 / 0.45);
+  transition: transform var(--squonk-roles-motion-feedback);
+}
+
+/* A monitor on a stand. */
+.device[data-kind="monitor"] {
+  width: 74%;
+  margin-bottom: 7%;
+  padding: 1.6%;
+  border-radius: 10px;
+}
+
+.device[data-kind="monitor"]::before,
+.device[data-kind="monitor"]::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  translate: -50% 0;
+  background: linear-gradient(180deg, #8a9099, #4b5058);
+}
+
+/* The neck… */
+.device[data-kind="monitor"]::before {
+  top: 100%;
+  width: 14%;
+  height: 12%;
+  clip-path: polygon(12% 0, 88% 0, 100% 100%, 0 100%);
+}
+
+/* …and the foot. */
+.device[data-kind="monitor"]::after {
+  top: calc(100% + 12%);
+  width: 34%;
+  height: 3%;
+  min-height: 4px;
+  border-radius: 4px 4px 2px 2px;
+}
+
+/* A phone, with a speaker slot in the top bezel. */
+.device[data-kind="phone"] {
+  width: 26%;
+  padding: 1.4%;
+  border-radius: 18px;
+}
+
+.device[data-kind="phone"]::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 2.6%;
+  left: 50%;
+  translate: -50% 0;
+  width: 28%;
+  height: 2%;
+  border-radius: 999px;
+  background: #0c0d0f;
+}
+
+.screen {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: 3px;
+  background-color: var(--squonk-roles-color-page);
+}
+
+.device[data-kind="phone"] .screen { border-radius: 13px; }
+
+/* The full-size screen, scaled down to fit. It's a picture: the card is the link. */
+.screenFrame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: 0;
+  transform-origin: 0 0;
+  pointer-events: none;
+  /* Hidden until its screen is in, styled and scaled (device-screen.tsx),
+     then fades in. Paced by the page's motion level. */
+  opacity: 0;
+  transition: opacity calc(var(--squonk-roles-motion-reveal) * var(--squonk-motion-level-time, 1)) var(--squonk-roles-motion-reveal-easing);
+}
+
+.screenFrame[data-shown] {
+  opacity: 1;
+}
+
+.card:hover .device,
+.card:focus-visible .device {
+  transform: translateY(-4px);
+  transition-duration: var(--squonk-roles-motion-feedback-in);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .device { transition: none; }
+  .card:hover .device,
+  .card:focus-visible .device { transform: none; }
+}

@@ -1,0 +1,16 @@
+@layer dt.components {
+  .root {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    background-color: var(--squonk-components-page-background);
+    /* An image over the colour (a gradient), held to the screen while the
+       page scrolls. `none` unless the theme binds it. */
+    background-image: var(--squonk-components-page-background-image);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    color: var(--squonk-components-page-text);
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+}

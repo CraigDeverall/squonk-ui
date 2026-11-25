@@ -1,0 +1,69 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../documentation-imports/index.ts";
+import { Do, DoDont, Dont, Example } from "./pattern-blocks.tsx";
+import { DestructiveExample, VagueConfirmExample } from "./pattern-examples.tsx";
+
+<Meta title="Patterns/Destructive actions" />
+
+<HideSbBar />
+
+# Destructive actions
+
+<Example caption="Deleting a draft happens at once, with undo offered in a toast that stays. Cancelling the membership can't be undone, so it asks first; while it works, the dialog can't be dismissed.">
+  <DestructiveExample />
+</Example>
+
+## Prefer undo when you can
+
+**Our guidance** (the sources don't compare the two): if an action can be reversed,
+do it straight away and offer **Undo**. A confirmation for every routine delete
+trains people to click through without reading. Offer undo where the user is
+looking — next to the item, or in a toast that stays until dismissed
+(`duration: 0`) — and also from somewhere durable, such as a "Recently deleted"
+view, because a toast can be missed.
+
+## Confirm what can't be undone
+
+When the action is permanent, or affects other people, ask first with
+[ConfirmModal](?path=/docs/functional-modal--docs):
+
+- **Title** names the action and its object: "Delete project 'Atlas'?"
+- **Message** states the consequence, including that it can't be undone.
+- **Confirm button** says what it does ("Delete project"), uses `danger`, and is
+  never "Yes" or "OK".
+- **Cancel** stays available until the work starts. While it runs, `loading`
+  blocks dismissal so the user can't leave a half-finished change.
+
+Put destructive commands last in a [DropdownMenu](?path=/docs/functional-dropdown-menu--docs)
+with `tone: "danger"`, separated from the rest.
+
+<DoDont>
+  <Do caption="The title names the action, the message states the consequence, and the button says what it does. Try “Cancel membership” above.">
+    <DestructiveExample />
+  </Do>
+  <Dont caption="“Are you sure?” and “Yes” make people click through without reading.">
+    <VagueConfirmExample />
+  </Dont>
+</DoDont>
+
+Your app owns `open`, the operation and what happens if it fails: clear
+`loading` and say what went wrong, so people aren't left stuck in the dialog.
+Focus starts on the least destructive choice and returns to the trigger when the
+dialog closes. Don't use a dialog for routine news; that's a toast.
+
+## Afterwards
+
+Say what happened, and move focus somewhere useful if the deleted item had it:
+the next row, or the list. See [Focus management](?path=/docs/patterns-focus-management--docs).
+
+## Related
+
+- [Toasts, alerts and dialogs](?path=/docs/patterns-toasts-alerts-and-dialogs--docs)
+
+---
+
+Sources, paraphrased: [WAI-ARIA Authoring Practices: alert dialog](https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/)
+and [dialog (modal)](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/), © W3C, under the
+[W3C Software and Document License](https://www.w3.org/copyright/software-license/);
+[React Spectrum AlertDialog](https://react-spectrum.adobe.com/v3/AlertDialog.html), © Adobe;
+[React Aria Dialog](https://react-spectrum.adobe.com/react-aria/Dialog.html).

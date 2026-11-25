@@ -1,0 +1,614 @@
+{
+  "name": "@squonk/ui",
+  "version": "0.0.0-development",
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./docs": {
+      "types": "./dist/docs.d.ts",
+      "import": "./dist/docs.mjs",
+      "require": "./dist/docs.cjs"
+    },
+    "./styles.css": "./dist/styles.css",
+    "./docs.css": "./dist/docs.css",
+    "./fonts.css": "./dist/fonts.css",
+    "./skill": "./skills/use-squonk-ui/SKILL.md",
+    "./catalog.json": "./dist/design-catalog.json",
+    "./guides.json": "./dist/design-guides.json",
+    "./eslint": {
+      "types": "./eslint/index.d.ts",
+      "default": "./eslint/index.js"
+    },
+    "./package.json": "./package.json",
+    "./accordion": {
+      "types": "./dist/components/functional/accordion/accordion.d.ts",
+      "import": "./dist/components/functional/accordion/accordion.mjs",
+      "require": "./dist/components/functional/accordion/accordion.cjs"
+    },
+    "./alert": {
+      "types": "./dist/components/functional/alert/alert.d.ts",
+      "import": "./dist/components/functional/alert/alert.mjs",
+      "require": "./dist/components/functional/alert/alert.cjs"
+    },
+    "./area-chart": {
+      "types": "./dist/components/functional/area-chart/area-chart.d.ts",
+      "import": "./dist/components/functional/area-chart/area-chart.mjs",
+      "require": "./dist/components/functional/area-chart/area-chart.cjs"
+    },
+    "./aspect-ratio": {
+      "types": "./dist/components/layout-primitive/aspect-ratio/aspect-ratio.d.ts",
+      "import": "./dist/components/layout-primitive/aspect-ratio/aspect-ratio.mjs",
+      "require": "./dist/components/layout-primitive/aspect-ratio/aspect-ratio.cjs"
+    },
+    "./avatar": {
+      "types": "./dist/components/functional/avatar/avatar.d.ts",
+      "import": "./dist/components/functional/avatar/avatar.mjs",
+      "require": "./dist/components/functional/avatar/avatar.cjs"
+    },
+    "./badge": {
+      "types": "./dist/components/functional/badge/badge.d.ts",
+      "import": "./dist/components/functional/badge/badge.mjs",
+      "require": "./dist/components/functional/badge/badge.cjs"
+    },
+    "./bar-chart": {
+      "types": "./dist/components/functional/bar-chart/bar-chart.d.ts",
+      "import": "./dist/components/functional/bar-chart/bar-chart.mjs",
+      "require": "./dist/components/functional/bar-chart/bar-chart.cjs"
+    },
+    "./block": {
+      "types": "./dist/components/layout-primitive/block/block.d.ts",
+      "import": "./dist/components/layout-primitive/block/block.mjs",
+      "require": "./dist/components/layout-primitive/block/block.cjs"
+    },
+    "./breadcrumb": {
+      "types": "./dist/components/functional/breadcrumb/breadcrumb.d.ts",
+      "import": "./dist/components/functional/breadcrumb/breadcrumb.mjs",
+      "require": "./dist/components/functional/breadcrumb/breadcrumb.cjs"
+    },
+    "./button": {
+      "types": "./dist/components/functional/button/button.d.ts",
+      "import": "./dist/components/functional/button/button.mjs",
+      "require": "./dist/components/functional/button/button.cjs"
+    },
+    "./card": {
+      "types": "./dist/components/layout/card/card.d.ts",
+      "import": "./dist/components/layout/card/card.mjs",
+      "require": "./dist/components/layout/card/card.cjs"
+    },
+    "./centered": {
+      "types": "./dist/components/layout-primitive/centered/centered.d.ts",
+      "import": "./dist/components/layout-primitive/centered/centered.mjs",
+      "require": "./dist/components/layout-primitive/centered/centered.cjs"
+    },
+    "./checkbox": {
+      "types": "./dist/components/functional/checkbox/checkbox.d.ts",
+      "import": "./dist/components/functional/checkbox/checkbox.mjs",
+      "require": "./dist/components/functional/checkbox/checkbox.cjs"
+    },
+    "./checkbox-group": {
+      "types": "./dist/components/functional/checkbox-group/checkbox-group.d.ts",
+      "import": "./dist/components/functional/checkbox-group/checkbox-group.mjs",
+      "require": "./dist/components/functional/checkbox-group/checkbox-group.cjs"
+    },
+    "./cluster": {
+      "types": "./dist/components/layout/cluster/cluster.d.ts",
+      "import": "./dist/components/layout/cluster/cluster.mjs",
+      "require": "./dist/components/layout/cluster/cluster.cjs"
+    },
+    "./code": {
+      "types": "./dist/components/functional-primitive/code/code.d.ts",
+      "import": "./dist/components/functional-primitive/code/code.mjs",
+      "require": "./dist/components/functional-primitive/code/code.cjs"
+    },
+    "./container": {
+      "types": "./dist/components/layout-primitive/container/container.d.ts",
+      "import": "./dist/components/layout-primitive/container/container.mjs",
+      "require": "./dist/components/layout-primitive/container/container.cjs"
+    },
+    "./currency": {
+      "types": "./dist/components/functional-primitive/currency/currency.d.ts",
+      "import": "./dist/components/functional-primitive/currency/currency.mjs",
+      "require": "./dist/components/functional-primitive/currency/currency.cjs"
+    },
+    "./currency-field": {
+      "types": "./dist/components/functional/currency-field/currency-field.d.ts",
+      "import": "./dist/components/functional/currency-field/currency-field.mjs",
+      "require": "./dist/components/functional/currency-field/currency-field.cjs"
+    },
+    "./divider": {
+      "types": "./dist/components/layout-primitive/divider/divider.d.ts",
+      "import": "./dist/components/layout-primitive/divider/divider.mjs",
+      "require": "./dist/components/layout-primitive/divider/divider.cjs"
+    },
+    "./donut-chart": {
+      "types": "./dist/components/functional/donut-chart/donut-chart.d.ts",
+      "import": "./dist/components/functional/donut-chart/donut-chart.mjs",
+      "require": "./dist/components/functional/donut-chart/donut-chart.cjs"
+    },
+    "./drawer": {
+      "types": "./dist/components/functional/drawer/drawer.d.ts",
+      "import": "./dist/components/functional/drawer/drawer.mjs",
+      "require": "./dist/components/functional/drawer/drawer.cjs"
+    },
+    "./dropdown-menu": {
+      "types": "./dist/components/functional/dropdown-menu/dropdown-menu.d.ts",
+      "import": "./dist/components/functional/dropdown-menu/dropdown-menu.mjs",
+      "require": "./dist/components/functional/dropdown-menu/dropdown-menu.cjs"
+    },
+    "./empty-state": {
+      "types": "./dist/components/layout/empty-state/empty-state.d.ts",
+      "import": "./dist/components/layout/empty-state/empty-state.mjs",
+      "require": "./dist/components/layout/empty-state/empty-state.cjs"
+    },
+    "./fieldset": {
+      "types": "./dist/components/functional/fieldset/fieldset.d.ts",
+      "import": "./dist/components/functional/fieldset/fieldset.mjs",
+      "require": "./dist/components/functional/fieldset/fieldset.cjs"
+    },
+    "./footer": {
+      "types": "./dist/components/layout/footer/footer.d.ts",
+      "import": "./dist/components/layout/footer/footer.mjs",
+      "require": "./dist/components/layout/footer/footer.cjs"
+    },
+    "./form": {
+      "types": "./dist/components/functional/form/form.d.ts",
+      "import": "./dist/components/functional/form/form.mjs",
+      "require": "./dist/components/functional/form/form.cjs"
+    },
+    "./grid": {
+      "types": "./dist/components/layout-primitive/grid/grid.d.ts",
+      "import": "./dist/components/layout-primitive/grid/grid.mjs",
+      "require": "./dist/components/layout-primitive/grid/grid.cjs"
+    },
+    "./header": {
+      "types": "./dist/components/layout/header/header.d.ts",
+      "import": "./dist/components/layout/header/header.mjs",
+      "require": "./dist/components/layout/header/header.cjs"
+    },
+    "./heading": {
+      "types": "./dist/components/functional-primitive/heading/heading.d.ts",
+      "import": "./dist/components/functional-primitive/heading/heading.mjs",
+      "require": "./dist/components/functional-primitive/heading/heading.cjs"
+    },
+    "./hstack": {
+      "types": "./dist/components/layout-primitive/hstack/hstack.d.ts",
+      "import": "./dist/components/layout-primitive/hstack/hstack.mjs",
+      "require": "./dist/components/layout-primitive/hstack/hstack.cjs"
+    },
+    "./icon": {
+      "types": "./dist/components/functional-primitive/icon/icon.d.ts",
+      "import": "./dist/components/functional-primitive/icon/icon.mjs",
+      "require": "./dist/components/functional-primitive/icon/icon.cjs"
+    },
+    "./icon-button": {
+      "types": "./dist/components/functional/icon-button/icon-button.d.ts",
+      "import": "./dist/components/functional/icon-button/icon-button.mjs",
+      "require": "./dist/components/functional/icon-button/icon-button.cjs"
+    },
+    "./illustration": {
+      "types": "./dist/components/functional-primitive/illustration/illustration.d.ts",
+      "import": "./dist/components/functional-primitive/illustration/illustration.mjs",
+      "require": "./dist/components/functional-primitive/illustration/illustration.cjs"
+    },
+    "./infinite-list": {
+      "types": "./dist/components/functional/infinite-list/infinite-list.d.ts",
+      "import": "./dist/components/functional/infinite-list/infinite-list.mjs",
+      "require": "./dist/components/functional/infinite-list/infinite-list.cjs"
+    },
+    "./inline": {
+      "types": "./dist/components/layout-primitive/inline/inline.d.ts",
+      "import": "./dist/components/layout-primitive/inline/inline.mjs",
+      "require": "./dist/components/layout-primitive/inline/inline.cjs"
+    },
+    "./interactive-card": {
+      "types": "./dist/components/layout/interactive-card/interactive-card.d.ts",
+      "import": "./dist/components/layout/interactive-card/interactive-card.mjs",
+      "require": "./dist/components/layout/interactive-card/interactive-card.cjs"
+    },
+    "./kbd": {
+      "types": "./dist/components/functional-primitive/kbd/kbd.d.ts",
+      "import": "./dist/components/functional-primitive/kbd/kbd.mjs",
+      "require": "./dist/components/functional-primitive/kbd/kbd.cjs"
+    },
+    "./line-chart": {
+      "types": "./dist/components/functional/line-chart/line-chart.d.ts",
+      "import": "./dist/components/functional/line-chart/line-chart.mjs",
+      "require": "./dist/components/functional/line-chart/line-chart.cjs"
+    },
+    "./link": {
+      "types": "./dist/components/functional/link/link.d.ts",
+      "import": "./dist/components/functional/link/link.mjs",
+      "require": "./dist/components/functional/link/link.cjs"
+    },
+    "./media-object": {
+      "types": "./dist/components/layout/media-object/media-object.d.ts",
+      "import": "./dist/components/layout/media-object/media-object.mjs",
+      "require": "./dist/components/layout/media-object/media-object.cjs"
+    },
+    "./meter": {
+      "types": "./dist/components/functional/meter/meter.d.ts",
+      "import": "./dist/components/functional/meter/meter.mjs",
+      "require": "./dist/components/functional/meter/meter.cjs"
+    },
+    "./modal": {
+      "types": "./dist/components/functional/modal/modal.d.ts",
+      "import": "./dist/components/functional/modal/modal.mjs",
+      "require": "./dist/components/functional/modal/modal.cjs"
+    },
+    "./motion": {
+      "types": "./dist/components/animation/motion/motion.d.ts",
+      "import": "./dist/components/animation/motion/motion.mjs",
+      "require": "./dist/components/animation/motion/motion.cjs"
+    },
+    "./nav-list": {
+      "types": "./dist/components/functional/nav-list/nav-list.d.ts",
+      "import": "./dist/components/functional/nav-list/nav-list.mjs",
+      "require": "./dist/components/functional/nav-list/nav-list.cjs"
+    },
+    "./network-graph": {
+      "types": "./dist/components/functional/network-graph/network-graph.d.ts",
+      "import": "./dist/components/functional/network-graph/network-graph.mjs",
+      "require": "./dist/components/functional/network-graph/network-graph.cjs"
+    },
+    "./page": {
+      "types": "./dist/components/layout/page/page.d.ts",
+      "import": "./dist/components/layout/page/page.mjs",
+      "require": "./dist/components/layout/page/page.cjs"
+    },
+    "./pagination": {
+      "types": "./dist/components/functional/pagination/pagination.d.ts",
+      "import": "./dist/components/functional/pagination/pagination.mjs",
+      "require": "./dist/components/functional/pagination/pagination.cjs"
+    },
+    "./popover": {
+      "types": "./dist/components/functional/popover/popover.d.ts",
+      "import": "./dist/components/functional/popover/popover.mjs",
+      "require": "./dist/components/functional/popover/popover.cjs"
+    },
+    "./presentation": {
+      "types": "./dist/components/style/presentation/presentation.d.ts",
+      "import": "./dist/components/style/presentation/presentation.mjs",
+      "require": "./dist/components/style/presentation/presentation.cjs"
+    },
+    "./printable": {
+      "types": "./dist/components/style/printable/printable.d.ts",
+      "import": "./dist/components/style/printable/printable.mjs",
+      "require": "./dist/components/style/printable/printable.cjs"
+    },
+    "./progress-bar": {
+      "types": "./dist/components/functional/progress-bar/progress-bar.d.ts",
+      "import": "./dist/components/functional/progress-bar/progress-bar.mjs",
+      "require": "./dist/components/functional/progress-bar/progress-bar.cjs"
+    },
+    "./qr-code": {
+      "types": "./dist/components/functional/qr-code/qr-code.d.ts",
+      "import": "./dist/components/functional/qr-code/qr-code.mjs",
+      "require": "./dist/components/functional/qr-code/qr-code.cjs"
+    },
+    "./radio": {
+      "types": "./dist/components/functional/radio/radio.d.ts",
+      "import": "./dist/components/functional/radio/radio.mjs",
+      "require": "./dist/components/functional/radio/radio.cjs"
+    },
+    "./relative-time": {
+      "types": "./dist/components/functional/relative-time/relative-time.d.ts",
+      "import": "./dist/components/functional/relative-time/relative-time.mjs",
+      "require": "./dist/components/functional/relative-time/relative-time.cjs"
+    },
+    "./resizable-panels": {
+      "types": "./dist/components/layout/resizable-panels/resizable-panels.d.ts",
+      "import": "./dist/components/layout/resizable-panels/resizable-panels.mjs",
+      "require": "./dist/components/layout/resizable-panels/resizable-panels.cjs"
+    },
+    "./scatter-chart": {
+      "types": "./dist/components/functional/scatter-chart/scatter-chart.d.ts",
+      "import": "./dist/components/functional/scatter-chart/scatter-chart.mjs",
+      "require": "./dist/components/functional/scatter-chart/scatter-chart.cjs"
+    },
+    "./scroll-box": {
+      "types": "./dist/components/layout-primitive/scroll-box/scroll-box.d.ts",
+      "import": "./dist/components/layout-primitive/scroll-box/scroll-box.mjs",
+      "require": "./dist/components/layout-primitive/scroll-box/scroll-box.cjs"
+    },
+    "./section": {
+      "types": "./dist/components/layout/section/section.d.ts",
+      "import": "./dist/components/layout/section/section.mjs",
+      "require": "./dist/components/layout/section/section.cjs"
+    },
+    "./section-heading": {
+      "types": "./dist/components/layout/section-heading/section-heading.d.ts",
+      "import": "./dist/components/layout/section-heading/section-heading.mjs",
+      "require": "./dist/components/layout/section-heading/section-heading.cjs"
+    },
+    "./select": {
+      "types": "./dist/components/functional/select/select.d.ts",
+      "import": "./dist/components/functional/select/select.mjs",
+      "require": "./dist/components/functional/select/select.cjs"
+    },
+    "./sidebar": {
+      "types": "./dist/components/layout/sidebar/sidebar.d.ts",
+      "import": "./dist/components/layout/sidebar/sidebar.mjs",
+      "require": "./dist/components/layout/sidebar/sidebar.cjs"
+    },
+    "./skeleton": {
+      "types": "./dist/components/functional/skeleton/skeleton.d.ts",
+      "import": "./dist/components/functional/skeleton/skeleton.mjs",
+      "require": "./dist/components/functional/skeleton/skeleton.cjs"
+    },
+    "./spacer": {
+      "types": "./dist/components/layout-primitive/spacer/spacer.d.ts",
+      "import": "./dist/components/layout-primitive/spacer/spacer.mjs",
+      "require": "./dist/components/layout-primitive/spacer/spacer.cjs"
+    },
+    "./sparkline": {
+      "types": "./dist/components/functional/sparkline/sparkline.d.ts",
+      "import": "./dist/components/functional/sparkline/sparkline.mjs",
+      "require": "./dist/components/functional/sparkline/sparkline.cjs"
+    },
+    "./spinner": {
+      "types": "./dist/components/functional/spinner/spinner.d.ts",
+      "import": "./dist/components/functional/spinner/spinner.mjs",
+      "require": "./dist/components/functional/spinner/spinner.cjs"
+    },
+    "./split": {
+      "types": "./dist/components/layout/split/split.d.ts",
+      "import": "./dist/components/layout/split/split.mjs",
+      "require": "./dist/components/layout/split/split.cjs"
+    },
+    "./stat": {
+      "types": "./dist/components/functional/stat/stat.d.ts",
+      "import": "./dist/components/functional/stat/stat.mjs",
+      "require": "./dist/components/functional/stat/stat.cjs"
+    },
+    "./switch": {
+      "types": "./dist/components/functional/switch/switch.d.ts",
+      "import": "./dist/components/functional/switch/switch.mjs",
+      "require": "./dist/components/functional/switch/switch.cjs"
+    },
+    "./table": {
+      "types": "./dist/components/functional/table/table.d.ts",
+      "import": "./dist/components/functional/table/table.mjs",
+      "require": "./dist/components/functional/table/table.cjs"
+    },
+    "./tabs": {
+      "types": "./dist/components/functional/tabs/tabs.d.ts",
+      "import": "./dist/components/functional/tabs/tabs.mjs",
+      "require": "./dist/components/functional/tabs/tabs.cjs"
+    },
+    "./tag": {
+      "types": "./dist/components/functional/tag/tag.d.ts",
+      "import": "./dist/components/functional/tag/tag.mjs",
+      "require": "./dist/components/functional/tag/tag.cjs"
+    },
+    "./text": {
+      "types": "./dist/components/functional-primitive/text/text.d.ts",
+      "import": "./dist/components/functional-primitive/text/text.mjs",
+      "require": "./dist/components/functional-primitive/text/text.cjs"
+    },
+    "./text-field": {
+      "types": "./dist/components/functional/text-field/text-field.d.ts",
+      "import": "./dist/components/functional/text-field/text-field.mjs",
+      "require": "./dist/components/functional/text-field/text-field.cjs"
+    },
+    "./textarea": {
+      "types": "./dist/components/functional/textarea/textarea.d.ts",
+      "import": "./dist/components/functional/textarea/textarea.mjs",
+      "require": "./dist/components/functional/textarea/textarea.cjs"
+    },
+    "./theme": {
+      "types": "./dist/theme/index.d.ts",
+      "import": "./dist/theme/index.mjs",
+      "require": "./dist/theme/index.cjs"
+    },
+    "./theme-modifier": {
+      "types": "./dist/components/style/theme-modifier/theme-modifier.d.ts",
+      "import": "./dist/components/style/theme-modifier/theme-modifier.mjs",
+      "require": "./dist/components/style/theme-modifier/theme-modifier.cjs"
+    },
+    "./theme-provider": {
+      "types": "./dist/theme/theme-provider.d.ts",
+      "import": "./dist/theme/theme-provider.mjs",
+      "require": "./dist/theme/theme-provider.cjs"
+    },
+    "./theme-style-block": {
+      "types": "./dist/components/style/theme-style-block/theme-style-block.d.ts",
+      "import": "./dist/components/style/theme-style-block/theme-style-block.mjs",
+      "require": "./dist/components/style/theme-style-block/theme-style-block.cjs"
+    },
+    "./toast": {
+      "types": "./dist/components/functional/toast/toast.d.ts",
+      "import": "./dist/components/functional/toast/toast.mjs",
+      "require": "./dist/components/functional/toast/toast.cjs"
+    },
+    "./tooltip": {
+      "types": "./dist/components/functional/tooltip/tooltip.d.ts",
+      "import": "./dist/components/functional/tooltip/tooltip.mjs",
+      "require": "./dist/components/functional/tooltip/tooltip.cjs"
+    },
+    "./vstack": {
+      "types": "./dist/components/layout-primitive/vstack/vstack.d.ts",
+      "import": "./dist/components/layout-primitive/vstack/vstack.mjs",
+      "require": "./dist/components/layout-primitive/vstack/vstack.cjs"
+    }
+  },
+  "bin": {
+    "squonk-ui": "./bin/squonk-ui.mjs"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json && rollup -c && node scripts/finalize-declarations.mjs && cp src/fonts.css dist/fonts.css && cp public/design-catalog.json dist/design-catalog.json && cp public/design-guides.json dist/design-guides.json && node scripts/build-stories.mjs",
+    "prebuild": "rm -rf dist && node scripts/generate-package-exports.mjs && node scripts/generate-tokens-css.mjs --check",
+    "lint": "eslint . && node scripts/check-purpose-tokens.mjs",
+    "dev": "storybook dev -p 6006",
+    "build-storybook": "storybook build && node scripts/storybook-site-title.mjs",
+    "pretest": "node scripts/check-docker.mjs",
+    "test": "./test-setup/storybook-test.sh",
+    "pretest:update": "node scripts/check-docker.mjs",
+    "test:update": "UPDATE_SNAPSHOTS=true ./test-setup/storybook-test.sh",
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest",
+    "show-report": "npx playwright show-report",
+    "prepare": "husky || true",
+    "pre-commit": "lint-staged && tsc --noEmit",
+    "generate": "yo ./generators/component",
+    "test:package": "node scripts/check-packed-consumers.mjs",
+    "test:scripts": "node --test scripts/*.test.mjs eslint/*.test.mjs bin/*.test.mjs",
+    "typecheck": "tsc --noEmit",
+    "typecheck:tests": "tsc -p tsconfig.tests.json",
+    "test:generator": "node --test generators/component/generator.test.mjs",
+    "check:secrets": "node scripts/check-source-secrets.mjs",
+    "audit:dependencies": "node scripts/check-dependency-audit.mjs",
+    "catalog:generate": "node scripts/design-catalog.mjs",
+    "catalog:check": "node scripts/design-catalog.mjs --check",
+    "tokens:generate": "node scripts/generate-tokens-css.mjs",
+    "tokens:check": "node scripts/generate-tokens-css.mjs --check"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true,
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CraigDeverall/squonk-ui.git"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource-variable/space-grotesk": "^5.3.0",
+    "@tanstack/react-form": "^1.33.5",
+    "@tanstack/react-table": "^9.3.1",
+    "chroma-js": "^3.2.0",
+    "clsx": "^2.1.1",
+    "color": "^5.0.3",
+    "d3-force": "^3.0.0",
+    "react-aria": "^3.53.1",
+    "react-aria-components": "^1.22.1",
+    "react-icons": "^5.7.0",
+    "react-is": "^19.3.1",
+    "react-qr-code": "^2.2.0",
+    "recharts": "^3.10.1"
+  },
+  "engines": {
+    "node": "^22.14.0 || >=24.10.0"
+  },
+  "peerDependencies": {
+    "eslint": ">=9.0.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^21.2.3",
+    "@commitlint/config-conventional": "^21.2.3",
+    "@eslint/js": "^10.0.1",
+    "@playwright/experimental-ct-react": "1.62.1",
+    "@rollup/plugin-alias": "^6.0.0",
+    "@rollup/plugin-commonjs": "^29.0.3",
+    "@rollup/plugin-node-resolve": "^16.0.3",
+    "@rollup/plugin-terser": "^1.0.0",
+    "@rollup/plugin-typescript": "^12.3.0",
+    "@semantic-release/commit-analyzer": "^13.0.1",
+    "@semantic-release/npm": "^13.2.0",
+    "@semantic-release/release-notes-generator": "^14.1.1",
+    "@storybook/addon-docs": "^10.6.3",
+    "@storybook/addon-onboarding": "^10.6.3",
+    "@storybook/react": "^10.6.3",
+    "@storybook/react-vite": "^10.6.3",
+    "@trivago/prettier-plugin-sort-imports": "^6.0.2",
+    "@types/chroma-js": "^3.1.3",
+    "@types/d3-force": "^3.0.10",
+    "@types/node": "^22.18.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "esbuild": "^0.28.2",
+    "eslint": "^10.14.0",
+    "eslint-plugin-mdx": "^3.8.1",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.7",
+    "eslint-plugin-storybook": "^10.6.2",
+    "globals": "^17.13.0",
+    "husky": "^9.1.7",
+    "lightningcss": "^1.33.0",
+    "lint-staged": "^17.6.0",
+    "lodash": "^4.18.1",
+    "mdast-util-from-markdown": "^2.1.0",
+    "mdast-util-gfm": "^3.1.0",
+    "mdast-util-mdx": "^3.0.0",
+    "micromark-extension-gfm": "^3.0.0",
+    "micromark-extension-mdxjs": "^3.0.0",
+    "playwright": "1.62.1",
+    "prompts": "^2.4.2",
+    "react": "^19.3.0",
+    "react-docgen-typescript": "^2.4.0",
+    "react-dom": "^19.3.0",
+    "remark-gfm": "^4.0.1",
+    "rollup": "^4.64.5",
+    "rollup-plugin-dts": "^6.5.1",
+    "rollup-plugin-preserve-directives": "^0.4.0",
+    "rollup-plugin-tsconfig-paths": "^1.5.2",
+    "semantic-release": "^25.0.9",
+    "storybook": "^10.6.2",
+    "tslib": "^2.8.1",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.71.2",
+    "vite": "^8.3.4",
+    "vite-tsconfig-paths": "^6.1.1",
+    "vitest": "^5.0.4",
+    "yeoman-generator": "^8.4.0",
+    "yo": "^7.0.1",
+    "zod": "^4.6.7"
+  },
+  "eslintConfig": {
+    "extends": [
+      "plugin:storybook/recommended"
+    ]
+  },
+  "files": [
+    "dist/**/*",
+    "bin/squonk-ui.mjs",
+    "bin/setup.mjs",
+    "skills/**/*",
+    "eslint/index.js",
+    "eslint/index.d.ts",
+    "README.md",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md"
+  ],
+  "author": "Squonk",
+  "lint-staged": {
+    "*.{ts,tsx}": "eslint --cache --fix"
+  },
+  "license": "MIT",
+  "overrides": {
+    "micromatch": "^4.0.8",
+    "minimatch@<3.1.4": "^3.1.4",
+    "undici@^6.0.0": "^6.28.1",
+    "http-cache-semantics": "^4.3.0",
+    "ip-address": "^10.7.4",
+    "brace-expansion@^4.0.0": "^5.0.12",
+    "simple-git": "^4.0.2",
+    "locutus": "^3.0.36",
+    "npm": "^12.2.2",
+    "glob@>=9.0.0 <14.0.2": "^14.0.4",
+    "minimatch@>=7.0.0 <11.0.1": "^11.0.5"
+  },
+  "peerDependenciesMeta": {
+    "eslint": {
+      "optional": true
+    }
+  },
+  "bugs": {
+    "url": "https://github.com/CraigDeverall/squonk-ui/issues"
+  }
+}

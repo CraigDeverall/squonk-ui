@@ -1,0 +1,245 @@
+@layer dt.components {
+  .root {
+    display: inline-flex;
+    flex-direction: column;
+    gap: var(--squonk-roles-space-field-gap);
+    width: 100%;
+    font-family: var(--squonk-roles-type-font);
+    color: var(--squonk-roles-color-text);
+  }
+
+  .fit { width: fit-content; }
+
+  .label {
+    font-size: var(--squonk-roles-type-label);
+    font-weight: var(--squonk-roles-type-strong);
+    color: var(--squonk-roles-color-label);
+  }
+
+  .control {
+    position: relative;
+    display: block;
+    width: 100%;
+  }
+
+  .trigger {
+    --field-accent: var(--squonk-roles-color-field-border-focus);
+    appearance: none;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+    height: var(--squonk-presentation-control-height-default);
+    padding: 0 var(--squonk-components-select-indicator-room) 0 var(--squonk-roles-control-padding-inline-default);
+    font-size: var(--squonk-roles-control-font-size-default);
+    font-family: var(--squonk-roles-type-font);
+    line-height: var(--squonk-roles-type-tight-line-height);
+    text-align: start;
+    color: var(--squonk-roles-color-field-text);
+    background-color: var(--squonk-roles-color-field-background);
+    border: var(--squonk-roles-border-width) solid var(--squonk-roles-color-field-border);
+    border-width: var(--squonk-roles-control-field-border);
+    --select-relief-fill: var(--squonk-roles-relief-control-fill);
+    --select-relief-edge: var(--squonk-roles-relief-control-edge);
+    background-image: var(--select-relief-fill);
+    background-blend-mode: var(--squonk-roles-relief-blend);
+    box-shadow: var(--select-relief-edge), var(--squonk-roles-elevation-field);
+    border-radius: var(--squonk-roles-radius-control);
+    outline: none;
+    cursor: pointer;
+  }
+
+  .trigger[data-register="compact"] {
+    height: var(--squonk-presentation-control-height-compact);
+    padding: 0 var(--squonk-components-select-indicator-room) 0 var(--squonk-roles-control-padding-inline-compact);
+    font-size: var(--squonk-roles-control-font-size-compact);
+  }
+  .trigger[data-register="large"] {
+    height: var(--squonk-presentation-control-height-large);
+    padding: 0 var(--squonk-components-select-indicator-room) 0 var(--squonk-roles-control-padding-inline-large);
+    font-size: var(--squonk-roles-control-font-size-large);
+  }
+  .trigger[data-register="hero"] {
+    height: var(--squonk-presentation-control-height-hero);
+    padding: 0 var(--squonk-components-select-indicator-room) 0 var(--squonk-roles-control-padding-inline-hero);
+    font-size: var(--squonk-roles-control-font-size-hero);
+  }
+
+  .trigger:has([data-placeholder]) { color: var(--squonk-roles-color-placeholder); }
+
+  /* Relief: raised at rest, pushed into the page while pressed or open. */
+  .trigger[data-pressed]:not(:disabled),
+  .root[data-open] .trigger {
+    --select-relief-fill: var(--squonk-roles-relief-pressed-fill);
+    --select-relief-edge: var(--squonk-roles-relief-pressed-edge);
+  }
+
+  .trigger:hover:not(:disabled) { border-color: var(--squonk-roles-color-field-border-hover); }
+
+  /* Focus: accent border plus the theme's field halo (by default, 2px of the accent at 20%). */
+  .trigger[data-focus-visible],
+  .root[data-open] .trigger {
+    border-color: var(--field-accent);
+    box-shadow:
+      0 0 0 var(--squonk-roles-interaction-field-focus-halo) color-mix(in srgb, var(--field-accent) var(--squonk-roles-interaction-field-focus-strength), transparent),
+      inset 0 var(--squonk-roles-interaction-field-focus-underline) 0 var(--field-accent),
+      var(--select-relief-edge),
+      var(--squonk-roles-elevation-field);
+  }
+
+  .root[data-invalid] .trigger,
+  .root[data-invalid] .trigger:hover:not(:disabled) {
+    --field-accent: var(--squonk-roles-color-invalid);
+    border-color: var(--squonk-roles-color-invalid);
+  }
+
+  .trigger:disabled {
+    opacity: var(--squonk-roles-state-disabled-opacity);
+    cursor: not-allowed;
+    background-color: var(--squonk-roles-color-field-background-disabled);
+    background-image: none;
+  }
+
+  .valueText {
+    display: block;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .indicator {
+    position: absolute;
+    right: var(--squonk-components-select-indicator-inset);
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--squonk-roles-color-field-icon);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+
+  /* Sits left of the chevron; the trigger makes room for both. */
+  .clear {
+    position: absolute;
+    right: calc(var(--squonk-components-select-indicator-inset) + var(--squonk-components-select-clear-size));
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--squonk-components-select-clear-size);
+    height: var(--squonk-components-select-clear-size);
+    padding: 0;
+    border: none;
+    /* Round inside a round trigger, square inside a square one. */
+    border-radius: max(var(--squonk-roles-radius-item), calc(var(--squonk-roles-radius-control) - var(--squonk-components-select-indicator-inset)));
+    background: transparent;
+    color: var(--squonk-roles-color-field-icon);
+    cursor: pointer;
+  }
+
+  .clear:hover {
+    background-color: var(--squonk-roles-color-hover);
+    color: var(--squonk-roles-color-on-hover);
+  }
+
+  .clear[data-focus-visible] {
+    outline: var(--squonk-roles-border-focus-width) solid var(--squonk-roles-color-focus-ring);
+    outline-offset: 0;
+  }
+
+  .control:has(.clear) .trigger { padding-right: calc(var(--squonk-components-select-indicator-room) + var(--squonk-components-select-clear-size)); }
+
+  .content {
+    min-width: var(--trigger-width);
+    overflow-y: auto;
+    box-sizing: border-box;
+    padding: var(--squonk-roles-space-list-inset);
+    display: flex;
+    flex-direction: column;
+    gap: var(--squonk-roles-space-list-gap);
+    background-color: var(--squonk-roles-color-surface);
+    border: var(--squonk-roles-border-width) solid var(--squonk-roles-color-floating-border);
+    border-radius: var(--squonk-roles-radius-list);
+    box-shadow: var(--squonk-roles-elevation-floating);
+    z-index: calc(var(--squonk-roles-layer-menu) + var(--layer-index, 0));
+    font-family: var(--squonk-roles-type-font);
+    outline: none;
+    transform-origin: var(--trigger-anchor-point);
+  }
+
+  .list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--squonk-roles-space-list-gap);
+    outline: none;
+  }
+
+  .item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--squonk-roles-space-item-gap);
+    padding: var(--squonk-roles-space-list-item-inset-block) var(--squonk-roles-space-list-item-inset-inline);
+    /* Concentric with the panel's corners. The line height is fixed because
+       the panel's radius is limited by the height of a row. */
+    border-radius: var(--squonk-roles-radius-list-item);
+    line-height: var(--squonk-roles-type-tight-line-height);
+    font-size: var(--squonk-roles-type-list-item);
+    color: var(--squonk-roles-color-on-surface);
+    cursor: pointer;
+    outline: none;
+  }
+
+  .item[data-focused] {
+    background-color: var(--squonk-roles-color-hover);
+    color: var(--squonk-roles-color-on-hover);
+  }
+
+  .item[data-selected] {
+    background-color: var(--squonk-roles-color-selected);
+    color: var(--squonk-roles-color-on-selected);
+    font-weight: var(--squonk-roles-type-selected);
+  }
+
+  .item[data-selected][data-focused] {
+    background-color: var(--squonk-roles-color-hover);
+    color: var(--squonk-roles-color-on-hover);
+  }
+
+  .item[data-disabled] {
+    cursor: not-allowed;
+    opacity: var(--squonk-roles-state-disabled-opacity);
+  }
+
+  .itemText {
+    display: flex;
+    flex-direction: column;
+    gap: var(--squonk-roles-space-text-gap);
+    min-width: 0;
+  }
+
+  .itemDescription {
+    font-size: var(--squonk-roles-type-supporting);
+    font-weight: var(--squonk-roles-type-regular);
+    color: var(--squonk-roles-color-on-surface-supporting);
+  }
+
+  .item[data-focused] .itemDescription { color: var(--squonk-roles-color-on-hover-supporting); }
+
+  .itemIndicator {
+    display: inline-flex;
+    color: var(--squonk-roles-color-selected-mark);
+  }
+
+  .message {
+    font-size: var(--squonk-roles-type-hint);
+    color: var(--squonk-roles-color-hint);
+  }
+
+  .message[slot="errorMessage"] { color: var(--squonk-roles-color-invalid); }
+}

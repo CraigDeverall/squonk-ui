@@ -1,0 +1,29 @@
+@layer dt.components {
+  /* Shimmer geometry: a 200px sweep with the highlight at 40px and the
+     gradient ending at 80px. */
+  .block {
+    display: inline-block;
+    width: var(--skeleton-width);
+    height: var(--skeleton-height);
+    border-radius: var(--squonk-components-skeleton-radius);
+    background-color: var(--squonk-roles-color-well);
+    background-image: linear-gradient(
+      90deg,
+      var(--squonk-roles-color-well) 0px,
+      var(--squonk-components-skeleton-highlight) 40px,
+      var(--squonk-roles-color-well) 80px
+    );
+    background-size: 200px 100%;
+    background-repeat: no-repeat;
+  }
+
+  .block[data-shape="text"] { border-radius: var(--squonk-components-skeleton-text-radius); }
+  .block[data-shape="circle"] { border-radius: 50%; }
+
+  .lines {
+    display: flex;
+    flex-direction: column;
+    gap: var(--squonk-components-skeleton-line-gap);
+    width: var(--skeleton-width);
+  }
+}

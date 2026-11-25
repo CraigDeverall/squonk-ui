@@ -1,0 +1,44 @@
+/* Docs-only: unlayered so it can flatten Storybook's own <Source> styling. */
+.panel {
+  margin: 16px 0;
+  border: 1px solid var(--sb-docs-border);
+  border-radius: 4px;
+  overflow: hidden;
+
+  & :global(.docblock-source) {
+    box-shadow: none !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+  }
+  & :global(pre.prismjs) {
+    box-shadow: none !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    max-height: 70vh !important;
+    overflow: auto !important;
+  }
+
+  & :global(.docblock-source) > div:has(> button) {
+    inset: auto 8px 8px auto !important;
+    background: transparent !important;
+  }
+  & :global(.docblock-source) button {
+    background: var(--sb-docs-bg-subtle) !important;
+    color: var(--sb-docs-fg-muted) !important;
+    border: 1px solid var(--sb-docs-border) !important;
+    border-radius: 4px !important;
+    padding: 3px 10px !important;
+    font-size: 11px !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.02em !important;
+    box-shadow: none !important;
+  }
+  & :global(.docblock-source) button:hover {
+    background: var(--sb-docs-bg-raised) !important;
+    color: var(--sb-docs-fg) !important;
+    border-color: var(--sb-docs-fg-muted) !important;
+  }
+}

@@ -1,0 +1,74 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as ScrollBoxStories from "./scroll-box.stories.tsx";
+import meta from "./scroll-box.stories.tsx";
+import { ScrollBox } from "./scroll-box.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# ScrollBox
+
+<ResizableCanvas of={ScrollBoxStories.Vertical} />
+
+`ScrollBox` is a scrollable wrapper — sets `overflow` along the chosen axis and caps the box at `maxHeight` / `maxWidth`. Use it for long lists in a fixed panel, code blocks that exceed their row, table viewports, or any container whose content can exceed its visible bounds. The opposite-axis overflow is hidden by default (vertical scrolling clips horizontal overflow, and vice-versa); pass `axis="both"` when both axes should scroll independently.
+
+<Controls />
+
+## Long list in a fixed panel
+
+The most common use — a list that can grow to N items but always fits in the same UI footprint.
+
+<InlineCodeExample>
+  {`<ScrollBox maxHeight="240px">
+  <VStack gap="xs">
+    {items.map(item => <Row key={item.id} {...item} />)}
+  </VStack>
+</ScrollBox>`}
+</InlineCodeExample>
+
+## Horizontal table viewport
+
+For wide tables that should scroll horizontally rather than overflow the page.
+
+<InlineCodeExample>
+  {`<ScrollBox axis="horizontal" maxWidth="100%">
+  <DataTable rows={transactions} />
+</ScrollBox>`}
+</InlineCodeExample>
+
+## Code block
+
+Long code lines should scroll horizontally rather than wrap.
+
+<InlineCodeExample>
+  {`<ScrollBox axis="horizontal" maxWidth="100%">
+  <Code block>{longCodeSnippet}</Code>
+</ScrollBox>`}
+</InlineCodeExample>
+
+## Both axes
+
+For a fixed-viewport image / canvas / large chart, `axis="both"` allows independent vertical and horizontal scrolling.
+
+<InlineCodeExample>
+  {`<ScrollBox axis="both" maxHeight="400px" maxWidth="600px">
+  <FullSizeDiagram />
+</ScrollBox>`}
+</InlineCodeExample>
+
+## Accessibility
+
+- Renders a plain `<div>` — semantics live in the child.
+- Scrollable regions need to be focusable so keyboard users can scroll them. Add `tabIndex={0}` (and an `aria-label` describing the region) when the contained content isn't itself focusable.
+- A scroll region nested inside another scroll region is confusing for screen-reader users; keep page-level scroll on `Page` and use ScrollBox sparingly for genuinely separate scroll surfaces.
+
+## Common pitfalls
+
+- **Vertical scrolling needs a constrained height.** Either pass `maxHeight` here or ensure the parent has a fixed height. Without it, the box grows to fit its content and never scrolls.
+- **Don't nest ScrollBox inside another scrolling container** unless you really want two independent scroll regions — most of the time it's a sign the inner one should be removed.
+- **For "fade out at the edges" effects**, layer a CSS mask on the parent rather than baking it into ScrollBox. Keeps the scroller composable.
+- **Don't put `axis="horizontal"` on a region that should wrap.** If long text inside a ScrollBox forces a horizontal scrollbar, the user probably wanted line wrapping — drop the ScrollBox or constrain width on the child.

@@ -1,0 +1,109 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as InteractiveCardStories from "./interactive-card.stories.tsx";
+import meta from "./interactive-card.stories.tsx";
+import { InteractiveCard } from "./interactive-card.tsx";
+import { Card } from "../card/card.tsx";
+import { Grid } from "../../layout-primitive/grid/grid.tsx";
+import { VStack } from "../../layout-primitive/vstack/vstack.tsx";
+import { HStack } from "../../layout-primitive/hstack/hstack.tsx";
+import { Heading } from "../../functional-primitive/heading/heading.tsx";
+import { Text } from "../../functional-primitive/text/text.tsx";
+import { Badge } from "../../functional/badge/badge.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# InteractiveCard
+
+<ResizableCanvas of={InteractiveCardStories.Outlined} />
+
+`InteractiveCard` is `Card` plus a hover-lift state — it slightly rises and casts a shadow on hover, signalling "this responds to interaction." Use it for a card that links somewhere (`as="a" href="…"`) or opens a detail panel on click. For a static, non-interactive card use `Card` instead — reserving the lift for things that actually do something keeps the cue meaningful.
+
+<Controls />
+
+## Variants
+
+Same four variants as `Card` (`outlined`, `elevated`, `filled`, `featured`) — `InteractiveCard` shares its color and shape logic with `Card`, adding only the interaction chrome.
+
+<InlineCodeExample>
+  <Grid columns={2} gap="md">
+    <InteractiveCard variant="outlined">
+      <VStack gap="xs">
+        <Heading level={4}>Outlined</Heading>
+        <Text tone="secondary">Bordered, on the page background.</Text>
+      </VStack>
+    </InteractiveCard>
+    <InteractiveCard variant="elevated">
+      <VStack gap="xs">
+        <Heading level={4}>Elevated</Heading>
+        <Text tone="secondary">Borderless, soft resting shadow.</Text>
+      </VStack>
+    </InteractiveCard>
+  </Grid>
+</InlineCodeExample>
+
+## As a link
+
+Pass `as="a"` with `href` to make the whole card a real navigable link — keyboard-focusable, with a visible focus ring, and no anchor underline leaking into the card's text.
+
+<InlineCodeExample>
+  <InteractiveCard as="a" href="#" variant="outlined">
+    <VStack gap="xs">
+      <HStack justify="between" align="center">
+        <Heading level={4}>Shipping faster with snapshot tests</Heading>
+        <Badge tone="primary" variant="subtle">Article</Badge>
+      </HStack>
+      <Text tone="secondary">A short note on visual regression in practice.</Text>
+    </VStack>
+  </InteractiveCard>
+</InlineCodeExample>
+
+## Composition — card grid
+
+`InteractiveCard` is the natural fit for a clickable grid of items — a list of projects, articles, or search results.
+
+<InlineCodeExample>
+  <Grid columns={3} gap="md">
+    <InteractiveCard as="a" href="#" variant="outlined">
+      <VStack gap="xs">
+        <Heading level={5}>checkout-flow</Heading>
+        <Text tone="secondary">Production traffic, deployed 4h ago.</Text>
+      </VStack>
+    </InteractiveCard>
+    <InteractiveCard as="a" href="#" variant="outlined">
+      <VStack gap="xs">
+        <Heading level={5}>auth-service</Heading>
+        <Text tone="secondary">Staging only, deployed 1d ago.</Text>
+      </VStack>
+    </InteractiveCard>
+    <InteractiveCard as="a" href="#" variant="outlined">
+      <VStack gap="xs">
+        <Heading level={5}>billing-api</Heading>
+        <Text tone="secondary">Production traffic, deployed 2h ago.</Text>
+      </VStack>
+    </InteractiveCard>
+  </Grid>
+</InlineCodeExample>
+
+## Accessibility
+
+- When `as="a"`, the card behaves like any link: focusable via Tab, activatable via Enter, and announced by screen readers using its accessible name (the visible text content).
+- The `&:focus-visible` state renders `theme.colors.border.focus` as a 2px outline — don't suppress it with a custom `outline: none`.
+- Use `as="button" onClick={...}` for an action. Native buttons already provide Tab, Enter and Space behavior; do not add redundant keyboard handlers. The default type is `button`; opt into `type="submit"` explicitly for a form submission.
+- A native element such as the default section with `onClick` gains `role="button"`, `tabIndex={0}`, Enter activation and Space activation on release. Caller keyboard handlers can prevent the default activation. Custom routing components retain their own semantics.
+- Supply clear visible action text or an `aria-label`/`aria-labelledby`. Bubbled clicks from nested controls do not activate the card; keyboard activation applies only when the card itself has focus. Prefer separate sibling actions because a button role can flatten descendant semantics for assistive technology.
+
+## Common pitfalls
+
+- **Don't nest another interactive element inside an anchor or button card.** Nested buttons/links create invalid or ambiguous native interaction. If the card needs a secondary action, put it visually inside but move it outside the anchor in the DOM, or reconsider the composition.
+- **Don't use `InteractiveCard` for a card that doesn't do anything on click.** If there's no navigation or handler, the hover-lift is a promise the UI doesn't keep — use `Card`.
+- **Don't override `text-decoration`.** It's already suppressed for the `as="a"` case; re-adding an underline via a wrapper style fights the component's intent.
+
+
+## Composed content
+
+InteractiveCard shares Card's semantic surface boundary: default Text, Heading and Link roles adapt to its background, including featured cards in dark mode. Independently painted children keep their own foreground/background pairs. A card rendered as an anchor must still contain no nested interactive controls.

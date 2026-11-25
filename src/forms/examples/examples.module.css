@@ -1,0 +1,88 @@
+/* Layout for the form examples only; the fields bring their own styles. */
+
+.group {
+  display: grid;
+  gap: var(--squonk-spacing-md);
+  margin: 0;
+  padding: var(--squonk-spacing-md);
+  border: var(--squonk-borders-width) solid var(--squonk-colors-border-default);
+  border-radius: var(--squonk-roles-radius-surface);
+}
+
+.groupLegend { padding-inline: var(--squonk-spacing-xs); }
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--squonk-spacing-sm);
+}
+
+.steps,
+.stepHeader {
+  display: grid;
+  gap: var(--squonk-spacing-md);
+}
+
+.stepHeader { gap: var(--squonk-spacing-xs); }
+
+.review {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: var(--squonk-spacing-xs) var(--squonk-spacing-lg);
+  margin: 0;
+  font-family: var(--squonk-typography-fonts-base);
+}
+
+.review dt { color: var(--squonk-colors-text-secondary); }
+.review dd { margin: 0; }
+
+/* The custom CurrencyField, styled from theme tokens like the library's
+   own fields. */
+.numberField {
+  display: grid;
+  gap: var(--squonk-spacing-xxs);
+  font-family: var(--squonk-typography-fonts-base);
+}
+
+.numberLabel {
+  font-size: var(--squonk-typography-sizes-sm);
+  font-weight: var(--squonk-typography-weights-bold);
+  color: var(--squonk-colors-text-primary);
+}
+
+.numberGroup {
+  display: flex;
+  max-width: 16rem;
+  border: var(--squonk-borders-width) solid var(--squonk-colors-border-default);
+  border-radius: var(--squonk-roles-radius-control);
+  background-color: var(--squonk-colors-background-default);
+}
+
+.numberGroup[data-focus-within] {
+  outline: var(--squonk-borders-focus-width) solid var(--squonk-colors-border-focus);
+  outline-offset: var(--squonk-borders-focus-offset);
+}
+
+.numberField[data-invalid] .numberGroup { border-color: var(--squonk-colors-error); }
+
+.numberInput {
+  flex: 1;
+  min-width: 0;
+  height: var(--squonk-presentation-control-height-default);
+  padding-inline: var(--squonk-spacing-sm);
+  border: 0;
+  background: transparent;
+  font: inherit;
+  color: var(--squonk-colors-text-primary);
+  outline: none;
+}
+
+.numberHint {
+  font-size: var(--squonk-typography-sizes-xs);
+  color: var(--squonk-colors-text-secondary);
+}
+
+.numberError {
+  font-size: var(--squonk-typography-sizes-xs);
+  color: var(--squonk-colors-error);
+}

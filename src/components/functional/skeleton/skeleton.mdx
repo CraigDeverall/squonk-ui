@@ -1,0 +1,107 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as SkeletonStories from "./skeleton.stories.tsx";
+import meta from "./skeleton.stories.tsx";
+import { Skeleton } from "./skeleton.tsx";
+import { HStack } from "../../layout-primitive/hstack/hstack.tsx";
+import { VStack } from "../../layout-primitive/vstack/vstack.tsx";
+import { Block } from "../../layout-primitive/block/block.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Skeleton
+
+<ResizableCanvas of={SkeletonStories.Default} />
+
+`Skeleton` is a content placeholder shown while data is loading. The point is to pre-allocate the shape of the final layout so the page doesn't jump when content arrives. Use it whenever you know what the loaded UI will look like; use `Spinner` instead when there's no spatial layout to reserve, and `ProgressBar` when you have a measurable percentage.
+
+<Controls />
+
+## Shapes
+
+Three shapes cover the common cases: `text` for typography, `rect` for blocks, `circle` for avatars / icons.
+
+<InlineCodeExample>
+  <HStack gap="md" align="center">
+    <Skeleton shape="circle" width={48} />
+    <Skeleton shape="rect" width={120} height={48} />
+    <Block width="200px">
+      <Skeleton shape="text" />
+    </Block>
+  </HStack>
+</InlineCodeExample>
+
+## Multi-line text
+
+For paragraphs, pass `lines` — the last line is automatically narrower so the block reads as natural prose, not a perfect rectangle.
+
+<InlineCodeExample>
+  <Block width="320px">
+    <Skeleton shape="text" lines={4} />
+  </Block>
+</InlineCodeExample>
+
+## Sizing
+
+Width defaults to `100%` so the skeleton fills its parent — that's how you avoid layout shift on swap. Pass `width` and `height` explicitly only when the slot doesn't have a width-bearing parent.
+
+<InlineCodeExample>
+  <Block width="320px">
+    <VStack gap="sm">
+      <Skeleton width="80%" height={12} />
+      <Skeleton width="50%" height={12} />
+      <Skeleton width="65%" height={12} />
+    </VStack>
+  </Block>
+</InlineCodeExample>
+
+## No animation
+
+`noAnimation` disables the shimmer for static placeholders (e.g. inside a `<canvas>` capture, screenshot tests, or when the surrounding UI also animates and you want to quiet things down).
+
+<InlineCodeExample>
+  <Block width="280px">
+    <Skeleton shape="text" lines={3} noAnimation />
+  </Block>
+</InlineCodeExample>
+
+## Composition
+
+Build the exact shape of the loaded UI from a few primitives. Match the dimensions of the real content so the swap is invisible.
+
+<InlineCodeExample>
+  <Block width="320px" padding="md" radius="base" bordered>
+    <HStack gap="sm" align="center">
+      <Skeleton shape="circle" width={48} />
+      <Block width="full">
+        <VStack gap="xs">
+          <Skeleton width="60%" height={12} />
+          <Skeleton width="90%" height={10} />
+          <Skeleton width="40%" height={10} />
+        </VStack>
+      </Block>
+    </HStack>
+  </Block>
+</InlineCodeExample>
+
+## Accessibility
+
+- The skeleton itself is `aria-hidden="true"` — there's nothing meaningful to announce.
+- Pair with `aria-busy="true"` on the container that's loading, so assistive tech knows to wait.
+- The shimmer animation respects `prefers-reduced-motion` and stops entirely under that preference.
+- Color contrast isn't a concern (it's decorative), but the placeholder must visually read as "not yet content" — keep it on `background.subtle`, not on a colored surface that could be mistaken for real content.
+
+## Common pitfalls
+
+- **Don't size the skeleton differently from the real content.** The whole point is no layout shift; if the real avatar is 40px and the skeleton is 48px, the page jumps on swap.
+- **Don't show a skeleton for sub-300ms requests.** A flash of placeholder is worse than waiting. Add a delay before mounting if you know the request is usually fast.
+- **Don't skeleton everything.** Pre-allocate the high-level shape, not every nested element. Five lines of text is enough — don't render 47 word-shaped boxes.
+- **Don't forget `aria-busy` on the parent.** Skeletons hide themselves from screen readers; without `aria-busy` on the container, the page reads as empty.
+
+## UX guidance
+
+- [Tables and grids](?path=/docs/patterns-tables-and-grids--docs)

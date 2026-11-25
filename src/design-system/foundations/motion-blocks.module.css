@@ -1,0 +1,166 @@
+/* Docs-only specimens for the Foundations › Motion page. */
+
+.lab {
+  display: grid;
+  gap: var(--squonk-roles-space-overlay-gap);
+  margin: var(--squonk-roles-space-overlay-gap) 0;
+  font-family: var(--squonk-roles-type-font);
+}
+
+.labBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--squonk-roles-space-overlay-gap);
+}
+
+.labGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+  gap: var(--squonk-roles-space-surface-gap);
+}
+
+/* One theme's scene, on its own page colour. */
+.scene {
+  display: grid;
+  align-content: start;
+  gap: var(--squonk-roles-space-surface-gap);
+  padding: var(--squonk-roles-space-surface-inset);
+  border: var(--squonk-roles-border-width) solid var(--squonk-roles-color-divider);
+  border-radius: var(--squonk-roles-radius-surface);
+  background: var(--squonk-roles-color-page);
+  color: var(--squonk-roles-color-text);
+  font-family: var(--squonk-roles-type-font);
+}
+
+.sceneHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--squonk-roles-space-item-gap);
+}
+
+.sceneName {
+  font-family: var(--squonk-roles-type-heading-font);
+  font-size: var(--squonk-roles-type-callout-title);
+  font-weight: var(--squonk-roles-type-strong);
+}
+
+.sceneCards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--squonk-roles-space-segment-gap);
+  min-height: 3rem;
+}
+
+.sceneCard {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--squonk-roles-space-segment-gap);
+  border-radius: var(--squonk-roles-radius-item);
+  background: var(--squonk-roles-color-surface);
+  box-shadow: var(--squonk-roles-elevation-soft);
+  font-size: var(--squonk-roles-type-meta);
+  text-align: center;
+}
+
+.sceneFigure {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--squonk-roles-space-item-gap);
+  padding: var(--squonk-roles-space-segment-gap) var(--squonk-roles-space-surface-gap);
+  border-radius: var(--squonk-roles-radius-item);
+  font-weight: var(--squonk-roles-type-strong);
+}
+
+.sceneList {
+  display: grid;
+  gap: var(--squonk-roles-space-segment-gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sceneItem {
+  padding: var(--squonk-roles-space-segment-gap) var(--squonk-roles-space-surface-gap);
+  border: var(--squonk-roles-border-width) solid var(--squonk-roles-color-divider);
+  border-radius: var(--squonk-roles-radius-item);
+  background: var(--squonk-roles-color-surface);
+  font-size: var(--squonk-roles-type-meta);
+}
+
+/* Each theme's curves. */
+.characters {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+  gap: var(--squonk-roles-space-surface-gap);
+  margin: var(--squonk-roles-space-surface-gap) 0 var(--squonk-roles-space-overlay-gap);
+  font-family: var(--squonk-roles-type-font);
+  color: var(--squonk-roles-color-text);
+}
+
+.character {
+  display: grid;
+  gap: var(--squonk-roles-space-item-gap);
+  margin: 0;
+  padding: var(--squonk-roles-space-surface-gap);
+  border: var(--squonk-roles-border-width) solid var(--squonk-roles-color-divider);
+  border-radius: var(--squonk-roles-radius-surface);
+}
+
+.curve {
+  width: 100%;
+  height: 4.5rem;
+  overflow: visible;
+}
+
+.curveGuide {
+  stroke: var(--squonk-roles-color-divider);
+  stroke-dasharray: 3 3;
+}
+
+.curveAxis { stroke: var(--squonk-roles-color-divider); }
+
+.enter,
+.exit,
+.spring {
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.enter { stroke: var(--squonk-colors-data-series1); }
+.exit { stroke: var(--squonk-colors-data-series2); stroke-dasharray: 4 3; }
+.spring { stroke: var(--squonk-colors-data-series3); }
+
+.characterText {
+  display: grid;
+  gap: var(--squonk-roles-space-text-gap);
+  font-size: var(--squonk-roles-type-meta);
+}
+
+.characterMeta { color: var(--squonk-roles-color-text-supporting); }
+
+.legend {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--squonk-roles-space-overlay-gap);
+  margin: 0;
+  font-size: var(--squonk-roles-type-meta);
+}
+
+.legendEnter::before,
+.legendExit::before,
+.legendSpring::before {
+  content: "";
+  display: inline-block;
+  width: 1.25rem;
+  margin-inline-end: var(--squonk-roles-space-segment-gap);
+  vertical-align: middle;
+  border-top: 2px solid var(--squonk-colors-data-series1);
+}
+
+.legendExit::before { border-top-style: dashed; border-top-color: var(--squonk-colors-data-series2); }
+.legendSpring::before { border-top-color: var(--squonk-colors-data-series3); }

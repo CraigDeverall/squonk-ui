@@ -1,0 +1,82 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../documentation-imports/index.ts";
+import { Example } from "./pattern-blocks.tsx";
+import { MessagesExample } from "./pattern-examples.tsx";
+
+<Meta title="Patterns/Toasts, alerts and dialogs" />
+
+<HideSbBar />
+
+# Toasts, alerts and dialogs
+
+| The message… | Use |
+| --- | --- |
+| Confirms something the user just did and needs no action ("Invite sent") | A toast — [`useToast`](?path=/docs/functional-toast--docs) |
+| Describes the state of this page or form and should stay until it changes | An inline [Alert](?path=/docs/functional-alert--docs) |
+| Needs an answer before the user can continue | A dialog — [ConfirmModal](?path=/docs/functional-modal--docs) |
+
+<Example caption="The deadline is about this page, so it's an Alert. “Remind me” confirms with a toast. “Pay now” needs a decision first, so it asks.">
+  <MessagesExample />
+</Example>
+
+## Toasts are for things that can be missed
+
+A toast disappears, may appear far from where the user is looking, and is easy to
+miss with a screen magnifier. Only use it for news the user can safely miss or
+can find again elsewhere.
+
+- **Duration:** at least five seconds (the `ToastProvider` default). Timers
+  pause while the user hovers or focuses the notifications and while the page is
+  hidden.
+- **Actions:** never make a toast the only way to do something. If a toast
+  offers an action ("Undo"), keep the toast until dismissed (`duration: 0`) and
+  offer the same action somewhere on the page.
+- **Errors:** an error the user must fix belongs on the page, as an Alert or a
+  field error. A toast can echo it.
+- **Focus:** toasts never take focus. `Alt+T` reaches them from the keyboard.
+
+The WAI-ARIA guidance goes further and says alerts should not disappear on their
+own at all; we allow timed toasts for low-stakes confirmations only, which is
+why the rules above are strict.
+
+## Inline alerts stay put
+
+An `Alert` sits next to the content it describes and stays until the situation
+changes. Errors and warnings are announced assertively; information and success
+politely. Don't move focus to an alert as it appears — except an error summary
+after a failed submit, which the user needs next.
+
+## Dialogs interrupt
+
+Use a dialog only when the user must decide before continuing: confirming an
+irreversible action, or resolving a conflict. See
+[Destructive actions](?path=/docs/patterns-destructive-actions--docs).
+
+## While something is happening
+
+Show a wait where it happens, not as a toast: a
+[Skeleton](?path=/docs/functional-skeleton--docs) when you know the shape of
+what's coming, a [Spinner](?path=/docs/functional-spinner--docs) for a short
+wait, a [ProgressBar](?path=/docs/functional-progress-bar--docs) when you can
+measure progress, and a Button's `pending` for an action in flight. A toast can
+say when long work has finished. See
+[Loading and progress](?path=/docs/patterns-loading-and-progress--docs).
+
+The toast queue is bounded: if losing a notification would matter, handle
+`onOverflow`, and keep anything people must act on in the page too. Check busy,
+success, failure, retry and leaving the page mid-way.
+
+## Related
+
+- [Loading and progress](?path=/docs/patterns-loading-and-progress--docs)
+- [Empty and error states](?path=/docs/patterns-empty-and-error-states--docs)
+- [Writing for the interface](?path=/docs/patterns-writing-for-the-interface--docs)
+
+---
+
+Sources, paraphrased: [WAI-ARIA Authoring Practices: alert](https://www.w3.org/WAI/ARIA/apg/patterns/alert/)
+and [alert dialog](https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/), © W3C, under the
+[W3C Software and Document License](https://www.w3.org/copyright/software-license/);
+[React Spectrum Toast](https://react-spectrum.adobe.com/v3/Toast.html) and
+[InlineAlert](https://react-spectrum.adobe.com/v3/InlineAlert.html), [React Aria Toast](https://react-aria.adobe.com/Toast), © Adobe;
+[Chakra UI v3 Toast](https://chakra-ui.com/docs/components/toast) (MIT).

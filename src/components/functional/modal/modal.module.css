@@ -1,0 +1,77 @@
+@layer dt.components {
+  /* The backdrop, and the layer that centres the dialog. Later dialogs
+     portal in after earlier ones, so equal z-indexes stack in opening
+     order. */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    z-index: var(--squonk-roles-layer-dialog);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--squonk-roles-space-viewport-margin);
+    box-sizing: border-box;
+    background-color: var(--squonk-roles-color-backdrop);
+  }
+
+  /* Max-width steps per size (360 / 480 / 720px) are component geometry. */
+  .content {
+    width: 100%;
+    max-width: 480px;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    gap: var(--squonk-roles-space-overlay-gap);
+    padding: var(--squonk-roles-space-overlay-inset);
+    box-sizing: border-box;
+    overflow-y: auto;
+    background-color: var(--squonk-roles-color-surface);
+    color: var(--squonk-roles-color-on-surface);
+    border: var(--squonk-roles-border-width) solid var(--squonk-roles-color-floating-border);
+    border-radius: var(--squonk-roles-radius-overlay);
+    box-shadow: var(--squonk-roles-elevation-overlay);
+    font-family: var(--squonk-roles-type-font);
+  }
+
+  .content[data-size="sm"] { max-width: 360px; }
+  .content[data-size="lg"] { max-width: 720px; }
+
+  .titleRow {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--squonk-roles-space-title-row-gap);
+  }
+
+  .close {
+    display: inline-flex;
+    appearance: none;
+    background: transparent;
+    border: none;
+    color: var(--squonk-roles-color-dismiss);
+    cursor: pointer;
+    padding: var(--squonk-roles-space-close-inset);
+    margin-inline-start: auto;
+    font-size: var(--squonk-roles-size-close-icon);
+    line-height: 1;
+    border-radius: var(--squonk-roles-radius-item);
+    flex-shrink: 0;
+  }
+
+  .close[data-hovered] { color: var(--squonk-roles-color-dismiss-hover); }
+
+  .close[data-focus-visible] {
+    outline: var(--squonk-roles-border-focus-width) solid var(--squonk-roles-color-focus-ring);
+    outline-offset: var(--squonk-roles-border-focus-offset);
+  }
+
+  .body { min-height: 0; }
+
+  /* Wrap rather than overflow: with flex-end, actions too wide for the
+     dialog spill past its left edge and are clipped. */
+  .footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--squonk-roles-space-action-gap);
+  }
+}

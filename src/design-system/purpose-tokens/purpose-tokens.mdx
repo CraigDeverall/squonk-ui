@@ -1,0 +1,384 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../documentation-imports/index.ts";
+import { Specimen } from "../foundations/foundation-blocks.tsx";
+import { PurposeTokenGroups } from "./purpose-token-table.tsx";
+import { CascadeExample, EveryTheme, OneDecisionThreeWays, OverrideExample, ScopedExample } from "./purpose-token-examples.tsx";
+
+<Meta title="Foundations/Purpose tokens" />
+
+<HideSbBar />
+
+# Purpose tokens
+
+A purpose token names why a value is there: "the gap between a label and its
+field", "the fill behind the current page in a nav list". Components read only
+these names, never a raw size or colour. A theme decides what each name means,
+so you can change how a whole product looks by changing a few decisions.
+
+This page explains the kinds of purpose tokens, how they bind to one another,
+and how to change a theme with confidence that it stays coherent.
+
+## Three layers, one direction
+
+The theme has three layers, and values flow one way through them:
+
+| Layer | Says | Examples | Who reads it |
+| --- | --- | --- | --- |
+| **Primitives and raw values** | How much | `spacingPx`, `fontPx`, `colors.primary`; the scales `spacing.md`, `typography.sizes.sm` | Purpose tokens, and layout props such as `gap="md"` |
+| **Purpose tokens** | What for | `roles.space.fieldGap`, `roles.color.hint`, `roles.indicator.current.bar` | Every component with that purpose |
+| **Component tokens** | One component's own decision | `components.button.paddingInline`, `components.illustration.tintStrength` | That component only |
+
+A purpose can point at a raw value or at another purpose. A component token can
+point at a purpose. Nothing points back up a layer. Follow any token and you
+reach a primitive in a few steps:
+
+```text
+roles.space.fieldGap → roles.space.related → spacing.xs → spacingPx × 0.5
+```
+
+The Theme panel in Storybook shows this chain for every token on the page.
+
+## Why you can experiment without losing control
+
+A theme you can't predict is one you stop changing. Purpose tokens keep a theme
+predictable with a few rules, so you can try ideas freely and keep the ones that
+work.
+
+- **Every value has one owner and one reason.** Each token has a `why` (shown in
+  the tables below). If two uses share a value but not a reason, they get two
+  tokens, so changing one never surprises the other.
+- **Decisions flow one way.** Primitives feed purposes, and purposes feed
+  components. A change moves down the chain to everything that depends on it
+  and never sideways into unrelated parts.
+- **Change at the highest level that's true.** If every gap between related
+  things should grow, change the one tier token they share. If only form fields
+  should, change `roles.space.fieldGap`. The table below maps common wishes to
+  the token to change.
+- **The theme guards what matters.** Text on a fill never drops below AA
+  contrast, whatever the colours or sliders say. Unsafe binding values are
+  ignored, and lint stops component CSS from using raw values.
+- **Every change is visible and reversible.** The Theme panel shows what you
+  changed, its chain and its effect live. **Copy diff** gives you the
+  `roleBindings` to paste, and **Reset** puts everything back.
+
+| I want… | Change | Reaches |
+| --- | --- | --- |
+| More space between related things everywhere | `roles.space.related` | Field gaps, icon gaps, group gaps, stat gaps, summary gaps |
+| More space between questions only | `roles.space.questionGap` | Form questions |
+| Larger small print | `roles.type.fine` | Hints, descriptions, tooltips |
+| Softer lines everywhere | `roles.color.edge` | Dividers, outlines, field borders, floating panels, gridlines |
+| Pill-shaped controls | `pillControls: true` | Buttons, fields, tags |
+| A different "you are here" mark | `indicatorStyle` | Every navigation list |
+| Richer filled buttons with white text | `lightTextBalance` above 50 | Primary buttons, solid badges, ticked boxes |
+| A denser region | `<Presentation register="compact">` | Everything in that region |
+
+## How a binding resolves
+
+A theme re-points a purpose with `roleBindings`. A binding is one of three
+things:
+
+```tsx
+<SquonkThemeProvider
+  roleBindings={{
+    "roles.space.questionGap": "spacing.xl",        // a raw token: still follows spacingPx
+    "roles.color.heading": "roles.color.link",      // another purpose: follows it wherever it goes
+    "components.toast.width": "420px",              // a literal CSS value: fixed
+  }}
+>
+```
+
+Prefer them in that order of reach. A raw token keeps the value on the theme's
+scales. Another purpose keeps two decisions in step, so re-pointing links later
+moves headings too. A literal is fixed and follows nothing, so use it only when
+no scale or purpose says what you mean.
+
+<Specimen>
+  <CascadeExample />
+</Specimen>
+
+Above, the right-hand card re-points one tier token, `roles.space.related`,
+and one edge token, `roles.color.edge`. Every gap and line that shares those
+meanings moves together, and nothing else does.
+
+### What happens in order
+
+1. The primitives build the raw scales (`spacing.*`, `colors.*`, `typography.*`)
+   and the computed roles (radius, elevation, relief).
+2. The theme's **switches and choices** apply their bindings (see below).
+3. The theme's own **`roleBindings`** apply on top, so they always win.
+4. Each purpose resolves through its chain to a value, and the result is
+   written as CSS custom properties: `--squonk-roles-*` and `--squonk-components-*`.
+5. A nested `SquonkThemeProvider`, `ThemeModifier` or `ThemeStyleBlock` repeats this
+   for its part of the page, and only the values that differ are written there.
+
+## The kinds of purpose token
+
+Every purpose sits in a group under `roles`. The groups below are the vocabulary
+a theme makes its decisions in. The full tables, with each token's reason and
+current value, are at the end of the page.
+
+### The shared tier
+
+The most reusable purposes are a small set of shared decisions that other
+purposes bind through. Change one and everything that shares its meaning
+follows.
+
+| Ladder | Tokens | Meaning |
+| --- | --- | --- |
+| Proximity | `roles.space.adjoining`, `related`, `grouped`, `separated`, `distinct` | How close two things sit, by how related they are |
+| Text size | `roles.type.fine`, `small`, `body`, `large` | The text-size steps every label, hint and title uses |
+| Edges | `roles.color.edge`, `edgeStrong` | Every hairline, and the firmer line on hover or for axes |
+| Surfaces | `roles.color.page`, `surface`, `well` | The page behind content, panels on it, and recessed areas |
+
+```tsx
+// Tighter related spacing and finer small print, across the whole product.
+<SquonkThemeProvider roleBindings={{ "roles.space.related": "spacing.xxs", "roles.type.fine": "typography.sizes.sm" }}>
+```
+
+### Space
+
+Space purposes are either **gaps** (between things) or **insets** (inside
+something). Gaps bind to the proximity ladder: `fieldGap` and `iconGap` are
+`related`, `actionGap` and `choiceListGap` are `grouped`, `questionGap` is
+`distinct`. Insets are named for the surface they pad: `surfaceInset` for
+panels, `overlayInset` for dialogs and drawers, `listItemInsetBlock` and
+`listItemInsetInline` for rows in menus and lists, and `pageGutter` for the
+screen edge.
+
+```tsx
+// Roomier dialogs, without touching panels on the page.
+<SquonkThemeProvider roleBindings={{ "roles.space.overlayInset": "spacing.xl" }}>
+```
+
+### Type
+
+Type purposes name what text is for. `label`, `meta` and `listItem` bind to
+`small`, `hint` and `supporting` to `fine`, `title` to `large`, and `legend` and
+`calloutTitle` to `body`. Weights (`strong`, `regular`), line heights (`bodyLineHeight`,
+`tightLineHeight`) and faces (`font`, `headingFont`, `codeFont`) are purposes too.
+
+```tsx
+// Larger field labels only.
+<SquonkThemeProvider roleBindings={{ "roles.type.label": "roles.type.body" }}>
+```
+
+### Colour
+
+Colour purposes come in pairs: a fill and the text that reads on it. `surface`
+pairs with `onSurface`, `well` with `onWell`, `accent` with `onAccent`, `hover`
+with `onHover`. The "on" colours are computed for contrast, so re-point the fill
+and its text follows, still readable.
+
+| Family | Tokens | What they colour |
+| --- | --- | --- |
+| Surfaces | `page`, `surface`, `well`, `inverseSurface`, `backdrop` | Where content sits |
+| Text | `text`, `textSupporting`, `textQuiet`, `heading`, `label`, `hint`, `link` | Words, by importance |
+| State | `accent`, `accentHover`, `hover`, `selected`, `selectedMark`, `focusRing` | Interaction and selection |
+| Fields | `fieldBackground`, `fieldBorder`, `fieldBorderHover`, `fieldBorderFocus`, `placeholder` | Inputs |
+| Meaning | `invalid`, `invalidText`, `danger`, `destructive` | Errors and destructive actions |
+| Data | `dataSeries1` to `dataSeries8` | Chart series, in a fixed order that keeps neighbours apart |
+
+Status tones (success, warning, error, info) are palettes components pick by
+prop, so they aren't purposes. The theme still computes each tone's fills and
+text for contrast.
+
+### Shape
+
+Radius purposes name what is rounded: `roles.radius.control` (buttons, fields),
+`surface` (cards, menus, popovers), `overlay` (dialogs), `item` (rows inside a
+panel), `chip` (tags), `mark` (checkbox boxes, keys) and `pill`. The theme
+computes the first five from `controlRadiusPx` and `borderRadiusPx`. Nested
+corners stay concentric: an inner corner is the outer radius minus the inset,
+never less than `item`.
+
+### Depth
+
+`roles.elevation.*` are shadows by use: `raised` (tooltips), `floating` (menus,
+popovers), `overlay` (dialogs), `lift` (a lifted button), `soft` and `field`.
+Every computed shadow falls away from the theme's `lightAngle`.
+`roles.relief.<posture>.fill` and `.edge` add surface relief for `surface`,
+`control`, `chrome`, `well` and `pressed` postures. Relief is flat until a theme
+sets `reliefDepth` or `reliefSheen`.
+
+### Motion and interaction
+
+`roles.motion.*` name what moves and how fast: `feedbackIn` and `feedback` for
+hover and press, `overlay` and `arrive` for things opening, `reveal`, `swap`,
+`layout`, `stagger` and `count` for content, with easings `enter`, `exit`,
+`standard` and `spring`. `roles.interaction.*` set the feel of a press:
+`hoverLift`, `pressScale`, `focusGlow` and the field focus halo.
+
+### Navigation indicators
+
+`roles.indicator.current.*` and `roles.indicator.hover.*` mark the page you're
+on and the item under the pointer. Each has a background, text and mark colour,
+and the widths of a start-edge bar, an underline and a ring, with the gap
+between ring and fill. Components compose the mark from these parts, so any
+combination is a few values.
+
+```tsx
+// A pill-shaped border with a gap around the current page.
+<SquonkThemeProvider
+  primitives={{ indicatorStyle: "ring" }}
+  roleBindings={{ "roles.indicator.radius": "borders.radius.full", "roles.indicator.current.gap": "3px" }}
+>
+```
+
+### Layers, sizes, states and print
+
+`roles.layer.*` stack menus, sticky headers, dialogs, popovers, tooltips and
+toasts in a fixed order. `roles.size.*` and `roles.state.disabledOpacity` cover
+small fixed sizes and the disabled look. `roles.print.*` take over the colour
+purposes when the page prints: ink on white by default, or the theme's own
+colours with `printBackgrounds`.
+
+### Register-stepped purposes
+
+Some purposes have one value per presentation register (`compact`, `default`,
+`large`, `hero`), such as `roles.control.paddingInline` and
+`components.button.fontSize`. `Presentation` picks the step for its region.
+Re-point one step with its full path:
+
+```tsx
+<SquonkThemeProvider roleBindings={{ "roles.control.paddingInline.compact": "spacing.xs" }}>
+```
+
+### Component tokens
+
+A component token is a decision only one component makes, such as
+`components.toast.width` or `components.chart.areaOpacity`. Most point at a
+shared purpose, so they follow the theme until you need them not to:
+
+```tsx
+// Every secondary button follows the edge colour, until this one decision.
+<SquonkThemeProvider roleBindings={{ "components.button.secondary.border": "roles.color.accent" }}>
+```
+
+## Switches, choices and sliders
+
+Some decisions are easier as one setting than as a list of bindings. Theme
+primitives cover them, and each sets purposes the components already read.
+
+- **Switches** (yes or no): `pillControls`, `underlinedFields`, `filledFields`,
+  `outlinedSecondary`, `brandHeadings`, `liftOnHover`, `squeezeOnPress`,
+  `inkShadows`, `strongFocus`, `uppercaseControls`, `underlineLinks`,
+  `deriveFromPrimary`, `printBackgrounds`, `printLinkUrls`.
+- **Choices**: `indicatorStyle` (`bar`, `fill`, `underline`, `ring`, `quiet`, `tint`),
+  `reliefProfile`, `reliefBlend`.
+- **Sliders**: `neutralTint`, `softToneStrength`, `lightTextBalance`, `textOnFillStrength`,
+  `motionBounce`, `reliefDepth`, `reliefSheen`.
+
+A switch only applies bindings, beneath the theme's own `roleBindings`. So take a
+switch for the big decision and adjust one purpose it sets:
+
+<Specimen>
+  <OverrideExample />
+</Specimen>
+
+```tsx
+<SquonkThemeProvider
+  primitives={{ pillControls: true }}
+  roleBindings={{ "roles.radius.chip": "borders.radius.sm" }} // pills, but square-ish tags
+>
+```
+
+The [Theme](?path=/docs/foundations-theme--docs) page describes each switch,
+choice and slider in full.
+
+## Changing part of a page
+
+The same bindings work for one region with `ThemeModifier`, or for a nested
+theme with another `SquonkThemeProvider`. The region recomputes its purposes, so a
+re-pointed tier reaches everything inside it.
+
+<Specimen>
+  <ScopedExample />
+</Specimen>
+
+```tsx
+<ThemeModifier override={{ roleBindings: { "roles.space.related": "spacing.sm", "roles.type.label": "roles.type.body" } }}>
+  <AccessibleForm />
+</ThemeModifier>
+```
+
+## One decision, three ways
+
+These three cards differ only in a handful of purpose decisions. The scales,
+primitives and colours are identical.
+
+<OneDecisionThreeWays />
+
+## Every example theme
+
+The same screen in each example theme. Each changes its primitives and a few
+purposes, and switches on what suits it.
+
+<EveryTheme />
+
+## Doing it well
+
+Do:
+
+- Start with primitives (palette, `spacingPx`, `fontPx`, radius) for the overall
+  character, then purposes for the decisions scaling can't express.
+- Bind to a raw token or another purpose. A literal is a last resort.
+- Re-point the shared tier when the change is about a meaning; re-point a single
+  purpose when it's about one use.
+- Use a switch for a whole look, then override the one purpose that doesn't fit.
+- Check light and dark, and one dense and one large region, before you keep a change.
+
+Don't:
+
+- Write literal colours into text or fill purposes. They skip the contrast the
+  theme computes for its own colours.
+- Point a purpose at an unrelated one because the value happens to match. When
+  either changes, the other changes with it for no reason.
+- Restyle components with app CSS. Re-point the purpose, so every instance agrees.
+- Copy a value into a binding (`"8px"`) when a token says it (`"spacing.sm"`).
+  The copy stops following the theme.
+
+## Rules for the library
+
+- **Components bind only to purpose or component tokens.** `npm run lint` fails
+  on a raw `--squonk-spacing-*`, `--squonk-typography-*`, `--squonk-colors-*` (other than
+  status tones), `--squonk-borders-*`, `--squonk-shadows-*` or motion token in component
+  CSS, or a raw `theme.*` read in component code.
+- **Pick by purpose, not by value.** If the right purpose doesn't exist, add it
+  to `src/theme/purpose.ts` with its reason, binding to the tier where one fits.
+- **Share a purpose before inventing a component token.** A component token is
+  for a decision only that component makes.
+- **Layout props are the exception.** `VStack gap`, `Block padding` and
+  `Text size` hand the raw scale to the app, which supplies the purpose. Those
+  files say so with a `purpose-tokens: scale-api` comment.
+
+## In Storybook
+
+The **Theme** panel on the right shows the tokens behind whatever you're
+looking at.
+
+- **In this story** lists every token the page reads, including rules for states
+  that aren't showing (hover, focus, selected, open, invalid), marked "in a
+  state". On a docs page it lists everything on the page.
+- Tokens are grouped as component tokens, purpose tokens, raw tokens chosen by a
+  prop (such as `gap="md"`), status tones, and raw tokens in app or story CSS.
+- Each purpose shows its reason and its chain to the primitive it comes from.
+  Pick another binding, or type a custom value, and the canvas updates live.
+- Component tokens appear only when their component is on the page.
+- **Reset**, **Export**, **Import** and **Copy diff** include the purposes you
+  re-pointed. Copy diff gives a `roleBindings={{ … }}` block ready for your
+  `SquonkThemeProvider`.
+
+## Every purpose
+
+Values are for the current theme. Switch the toolbar theme to see them change.
+
+<PurposeTokenGroups kind="roles" />
+
+## Component tokens
+
+<PurposeTokenGroups kind="components" />
+
+The radius and elevation roles the theme computes (`roles.radius.control`,
+`.surface`, `.overlay`, `.item`, `.chip` and `roles.elevation.raised`,
+`.floating`, `.overlay`) are listed on the [Theme](?path=/docs/foundations-theme--docs)
+page. `roleBindings` re-points them the same way.

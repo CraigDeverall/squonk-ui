@@ -1,0 +1,76 @@
+@layer dt.components {
+  /* Positioned, so the visually hidden status and edge targets stay inside
+     the list's scroll container instead of extending the page below it. */
+  .root {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    font-family: var(--squonk-roles-type-font);
+    color: var(--squonk-roles-color-text);
+  }
+
+  .feed {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .item {
+    border-radius: var(--squonk-roles-radius-item);
+  }
+
+  .item:focus-visible {
+    outline: var(--squonk-roles-border-focus-width) solid var(--squonk-roles-color-focus-ring);
+    outline-offset: var(--squonk-roles-border-focus-offset);
+  }
+
+  /* A zero-height marker after the last item; the observer watches it. */
+  .sentinel {
+    height: 1px;
+    margin-top: -1px;
+  }
+
+  .footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--squonk-components-infinite-list-footer-gap);
+    padding: var(--squonk-components-infinite-list-footer-inset) 0;
+    font-size: var(--squonk-roles-type-meta);
+    color: var(--squonk-roles-color-text-supporting);
+  }
+
+  .error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--squonk-components-infinite-list-footer-gap);
+    color: var(--squonk-roles-color-invalid-text);
+  }
+
+  .end { color: var(--squonk-roles-color-text-quiet); }
+
+  /* Focus targets for Ctrl+Home and Ctrl+End: invisible until focused. */
+  .edge,
+  .visuallyHidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .edge:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    clip-path: none;
+    align-self: flex-start;
+    padding: var(--squonk-components-infinite-list-edge-inset-block) var(--squonk-components-infinite-list-edge-inset-inline);
+    font-size: var(--squonk-roles-type-hint);
+    color: var(--squonk-roles-color-text-supporting);
+    outline: var(--squonk-roles-border-focus-width) solid var(--squonk-roles-color-focus-ring);
+    border-radius: var(--squonk-roles-radius-item);
+  }
+}

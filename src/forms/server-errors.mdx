@@ -1,0 +1,27 @@
+import { Meta, Source } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../documentation-imports/index.ts";
+import { ResizableCanvas } from "../utils/resizable-canvas.tsx";
+import * as Examples from "./forms.stories.tsx";
+import code from "./examples/server-errors.tsx?raw";
+
+<Meta title="Patterns/Forms/Server errors" />
+
+<HideSbBar />
+
+# Server errors
+
+<ResizableCanvas of={Examples.ServerErrors} defaultHeight={440} />
+
+Return the API's answer from `validators.onSubmitAsync`:
+
+- `{ fields: { username: "That username is taken. Try another one." } }` puts a
+  message on a field, as if the client had found it.
+- `{ form: "We couldn't create your login just now…" }` is for problems that
+  belong to no field. It shows in the error summary.
+- Return `undefined` when everything is fine, and `onSubmit` runs.
+
+The submit button is busy while the check runs, and a failed submit moves focus
+to the summary as usual. Map your API's error codes to messages people can act
+on; don't show the raw error.
+
+<Source code={code} language="tsx" />

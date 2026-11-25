@@ -1,0 +1,81 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../documentation-imports/index.ts";
+import { ResizableCanvas } from "../utils/resizable-canvas.tsx";
+import * as Examples from "./forms.stories.tsx";
+
+<Meta title="Patterns/Forms/Overview" />
+
+<HideSbBar />
+
+# Forms
+
+Most of what we build is forms, so every form works the same way. Three layers,
+each doing one job:
+
+| Layer | Does | Comes from |
+| --- | --- | --- |
+| **Fields** | Labels, help and error text wired to the input, keyboard behaviour, focus, the look | Library components on [React Aria](https://react-spectrum.adobe.com/react-aria/) |
+| **Form state** | Values, which fields were touched, running validators, submitting | [TanStack Form](https://tanstack.com/form), through `useAppForm` |
+| **Rules** | What counts as valid, and the message when it isn't | A [Zod](https://zod.dev) schema (any [Standard Schema](https://standardschema.dev) library works) |
+
+`useAppForm` from `@squonk/ui/form` joins them: its fields are the library's
+fields, already bound to the value, blur state and error.
+
+<ResizableCanvas of={Examples.ContactDetails} defaultHeight={620} />
+
+## How every form behaves
+
+- **Errors wait.** A field's error shows once it has been left or a submit has
+  been tried, never while someone is typing it the first time. After that it
+  updates live as they fix it.
+- **A failed submit says everything at once.** The error summary appears at the
+  top, takes focus, and links each message to its field.
+- **The submit button stays enabled.** A disabled button can't explain what's
+  wrong. While a submit runs it is marked busy and ignores presses.
+- **The server's errors look like ours.** Errors from the API land on their
+  field and in the summary.
+
+## Where to start
+
+| You need | Read |
+| --- | --- |
+| A form with a few fields | [The basics](?path=/docs/patterns-forms-the-basics--docs) |
+| Fields that must agree, or a check against the server | [Validation](?path=/docs/patterns-forms-validation--docs) |
+| To show the API's errors | [Server errors](?path=/docs/patterns-forms-server-errors--docs) |
+| Questions that depend on answers, or lists people add to | [Conditional and repeating fields](?path=/docs/patterns-forms-conditional-and-repeating-fields--docs) |
+| A long form split into steps | [Multi-step forms](?path=/docs/patterns-forms-multi-step-forms--docs) |
+| A field the library doesn't have | [Custom fields](?path=/docs/patterns-forms-custom-fields--docs) |
+
+## Why this stack
+
+**React Aria for fields.** It is the base of every component in this library.
+Each field gets the label, description and error relationships, `aria-invalid`,
+and the keyboard behaviour of the WAI-ARIA patterns without us maintaining them.
+
+**TanStack Form for state.** React Aria handles a field; it doesn't manage a
+form. Its own `Form` sets how validation behaves and can display server errors,
+but it doesn't hold values, track what was touched, compare fields, run async
+checks, manage repeating groups or track submission. TanStack Form does all of
+that, headless, so it sits behind our fields without changing how they look. Field
+names are type-checked against `defaultValues`, and it takes any Standard
+Schema validator.
+
+We looked at React Hook Form, the other common choice. It works with React Aria
+too, but it is built around uncontrolled inputs registered by ref, and React
+Aria's fields are controlled components, so every field would go through
+`Controller`. TanStack Form is controlled by design, so React Aria's fields bind
+to it directly.
+
+**Zod for rules.** One schema gives the types and the messages, and the same
+schema can run on the server.
+
+## Rules for writing forms
+
+- Give every field a visible label. A placeholder is not a label.
+- Write messages that make sense on their own, because they also appear in the
+  error summary: "Enter your full name", not "Required".
+- Ask only what you need, and say why when it isn't obvious.
+- Put the error summary at the top of every form longer than a couple of fields.
+
+See also [Labels, help and validation](?path=/docs/patterns-labels-help-and-validation--docs)
+and the [Form](?path=/docs/functional-form--docs) reference.

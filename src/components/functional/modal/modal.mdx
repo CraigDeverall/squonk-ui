@@ -1,0 +1,124 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as ModalStories from "./modal.stories.tsx";
+import meta from "./modal.stories.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Modal
+
+<ResizableCanvas of={ModalStories.Default} />
+
+`Modal` is a centered dialog over a dimmed backdrop, rendered in a portal on
+`document.body`. It is fully controlled: the consumer owns `open` and gets
+asked to close via `onClose` — fired by the backdrop press, `Escape`, or the ×
+button.
+
+Use a modal for a focused task that blocks the page (a short form, a
+confirmation). For transient feedback use `Toast`; for inline messages use
+`Alert`.
+
+<Controls />
+
+## Anatomy
+
+`title` renders the heading (and labels the dialog for assistive tech),
+`children` is the body, and `footer` is the action row — pass `Button`s and
+keep the primary action last.
+
+```tsx
+const [open, setOpen] = React.useState(false);
+
+<Modal
+  open={open}
+  onClose={() => setOpen(false)}
+  title="Invite a user"
+  footer={
+    <>
+      <Button variant="secondary" onClick={() => setOpen(false)}>
+        Cancel
+      </Button>
+      <Button variant="primary" onClick={sendInvite}>
+        Send invite
+      </Button>
+    </>
+  }
+>
+  <TextField label="Email" placeholder="you@example.com" />
+</Modal>;
+```
+
+## Sizes
+
+`size` caps the dialog width: `sm` (360px) for confirmations, `md` (480px,
+default) for short forms, `lg` (720px) for long-form content. Height caps at
+85vh with internal scrolling.
+
+## ConfirmModal
+
+The ready-made confirmation dialog: title, message, and a cancel/confirm
+pair. Set `danger` for destructive actions — the confirm button takes the
+danger variant. `loading` disables both buttons while the confirmed action is
+in flight. While loading, Escape, backdrop dismissal and the close button are
+also disabled; the dialog exposes `aria-busy`. The consumer can still close it
+by changing `open` after the operation completes.
+
+<ResizableCanvas of={ModalStories.ConfirmDanger} />
+
+```tsx
+<ConfirmModal
+  open={deleting !== null}
+  danger
+  title="Delete this user?"
+  message="This permanently removes the membership and cannot be undone."
+  confirmLabel="Delete"
+  loading={busy}
+  onConfirm={reallyDelete}
+  onCancel={() => setDeleting(null)}
+/>
+```
+
+## Accessibility
+
+- `role="dialog"`. Instead of `aria-modal` (which trips a Safari focus bug),
+  the rest of the page is hidden from assistive technology while it is open.
+- Supply a meaningful `title`, `aria-label`, or `aria-labelledby`; an explicit
+  accessible name takes precedence over the visual title. Untitled dialogs
+  fall back to the generic name "Dialog", which consumers should replace with
+  the task name.
+- Focus moves to the dialog on open, `Tab` cycles within it (skipping
+  controls in a disabled fieldset), and focus returns to the previously focused element on close.
+- While a dialog is open, the page behind it is hidden from assistive
+  technology and its scrolling is locked.
+- The dialog and backdrop fade in and out; reduced-motion users get no
+  animation.
+- `Escape` requests close only on the top dialog. An inner menu consumes Escape
+  first. Focus stays in the top dialog and page scroll remains locked until the
+  last dialog closes, including when a lower dialog closes first.
+
+## Pitfalls
+
+- The consumer owns `open` — `onClose` is a *request*, not a state change. If
+  you ignore it, the modal stays up (that's how "must choose" dialogs work:
+  pass `closeOnBackdrop={false}` and `showCloseButton={false}` too).
+- Prefer sequencing dialogs. When a secondary dialog is necessary, closing it
+  returns focus to its opener in the remaining dialog; closing the last dialog
+  restores the original page focus when that element still exists.
+
+
+## Migration: pending confirmations
+
+`ConfirmModal loading` now prevents all user cancellation, matching its disabled
+buttons. Complete or fail the operation and clear `loading` before offering
+cancellation again. For an intentionally cancellable background operation, use
+`Modal` with explicit actions and a consumer-owned cancellation policy.
+
+## UX guidance
+
+- [Overlays and disclosures](?path=/docs/patterns-overlays-and-disclosures--docs)
+- [Destructive actions](?path=/docs/patterns-destructive-actions--docs)
+- [Focus management](?path=/docs/patterns-focus-management--docs)
+- [Toasts, alerts and dialogs](?path=/docs/patterns-toasts-alerts-and-dialogs--docs)

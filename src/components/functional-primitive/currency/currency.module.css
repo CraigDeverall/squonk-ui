@@ -1,0 +1,29 @@
+@layer dt.components {
+  /* Inline: size, weight and colour come from the surrounding text.
+     Positioned, so the visually hidden full amount is placed against the
+     amount, not the page: inside a scroll area (a Table at phone width) it
+     would otherwise widen the page and scroll it sideways. */
+  .root {
+    position: relative;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .root[data-tone="primary"] { color: var(--squonk-roles-color-text); }
+  .root[data-tone="secondary"] { color: var(--squonk-roles-color-text-supporting); }
+  .root[data-tone="muted"] { color: var(--squonk-components-text-muted); }
+  .root[data-tone="inverse"] { color: var(--squonk-components-text-inverse); }
+  .root[data-tone="success"] { color: var(--squonk-colors-status-text-success); }
+  .root[data-tone="warning"] { color: var(--squonk-colors-status-text-warning); }
+  .root[data-tone="error"] { color: var(--squonk-colors-status-text-error); }
+  .root[data-tone="info"] { color: var(--squonk-colors-status-text-info); }
+
+  .visuallyHidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}

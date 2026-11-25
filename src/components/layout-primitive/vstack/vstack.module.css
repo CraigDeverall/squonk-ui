@@ -1,0 +1,10 @@
+@layer dt.components {
+  .root {
+    display: flex;
+    flex-direction: column;
+    gap: var(--vstack-gap);
+    align-items: var(--vstack-align);
+    justify-content: var(--vstack-justify);
+    min-width: 0;
+  }
+}

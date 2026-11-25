@@ -1,0 +1,222 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "./documentation-imports/hide-sb-bar";
+import { AgentSession } from "./documentation-imports/agents/agent-session.tsx";
+
+<Meta title="Get started/Working with your agent" />
+<HideSbBar />
+
+# Working with your agent
+
+Coding agents build better UI when they know the library as well as you do.
+SquonkUI gives them four things, all matched to the version your app has
+installed:
+
+| | What it is | What it does for your agent |
+| --- | --- | --- |
+| **MCP server** | `@squonk/ui-mcp`, registered as `squonk-ui` | Looks up components and guidance, and shows you the library's stories with live controls |
+| **Skill** | `use-squonk-ui`, shipped inside `@squonk/ui` | Teaches it how the library is meant to be used: setup, composition, forms, theming, accessibility |
+| **Catalog** | `@squonk/ui/catalog.json` | Every component with its imports, props, guidance, patterns and tests |
+| **Lint rules** | `@squonk/ui/eslint` | Flags code that rebuilds a control, reaches into internals or hard-codes a colour |
+
+<AgentSession />
+
+## Set it up
+
+One command, in your app's folder:
+
+```sh
+npx @squonk/ui
+```
+
+It asks whether to set up the MCP server (say yes, the default), installs the
+packages and connects the agents you choose. See
+[Getting started](?path=/docs/get-started-getting-started--docs) for the
+registry setup it needs first.
+
+| Agent | Where the server is registered |
+| --- | --- |
+| Claude Code, including the Claude desktop app's Code tab | `.mcp.json` |
+| Codex | `.codex/config.toml` (Codex reads it in trusted projects) |
+| VS Code with Copilot | `.vscode/mcp.json` |
+| Cursor | `.cursor/mcp.json` |
+| Claude Desktop chat | Its own user settings, `claude_desktop_config.json` (see below) |
+
+Commit the project files, and everyone on the team gets the same setup. It also adds
+this section to `AGENTS.md`, which most agents read on every task (Claude Code
+reads it through an `@AGENTS.md` line in `CLAUDE.md`):
+
+```md
+## UI: @squonk/ui
+
+This app builds its UI with `@squonk/ui`, Squonk's React component library.
+
+- Before writing UI, read the skill that ships with the installed version:
+  `node_modules/@squonk/ui/skills/use-squonk-ui/SKILL.md`.
+- Use the `squonk-ui` MCP server: `find_guidance` and `get_guide` for the design
+  rules, `find_components` and `get_component` before writing UI, and
+  `list_stories` and `preview_story` to show the user a library component or
+  example with live controls.
+- After UI changes, look at the result in the running app with your browser
+  tools (or ask the user to open the dev server), in light and dark and at a
+  phone width.
+- Compose library components. Don't restyle them, rebuild what exists, or import
+  from `@squonk/ui/dist`.
+- Run the linter after UI changes; `@squonk/ui/eslint` flags native controls and
+  colour literals.
+```
+
+Restart your agent afterwards so it loads the server.
+
+If you skip the MCP server (`npx @squonk/ui --no-mcp`), the second point
+tells agents to look components up in `@squonk/ui/catalog.json` instead, and
+no agents are connected. Run `npx @squonk/ui` again later to add the server.
+
+## The tools
+
+| Tool | Arguments | Returns |
+| --- | --- | --- |
+| `find_components` | `query` (optional): words for the need, such as `"date input"` or `"empty list"`. Leave it out to list everything. | Matching components from the installed catalog, each with its import path, exports, purpose and the patterns it belongs to |
+| `get_component` | `id`: a component id (`text-field`), title (`Text Field`) or export name (`TextField`) | One component in full: types, documented sections, accessibility guidance and pitfalls, and links to the guides for its patterns |
+| `find_guidance` | `query` (optional): what you're designing or deciding, such as `"badge or tag"` or `"confirm delete"`. Leave it out to list every guide. | The design guides that match, each with its summary and sections |
+| `get_guide` | `id`: a guide id (`patterns-labels-badge-or-tag`) or title (`Labels: Badge or Tag`) | One guide in full: the rules, do and don't examples with their code, and links to the components involved |
+| `list_stories` | `query` (optional): words for what to show, such as `"searchable select"` or `"dashboard"`<br />`component` (optional): only this component's stories, by id, title or export name<br />`limit` (optional): at most this many matches; all by default | Every story shipped with your installed `@squonk/ui`, briefly: each component's variants and the example screens, with the id `preview_story` takes. A `query` ranks them, best match first |
+| `get_theme` | `id` (optional): an example theme to copy, such as `"tidepool"`; absent returns a starter | A theme document to design from: the example theme's, or the library's defaults with what each switch, choice, slider and shared purpose does |
+| `preview_story` | `storyId`: a story id from `list_stories`, such as `functional-button--primary`<br />`theme` (optional): `"light"` or `"dark"`; defaults to the host's<br />`width` (optional): frame width in pixels, 240–2560, such as `375` for a phone<br />`args` (optional): prop values to start from, such as `{ "variant": "danger" }`<br />`exampleTheme` (optional): one of the example themes, such as `"tidepool"`<br />`customTheme` (optional): a theme document you're designing, optionally `basedOn` an example theme<br />`screenshot` (optional): `true` to also return a PNG and whether it rendered without errors | Shows you the story with a Controls panel for its props, so you can try it |
+
+The catalog and guides are also readable as resources, for apps that let you
+attach context: `squonk-ui://catalog`, `squonk-ui://components/{id}` (such as
+`squonk-ui://components/button`), `squonk-ui://guides` and
+`squonk-ui://guides/{id}` (such as `squonk-ui://guides/patterns-labels-badge-or-tag`).
+
+## Checking what your agent built
+
+The server doesn't render your agent's code. After it writes UI, ask it to look
+at the screen in your running app with the browser access it has: a Playwright
+or browser MCP server, its built-in browser, or you opening the dev server's URL
+and telling it what you see. That shows the real screen, with your data,
+routing and providers.
+
+## Stories with live controls
+
+`preview_story` shows one of the library's own Storybook stories, the same ones
+in this site, rendered with the version your app ships. Your agent finds one
+with `list_stories`, by component or by what you describe.
+
+- A **Controls panel** under the story has a control for each prop: switches,
+  text and number inputs, selects and radios, and a JSON editor for lists and
+  objects. Change one and the story updates at once.
+- A **Theme** editor under the controls shows the theme as a document you can
+  edit, apply and copy into your app. Ask your agent for a look ("warmer, more
+  rounded, a serif heading") and it designs a custom theme the same way.
+- **Theme** shows it in any of the example themes, **Dark** switches the
+  colour mode, **Width** shows it at phone, tablet or desktop width, and
+  **Reset** puts the story's own values back.
+
+Where it shows:
+
+- **In Claude Desktop, VS Code with Copilot and ChatGPT** the story appears in
+  the conversation. It's the real component tree, so keyboard, focus, menus and
+  validation all work.
+- **In Claude Code, Codex and other terminals** the agent gives you a local link
+  (`http://127.0.0.1:<port>/story/<id>`) to the same page. The server's root
+  address lists every story.
+- **claude.ai in a browser** can't show it: it only connects to servers on the
+  internet, and this one runs on your computer, reading your app's installed
+  packages. Use Claude Desktop for stories in the chat.
+- **With `screenshot: true`** the agent also gets a picture of the story and
+  whether it rendered without errors. This needs Playwright in your app:
+
+  ```sh
+  npm install --save-dev playwright
+  npx playwright install chromium
+  ```
+
+The first story takes a few seconds to build and is cached in
+`node_modules/.cache/squonk-ui-mcp`, rebuilt only when the library changes.
+
+## Stories inline in Claude Desktop
+
+Claude Desktop's chat shows stories in the conversation, but it reads its own
+settings rather than your project's, starts servers outside your app, and
+doesn't see your terminal's environment. Pick **Claude Desktop** when the setup
+asks, or add it later:
+
+```sh
+npx @squonk/ui --agents claude-desktop
+```
+
+The setup finds Claude Desktop's settings, including the Microsoft Store build's,
+and points the `squonk-ui` server at your app's installed copy with absolute
+paths, so it needs no registry token to start. On Windows with WSL it starts
+the server inside your Linux distro. Claude Desktop runs one `squonk-ui`
+server at a time: running the setup in another app asks before switching it.
+
+Then quit Claude Desktop fully (from the tray or menu bar, not just the window)
+and reopen it. In a chat, ask *"Show me the @squonk/ui Select with its
+controls"*.
+
+To set it up by hand, add this to `claude_desktop_config.json`, with your app's
+folder and the full path to Node:
+
+```json
+{
+  "mcpServers": {
+    "squonk-ui": {
+      "command": "/full/path/to/node",
+      "args": ["/path/to/your/app/node_modules/@squonk/ui-mcp/dist/cli.js", "--root", "/path/to/your/app"]
+    }
+  }
+}
+```
+
+## Prompts that work well
+
+- *"Show me the @squonk/ui Button and let me try its variants."* A good first test.
+- *"Build the settings page from this sketch. Use the library's form pattern, then check it in the browser on a phone width."*
+- *"Which component should I use for a list of applied filters? Check the catalog."*
+- *"Review this screen against the @squonk/ui skill and fix anything it rebuilds by hand."*
+- *"Show me the member dashboard example in dark mode."*
+
+Ask for a story when you're choosing between components or variants: you can
+try each one before your agent writes any code.
+
+## Keep it current
+
+The skill, the catalog and the stories always describe the installed version,
+so updating is just updating the packages, together:
+
+```sh
+npm install @squonk/ui@latest
+npm install --save-dev @squonk/ui-mcp@latest
+```
+
+They are released together, with the same version number. Running `npx @squonk/ui` again is safe: it only adds
+what is missing.
+
+## Troubleshooting
+
+- **`npx` or `npm` fails with 401, 403 or 404.** The packages are public on
+  registry.npmjs.org and need no sign-in, so an error like this almost always
+  means an old `@squonk:registry` line in the app's `.npmrc` or your home
+  `~/.npmrc` is sending npm somewhere else. Remove that line (and any
+  `_authToken` line for the same registry) and try again.
+- **The agent doesn't see the tools.** Restart it after the setup. Codex reads
+  `.codex/config.toml` only in projects you've marked as trusted.
+- **The server shows "Connection closed".** Its command couldn't run on the
+  machine the agent runs on. Run `npx @squonk/ui-mcp check` in the app's
+  folder: it starts each configured server the way the agent does and says why
+  one fails.
+- **Claude Code on Windows, app in WSL.** The desktop app's Code tab opening a
+  `\\wsl.localhost\…` folder runs `.mcp.json`'s `npx` on Windows, which usually
+  has no Node. Run `npx @squonk/ui-mcp init --windows-client` inside WSL. It
+  adds a launcher that starts the server inside WSL to that folder's local scope
+  in your Windows `.claude.json`, and leaves `.mcp.json` alone. Then restart the
+  session.
+- **The story link needs a fixed port.** Set `SQUONK_UI_PREVIEW_PORT`.
+- **Screenshots fail.** Install Playwright and Chromium in the app (see Stories with live controls).
+
+## Working on the library itself
+
+This repository has its own `AGENTS.md` and a set of skills for building
+components, in `.claude/skills/`. See
+[Developing the library](?path=/docs/contributing-developing-the-library--docs).

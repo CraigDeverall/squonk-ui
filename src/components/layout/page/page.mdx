@@ -1,0 +1,113 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as PageStories from "./page.stories.tsx";
+import meta from "./page.stories.tsx";
+import { Page } from "./page.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Page
+
+<ResizableCanvas of={PageStories.Primary} />
+
+`Page` is the outermost container for an application screen — a `<main>` landmark sized to the full viewport (`100vw` × `100vh`), painted with the theme's default background, and set up as a flex row so a `Sidebar` and the main content area drop in side-by-side. It owns vertical scroll for the whole screen; nested scroll areas should be `ScrollBox`, not raw overflow.
+
+<Controls />
+
+## App-shell layout
+
+The default shape — `Page` is a flex row, so `Sidebar` (or any flex-shrinking nav) sits next to a content container taking the remaining space.
+
+<InlineCodeExample>
+  {`<Page>
+  <Sidebar>
+    <nav>
+      <Link href="/dashboard">Dashboard</Link>
+      <Link href="/projects">Projects</Link>
+      <Link href="/reports">Reports</Link>
+    </nav>
+  </Sidebar>
+  <div style={{ flex: 1, minWidth: 0, padding: 24 }}>
+    {/* page content */}
+  </div>
+</Page>`}
+</InlineCodeExample>
+
+## Marketing layout
+
+For a landing page, drop a column of `<Section>`s inside; let the page scroll naturally.
+
+<InlineCodeExample>
+  {`<Page>
+  <div style={{ flex: 1, minWidth: 0 }}>
+    <Header />
+    <Section register="hero">
+      <VStack align="center">
+        <SectionHeading
+          headline={<>Ship products, <em>not platforms</em>.</>
+      </VStack>}
+        sub="A small, opinionated React component library."
+      />
+    </Section>
+    <Section tone="surface">
+      <VStack align="center">
+        <SectionHeading headline="What's new" />
+      </VStack>
+    </Section>
+    <Footer />
+  </div>
+</Page>`}
+</InlineCodeExample>
+
+## A background image from the theme
+
+`Page` paints the theme's `components.page.backgroundImage` over its background colour. It is `none` by default; a theme binds it to a gradient, for both colour modes or one each. The image is held to the screen while the page scrolls (`background-attachment: fixed`) and doesn't repeat. Set it in the theme, not with a `style` on `Page`, so the document body (with `withGlobalStyles`) and every screen agree.
+
+<InlineCodeExample>
+  {`<SquonkThemeProvider
+  roleBindings={{
+    "components.page.backgroundImage": {
+      light: "linear-gradient(180deg, #ffffff, #dbeafe)",
+      dark: "radial-gradient(circle at top, #1e1b4b, #020617)",
+    },
+  }}
+>
+  <Page>...</Page>
+</SquonkThemeProvider>`}
+</InlineCodeExample>
+
+Text on the page is picked to read on the page colour, not the image: keep the image close to that colour and check both modes.
+
+## Polymorphic
+
+`Page` defaults to `<main>` so the screen has a primary landmark out of the box. Override with `as` if your routing layer already provides the main element.
+
+<InlineCodeExample>
+  {`<Page as="div">
+  <main>...</main>
+</Page>`}
+</InlineCodeExample>
+
+## Accessibility
+
+- Renders a `<main>` landmark by default — screen-reader users can jump straight to the main content via the "main" landmark.
+- The full-viewport sizing means the page itself owns vertical scrolling — nested scroll regions should be explicit (`ScrollBox`) so screen readers can identify them.
+- Pair `Page` with a `Header` at the top and a `Footer` at the bottom for the standard landmark trio (banner / main / contentinfo).
+
+## Common pitfalls
+
+- **Don't ship multiple `Page` elements per screen.** It's the outermost container; nesting two creates duplicate `<main>` landmarks and double-scroll bugs.
+- **Don't add `overflow: hidden` to children.** Vertical scroll lives on `Page` itself; clipping a child breaks scroll-to-anchor and breaks sticky positioning.
+- **Don't use the default viewport sizing for a constrained documentation embed.** Override width and height against a definite-size parent as described below.
+- **Don't pair `Page` with `position: fixed` content without setting a z-index.** Fixed elements sit on top of the page's scroll container; use the `zIndices.fixed` token to stay consistent with `FixedHeader`.
+
+
+## Constrained parents and mobile viewports
+
+The default viewport-owned layout remains `100vw` × `100vh`. For a shell that follows the visible mobile viewport as browser controls move, use the existing native style prop: `<Page style={{ width: "100%", height: "100dvh" }}>…</Page>`. Choose the viewport behavior deliberately; `100vh` can extend behind mobile browser chrome.
+
+For an embedded shell, give the parent a definite width and height, then use `<Page style={{ width: "100%", height: "100%" }}>…</Page>`. The parent controls its size while Page retains internal vertical scrolling. Set shrinkable main content to `minWidth: 0`. Use only one main landmark: Page already renders `main`, so its content wrapper normally should be a `div`.

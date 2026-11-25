@@ -1,0 +1,420 @@
+/*
+ * Every animation and transition in the library lives here. Components don't
+ * declare motion in their own stylesheets: they wrap the element that moves
+ * in a Motion component, which adds one of these classes.
+ *
+ * Three layers meet here:
+ * - Character, from the theme: durations, curves, distances and the stagger
+ *   come only from motion purposes (--squonk-roles-motion-*), which the theme's
+ *   motion primitives derive.
+ * - Level, from the app: --squonk-motion-level-* (see src/theme/motion-level.ts).
+ *   `reduced` (1 when motion is reduced) zeroes every distance, so things
+ *   fade in place; `time` multiplies every duration and delay (0 for no
+ *   motion, more for slow motion); `decor` and `work` pause loops. The
+ *   device's reduced-motion setting sets the same properties, at the end.
+ * - Choreography: --motion-index, set by Motion.Stagger, delays an arrival
+ *   by that many stagger steps.
+ *
+ * The dt.motion layer sits after dt.components, so a recipe always wins over
+ * a component's own rules without needing extra specificity.
+ */
+@layer dt.tokens, dt.components, dt.motion;
+
+@layer dt.motion {
+  /* Shared terms. --motion-travel scales every distance: 1, or 0 when motion
+     is reduced. --motion-time scales every duration and delay. */
+  .pop,
+  .slide,
+  .collapse,
+  .shift,
+  .reveal,
+  .presence,
+  .swap,
+  .highlight,
+  .dim {
+    --motion-time: var(--squonk-motion-level-time, 1);
+    --motion-travel: calc(1 - var(--squonk-motion-level-reduced, 0));
+    --motion-wait: calc(min(var(--motion-index, 0), 12) * var(--squonk-roles-motion-stagger) * var(--motion-time));
+  }
+
+  /* ── Feedback: a control answering hover, press, focus or selection ──
+     Instant in, a short fade back to rest. The state can sit on the element
+     itself, on its parent (a checkbox's box inside its label), or, for
+     selection, on the field around that label. A colour fade, so it stays
+     with reduced motion. */
+  .feedback {
+    transition: var(--squonk-roles-motion-feedback);
+  }
+
+  .feedback:is([data-hovered], [data-pressed], [data-focus-visible], [data-selected], [data-indeterminate]),
+  .feedback:not([data-rac]):is(:hover, :active, :focus-visible),
+  :is([data-hovered], [data-pressed], [data-focus-visible]) > .feedback,
+  :is([data-selected], [data-indeterminate]) > * > .feedback,
+  .feedback.field:is(:hover, :focus-visible, :focus-within, [data-focused], [data-focus-within]) {
+    transition: var(--squonk-roles-motion-feedback-in);
+  }
+
+  /* A part that moves the same way both ways, like a switch's thumb. */
+  .feedback.even,
+  .feedback.even:is([data-hovered], [data-pressed], [data-focus-visible], [data-selected]),
+  :is([data-hovered], [data-pressed], [data-focus-visible]) > .feedback.even {
+    transition: var(--squonk-roles-motion-feedback);
+  }
+
+  /* ── Pop: an overlay anchored to a trigger, or a notification ──
+     Fades and grows from the theme's pop scale as it opens, settling on the
+     theme's spring; the reverse as it closes. With reduced motion it only
+     fades. React Aria marks the overlay, or its backdrop, with
+     data-entering and data-exiting. */
+  .pop {
+    --motion-in: var(--squonk-roles-motion-overlay);
+    --motion-from-scale: calc(1 - (1 - var(--squonk-roles-motion-pop-scale)) * var(--motion-travel));
+  }
+
+  .pop.arrive {
+    --motion-in: var(--squonk-roles-motion-arrive);
+  }
+
+  .pop[data-entering],
+  [data-entering] .pop {
+    animation: squonk-pop-in calc(var(--motion-in) * var(--motion-time)) var(--squonk-roles-motion-spring);
+  }
+
+  .pop[data-exiting],
+  [data-exiting] .pop {
+    animation: squonk-pop-out calc(var(--squonk-roles-motion-overlay) * var(--motion-time)) var(--squonk-roles-motion-exit);
+  }
+
+  /* Plays as soon as it mounts (toasts have no entering state), and holds
+     its end frame while leaving. */
+  .pop.mount {
+    animation: squonk-pop-in calc(var(--motion-in) * var(--motion-time)) var(--squonk-roles-motion-spring);
+  }
+
+  .pop.mount[data-exiting] {
+    animation: squonk-pop-out calc(var(--squonk-roles-motion-overlay) * var(--motion-time)) var(--squonk-roles-motion-exit) forwards;
+  }
+
+  /* ── Dim: the backdrop behind a dialog or drawer ── */
+  .dim {
+    --motion-in: var(--squonk-roles-motion-overlay);
+  }
+
+  .dim.arrive {
+    --motion-in: var(--squonk-roles-motion-arrive);
+  }
+
+  .dim[data-entering] {
+    animation: squonk-dim-in calc(var(--motion-in) * var(--motion-time)) var(--squonk-roles-motion-enter);
+  }
+
+  .dim[data-exiting] {
+    animation: squonk-dim-out calc(var(--squonk-roles-motion-overlay) * var(--motion-time)) var(--squonk-roles-motion-exit);
+  }
+
+  /* ── Slide: a panel arriving from an edge of the screen ──
+     Arrives at the arrival pace, leaves at the overlay pace, retracing its
+     path. The end edge is the default. With reduced motion it fades in
+     place instead of travelling. Never springs: an overshoot would open a
+     gap at the screen edge. */
+  .slide {
+    --motion-x: 100%;
+    --motion-y: 0%;
+  }
+
+  .slide.start { --motion-x: -100%; }
+
+  .slide.bottom {
+    --motion-x: 0%;
+    --motion-y: 100%;
+  }
+
+  .slide[data-entering],
+  [data-entering] .slide {
+    animation: squonk-slide calc(var(--squonk-roles-motion-arrive) * var(--motion-time)) var(--squonk-roles-motion-enter);
+  }
+
+  .slide[data-exiting],
+  [data-exiting] .slide {
+    animation: squonk-slide calc(var(--squonk-roles-motion-overlay) * var(--motion-time)) var(--squonk-roles-motion-exit) reverse;
+  }
+
+  /* ── Collapse: a disclosure panel opening and closing ──
+     React Aria sets --disclosure-panel-height to the panel's measured height
+     while it opens and closes, so the height can transition. A change of
+     size is movement, so with reduced motion it's immediate. */
+  .collapse {
+    height: var(--disclosure-panel-height);
+    overflow: clip;
+    transition: height calc(var(--squonk-roles-motion-quick) * var(--motion-time) * var(--motion-travel)) var(--squonk-roles-motion-exit);
+  }
+
+  [data-expanded] > .collapse {
+    transition: height calc(var(--squonk-roles-motion-panel) * var(--motion-time) * var(--motion-travel)) var(--squonk-roles-motion-enter);
+  }
+
+  /* ── Shift: a small change within the page ──
+     A colour shifting, a chevron turning, an indicator sliding to the chosen
+     tab. A component names what moves with --motion-property, and may give
+     its own duration (a component motion token) with --motion-duration and
+     a wait before it starts with --motion-delay (a resize handle lighting up
+     only once the pointer rests on it). */
+  .shift {
+    transition-property: var(--motion-property, all);
+    transition-duration: calc(var(--motion-duration, var(--squonk-roles-motion-quick)) * var(--motion-time) * var(--motion-travel));
+    transition-timing-function: var(--squonk-roles-motion-standard);
+    transition-delay: calc(var(--motion-delay, 0ms) * var(--motion-time));
+  }
+
+  /* ── Loops: work in progress, or something live ──
+     With reduced motion, loops that only decorate stop (decor) and loops
+     that show work is happening slow down; with no motion both hold still. */
+  .spin {
+    --motion-reduced: var(--squonk-motion-level-reduced, 0);
+    animation: squonk-spin calc(var(--squonk-roles-motion-spin) * (1 - var(--motion-reduced)) + var(--squonk-roles-motion-spin-reduced) * var(--motion-reduced)) linear infinite;
+    animation-play-state: var(--squonk-motion-level-work, running);
+  }
+
+  .sweep {
+    --motion-reduced: var(--squonk-motion-level-reduced, 0);
+    animation: squonk-sweep calc(var(--squonk-roles-motion-loop) * (1 - var(--motion-reduced)) + var(--squonk-roles-motion-loop-reduced) * var(--motion-reduced)) ease-in-out infinite;
+    animation-play-state: var(--squonk-motion-level-work, running);
+  }
+
+  .shimmer {
+    animation: squonk-shimmer var(--squonk-roles-motion-loop) ease-in-out infinite;
+    animation-play-state: var(--squonk-motion-level-decor, running);
+  }
+
+  .pulse {
+    animation: squonk-pulse var(--motion-loop-duration, var(--squonk-roles-motion-pulse)) infinite ease-in-out;
+    animation-play-state: var(--squonk-motion-level-decor, running);
+  }
+
+  /* A line's dashes marching from its start to its end: something flowing
+     along it. The child sets its own stroke-dasharray, and
+     --motion-flow-period to one dash and its gap. Decorative, so it stops
+     with reduced motion. */
+  .flow {
+    animation: squonk-flow var(--motion-loop-duration, var(--squonk-roles-motion-loop)) linear infinite;
+    animation-play-state: var(--squonk-motion-level-decor, running);
+  }
+
+  /* Something travelling along a path from start to end: a dot moving along
+     a line. The child sets offset-path; --motion-loop-delay places it along the
+     way. With reduced motion it would stand still mid-path, so it hides. */
+  .travel {
+    opacity: calc(1 - var(--squonk-motion-level-reduced, 0));
+    offset-rotate: 0deg;
+    animation: squonk-travel var(--motion-loop-duration, var(--squonk-roles-motion-loop)) linear infinite;
+    animation-delay: var(--motion-loop-delay, 0ms);
+    animation-play-state: var(--squonk-motion-level-decor, running);
+  }
+
+  /* ── Reveal: content arriving as it scrolls into view ──
+     Starts a little below its place and invisible; rises and fades in once
+     it's in view, after its stagger. With reduced motion it only fades.
+     Focus inside shows it at once. */
+  .reveal {
+    opacity: 0;
+    translate: 0 calc(var(--motion-reveal-offset, var(--squonk-roles-motion-reveal-offset)) * var(--motion-travel));
+    transition: none;
+  }
+
+  .reveal.revealed {
+    --motion-reveal-duration: calc(var(--squonk-roles-motion-reveal) * var(--motion-time));
+    --motion-reveal-wait: calc(var(--motion-reveal-delay, 0ms) * var(--motion-time) + var(--motion-wait));
+    opacity: 1;
+    translate: 0 0;
+    transition:
+      opacity var(--motion-reveal-duration) var(--squonk-roles-motion-reveal-easing) var(--motion-reveal-wait),
+      translate var(--motion-reveal-duration) var(--squonk-roles-motion-reveal-easing) var(--motion-reveal-wait);
+  }
+
+  .reveal:focus-within {
+    opacity: 1;
+    translate: none;
+    transition: none;
+  }
+
+  /* ── Presence: an element joining or leaving the page ──
+     Fades and nudges in from a side as it mounts, after its stagger; fades
+     and nudges back out before it unmounts. With reduced motion it only
+     fades. */
+  .presence {
+    --motion-x: 0px;
+    --motion-y: calc(var(--squonk-roles-motion-nudge) * var(--motion-travel));
+  }
+
+  .presence.above { --motion-y: calc(var(--squonk-roles-motion-nudge) * var(--motion-travel) * -1); }
+
+  .presence.start {
+    --motion-x: calc(var(--squonk-roles-motion-nudge) * var(--motion-travel) * -1);
+    --motion-y: 0px;
+  }
+
+  .presence.end {
+    --motion-x: calc(var(--squonk-roles-motion-nudge) * var(--motion-travel));
+    --motion-y: 0px;
+  }
+
+  .presence.fade {
+    --motion-x: 0px;
+    --motion-y: 0px;
+  }
+
+  .presence.entering {
+    animation: squonk-nudge-in calc(var(--squonk-roles-motion-arrive) * var(--motion-time)) var(--squonk-roles-motion-spring) var(--motion-wait) backwards;
+  }
+
+  .presence.exiting {
+    animation: squonk-nudge-out calc(var(--squonk-roles-motion-overlay) * var(--motion-time)) var(--squonk-roles-motion-exit) forwards;
+    pointer-events: none;
+  }
+
+  /* ── Swap: content replaced in place ──
+     The new content fades and rises half a nudge into place: a tab's panel,
+     loaded content replacing its placeholder. Two identical animations
+     alternate so each swap replays. An element shown again after being
+     hidden (a tab panel) replays it too. */
+  .swap {
+    --motion-x: 0px;
+    --motion-y: calc(var(--squonk-roles-motion-nudge) * var(--motion-travel) * 0.5);
+  }
+
+  .swap.odd {
+    animation: squonk-nudge-in calc(var(--squonk-roles-motion-swap) * var(--motion-time)) var(--squonk-roles-motion-enter) var(--motion-wait) backwards;
+  }
+
+  .swap.even {
+    animation: squonk-nudge-in-again calc(var(--squonk-roles-motion-swap) * var(--motion-time)) var(--squonk-roles-motion-enter) var(--motion-wait) backwards;
+  }
+
+  /* ── Highlight: something that just changed ──
+     Its background starts at the highlight colour and fades back to its own,
+     quickly at first and then lingering. A colour fade, so it stays with
+     reduced motion. */
+  .highlight.odd {
+    animation: squonk-highlight calc(var(--squonk-roles-motion-highlight) * var(--motion-time)) var(--squonk-roles-motion-enter);
+  }
+
+  .highlight.even {
+    animation: squonk-highlight-again calc(var(--squonk-roles-motion-highlight) * var(--motion-time)) var(--squonk-roles-motion-enter);
+  }
+
+  /* A Presence around a Highlight on one element, such as a row that has
+     just arrived: one animation property, so both play together. */
+  .presence.entering.highlight.odd {
+    animation:
+      squonk-nudge-in calc(var(--squonk-roles-motion-arrive) * var(--motion-time)) var(--squonk-roles-motion-spring) var(--motion-wait) backwards,
+      squonk-highlight calc(var(--squonk-roles-motion-highlight) * var(--motion-time)) var(--squonk-roles-motion-enter);
+  }
+
+  .presence.entering.highlight.even {
+    animation:
+      squonk-nudge-in calc(var(--squonk-roles-motion-arrive) * var(--motion-time)) var(--squonk-roles-motion-spring) var(--motion-wait) backwards,
+      squonk-highlight-again calc(var(--squonk-roles-motion-highlight) * var(--motion-time)) var(--squonk-roles-motion-enter);
+  }
+
+  /* ── Count: a figure counting to its new value ──
+     The digits keep one width so the figure doesn't jitter as it counts.
+     The counting text is hidden from assistive technology, which reads the
+     final value once instead. */
+  .count {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .countFinal {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* ── The device's reduced-motion setting ──
+     Sets the same level the app's `motion` prop sets. The app's own setting,
+     written by SquonkThemeProvider outside any layer, wins over this. */
+  @media (prefers-reduced-motion: reduce) {
+    :root {
+      --squonk-motion-level-reduced: 1;
+      --squonk-motion-level-decor: paused;
+    }
+  }
+
+  @keyframes squonk-pop-in {
+    from { opacity: 0; scale: var(--motion-from-scale); }
+    to { opacity: 1; scale: 1; }
+  }
+
+  @keyframes squonk-pop-out {
+    from { opacity: 1; scale: 1; }
+    to { opacity: 0; scale: var(--motion-from-scale); }
+  }
+
+  @keyframes squonk-dim-in { from { background-color: transparent; } }
+  @keyframes squonk-dim-out { to { background-color: transparent; } }
+
+  /* Travels the full panel from its edge; with reduced motion it starts in
+     place and transparent instead. */
+  @keyframes squonk-slide {
+    from {
+      translate: calc(var(--motion-x) * var(--motion-travel)) calc(var(--motion-y) * var(--motion-travel));
+      opacity: var(--motion-travel);
+    }
+    to { translate: 0 0; opacity: 1; }
+  }
+
+  @keyframes squonk-nudge-in {
+    from { opacity: 0; translate: var(--motion-x) var(--motion-y); }
+  }
+
+  @keyframes squonk-nudge-in-again {
+    from { opacity: 0; translate: var(--motion-x) var(--motion-y); }
+  }
+
+  @keyframes squonk-nudge-out {
+    to { opacity: 0; translate: var(--motion-x) var(--motion-y); }
+  }
+
+  @keyframes squonk-highlight {
+    from { background-color: var(--squonk-roles-motion-highlight-color); }
+  }
+
+  @keyframes squonk-highlight-again {
+    from { background-color: var(--squonk-roles-motion-highlight-color); }
+  }
+
+  @keyframes squonk-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes squonk-sweep {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(400%); }
+  }
+
+  @keyframes squonk-shimmer {
+    0% { background-position: -200px 0; }
+    100% { background-position: calc(200px + 100%) 0; }
+  }
+
+  @keyframes squonk-flow {
+    from { stroke-dashoffset: calc(var(--motion-flow-period, 18px) * 2); }
+    to { stroke-dashoffset: 0; }
+  }
+
+  @keyframes squonk-travel {
+    from { offset-distance: 0%; }
+    to { offset-distance: 100%; }
+  }
+
+  @keyframes squonk-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.55; transform: scale(0.92); }
+  }
+}

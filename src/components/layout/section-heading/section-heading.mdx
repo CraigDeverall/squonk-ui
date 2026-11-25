@@ -1,0 +1,98 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as SectionHeadingStories from "./section-heading.stories.tsx";
+import meta from "./section-heading.stories.tsx";
+import { SectionHeading } from "./section-heading.tsx";
+import { Section } from "../section/section.tsx";
+import { VStack } from "../../layout-primitive/vstack/vstack.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# SectionHeading
+
+<ResizableCanvas of={SectionHeadingStories.Default} />
+
+`SectionHeading` is the eyebrow + headline + sub-copy block that opens a `Section` — the recurring "small label, big statement, one line of support copy" shape used across marketing and dashboard pages alike.
+
+The headline and sub-copy size themselves from the ambient `Presentation` register set by a surrounding `Section` — a heading inside a `hero` section renders at hero scale automatically, no size prop needed.
+
+<Controls />
+
+## Alignment
+
+`center` (default) is the marketing-page convention — centered eyebrow, headline, and sub-copy, useful above a centered CTA row. `start` aligns the contents to the inline start for editorial or dashboard-style layouts. The parent controls placement of the whole block.
+
+<InlineCodeExample>
+  <VStack gap="lg">
+    <VStack align="center">
+      <SectionHeading
+        align="center"
+        eyebrow="Platform"
+        headline="Everything your team needs to ship"
+        sub="One workspace for planning, building, and shipping releases."
+      />
+    </VStack>
+    <SectionHeading
+      align="start"
+      headline="Release notes"
+      sub="What shipped this week, in plain language."
+    />
+  </VStack>
+</InlineCodeExample>
+
+## Without an eyebrow or sub-copy
+
+Both `eyebrow` and `sub` are optional — drop either (or both) for a terser heading.
+
+<InlineCodeExample>
+  <VStack gap="lg">
+    <VStack align="center">
+      <SectionHeading headline="Pricing" sub="Simple plans that scale with your team." />
+    </VStack>
+    <VStack align="center">
+      <SectionHeading headline="Frequently asked questions" />
+    </VStack>
+  </VStack>
+</InlineCodeExample>
+
+## Inside a Section
+
+`SectionHeading` commonly opens a `Section`. The section supplies the register and optional background tone; a parent `VStack align="center"` centers the heading block within that section.
+
+<InlineCodeExample>
+  <Section tone="surface" register="large">
+    <VStack align="center">
+      <SectionHeading
+        eyebrow="New"
+        headline="Ship with confidence"
+        sub="Visual regression testing built into every release."
+      />
+    </VStack>
+  </Section>
+</InlineCodeExample>
+
+## Heading level
+
+`level` controls the semantic heading level rendered (`h1`–`h3`), independent of the visual size (which comes from the register). Use `level={1}` only when the section hosts the page's primary heading — there should be exactly one `h1` per page.
+
+## Accessibility
+
+- `SectionHeading` renders the headline as a real `Heading` element (`h1`–`h3` per `level`) — don't wrap it in an additional heading of your own.
+- Because `level` is independent of visual size, you can keep a correct, linear heading outline (`h1` → `h2` → `h3`) across a page even as the *visual* weight varies by register.
+- The `eyebrow` renders as a `Badge`, which is not itself a heading — screen-reader users navigating by heading will land on the headline, not the eyebrow. Don't put essential information only in the eyebrow.
+
+## Common pitfalls
+
+- **Don't use `SectionHeading` for body copy.** It's an opening block, not a general two-line paragraph component — for supporting prose elsewhere in a section, use `Text` directly.
+- **Don't set `level` based on how big you want the text.** Size comes from the ambient `Presentation` register (usually set by the parent `Section`); `level` is purely semantic. Wrap in `<Presentation register="hero">` if you need to bump the visual size without changing the section it lives in.
+- **Don't override `maxWidth` to make the sub-copy wrap awkwardly narrow or wide.** The 720px default is tuned for readability — only override for genuinely different content shapes.
+
+## Parent-owned spacing and migration
+
+`align` aligns content inside the heading; the parent controls the heading block’s placement and spacing to siblings. Use `<VStack align="center" gap="xl">` around a centered heading and the following content, or `align="stretch"` for a full-width editorial stack.
+
+The implicit bottom margin and automatic horizontal margins have been removed. When migrating existing layouts, add the desired gap and centering to the parent instead of relying on extra space after every SectionHeading.

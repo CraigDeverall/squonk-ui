@@ -1,0 +1,59 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../documentation-imports/index.ts";
+import { Do, DoDont } from "./pattern-blocks.tsx";
+import { InstantSwitchExample, SubmittedCheckboxExample } from "./pattern-examples.tsx";
+
+<Meta title="Patterns/Switches, checkboxes and saving" />
+
+<HideSbBar />
+
+# Switches, checkboxes and saving
+
+A [Switch](?path=/docs/functional-switch--docs) turns something **on or off**.
+A [Checkbox](?path=/docs/functional-checkbox--docs) **selects** something. The
+difference is what the user expects to happen when they press it.
+
+## When a change takes effect
+
+**Our guidance** (the sources describe the controls but not this timing rule):
+
+- Use a **Switch** when the change applies straight away: "Email notifications",
+  "Dark mode". Show that it worked, or that it failed, right there. If saving
+  fails, move the switch back and say why.
+- Use a **Checkbox** when the choice is part of something the user submits later:
+  "I agree to the terms", "Send me a copy", or rows to act on. Nothing happens
+  until they press the form's button.
+- Don't mix the two in one form. A switch inside a form that only saves on
+  Submit makes people unsure whether anything changed.
+
+<DoDont>
+  <Do caption="A switch saves at once, says so, and moves back if saving fails. Tick the box below it to see a failure.">
+    <InstantSwitchExample />
+  </Do>
+  <Do caption="A checkbox in a form does nothing until the form is submitted.">
+    <SubmittedCheckboxExample />
+  </Do>
+</DoDont>
+
+## Labels describe the setting, not the state
+
+The label stays the same when the switch flips: "Email notifications", not
+"Notifications are on". The switch itself shows the state. Use `helperText` for
+consequences ("You'll still get security alerts").
+
+## Errors
+
+A setting that applies immediately reports failure where it happened, not as a
+form error. A checkbox that must be ticked to continue gets an `error` like any
+other form field.
+
+## Related
+
+- [Choosing a selection control](?path=/docs/patterns-choosing-a-selection-control--docs)
+- [Labels, help and validation](?path=/docs/patterns-labels-help-and-validation--docs)
+
+---
+
+Sources, paraphrased: [WAI-ARIA Authoring Practices: switch](https://www.w3.org/WAI/ARIA/apg/patterns/switch/),
+© W3C, under the [W3C Software and Document License](https://www.w3.org/copyright/software-license/);
+[React Spectrum v3 Switch](https://react-spectrum.adobe.com/v3/Switch.html), © Adobe.

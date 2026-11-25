@@ -1,0 +1,28 @@
+<!--
+  Runs synchronously inside the preview iframe head, before React
+  mounts. Reads the persisted mode from localStorage,
+  stamps data-mode onto <html>, and paints the iframe's html/body
+  background to the matching surface color — so navigating between docs
+  pages in dark mode never flashes white.
+-->
+<script>
+  (function () {
+    try {
+      var raw = localStorage.getItem("squonk-storybook-mode");
+      var mode = raw === "dark" ? "dark" : "light";
+      document.documentElement.setAttribute("data-mode", mode);
+      var bg = mode === "dark" ? "#0d1117" : "#ffffff";
+      var fg = mode === "dark" ? "#f0f6fc" : "#212529";
+      var style = document.createElement("style");
+      style.textContent =
+        "html, body { background-color: " +
+        bg +
+        " !important; color: " +
+        fg +
+        "; }";
+      document.head.appendChild(style);
+    } catch (e) {
+      /* localStorage may be unavailable — fall back to default light surface */
+    }
+  })();
+</script>

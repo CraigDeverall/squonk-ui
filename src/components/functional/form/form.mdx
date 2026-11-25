@@ -1,0 +1,122 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as FormStories from "./form.stories.tsx";
+import meta from "./form.stories.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Form
+
+<ResizableCanvas of={FormStories.Registration} defaultHeight={1180} />
+
+`@squonk/ui/form` builds forms on [TanStack Form](https://tanstack.com/form) with
+the library's fields already wired up: values, blur state and errors. Validate
+with any [Standard Schema](https://standardschema.dev) library; the examples use
+[Zod](https://zod.dev). Every form gets the same behaviour:
+
+- Errors show once a field is left or a submit is attempted, never while typing
+  the first time, and then update live as people fix them.
+- A failed submit shows an **error summary** at the top, moves focus to it, and
+  links each message to its field.
+- Server errors map back onto the fields they belong to.
+
+```tsx
+import { useAppForm } from "@squonk/ui/form";
+import { z } from "zod";
+
+const schema = z.object({
+  memberName: z.string().trim().min(1, "Enter your full name"),
+  email: z.email("Enter an email address in the right format, like name@example.co.nz"),
+});
+
+function MemberForm() {
+  const form = useAppForm({
+    defaultValues: { memberName: "", email: "" },
+    validators: { onChange: schema },
+    onSubmit: async ({ value }) => save(value),
+  });
+
+  return (
+    <form.AppForm>
+      <form.Form>
+        <form.ErrorSummary />
+        <form.AppField name="memberName">{(field) => <field.TextField label="Full name" />}</form.AppField>
+        <form.AppField name="email">{(field) => <field.TextField label="Email" type="email" />}</form.AppField>
+        <form.SubmitButton>Continue</form.SubmitButton>
+      </form.Form>
+    </form.AppForm>
+  );
+}
+```
+
+Field names are type-checked against `defaultValues`, and each bound field takes
+the same props as the component it wraps, minus the value, change and error props.
+
+## Bound fields
+
+| In `form.AppField` | Wraps | Value |
+| --- | --- | --- |
+| `field.TextField` | `TextField` | `string` |
+| `field.Textarea` | `Textarea` | `string` |
+| `field.CurrencyField` | `CurrencyField` | `number \| null` (dollars, `null` when empty) |
+| `field.Select` | `Select` (including `searchable`) | `string` (`""` for none) |
+| `field.Checkbox` | `Checkbox` | `boolean` |
+| `field.Switch` | `Switch` | `boolean` |
+| `field.CheckboxGroup` | `CheckboxGroup` | `string[]` |
+| `field.RadioGroup` | `RadioGroup` | `string` |
+
+For a field the library doesn't cover, use `useFieldContext()` in your own
+component, or add it to a form of your own with `extendForm`.
+
+## Validation
+
+Pass a schema to `validators.onChange` and it validates the whole form on every
+change; errors still only show once a field has been left or a submit attempted.
+Use `onBlur` instead for checks that are expensive to run on each keystroke.
+
+Write messages that make sense on their own, because they also appear in the
+error summary: "Enter your full name", not "Required".
+
+## Server errors
+
+Return field errors from `validators.onSubmitAsync`, and they appear on their
+fields and in the summary like any other error:
+
+```tsx
+validators: {
+  onChange: schema,
+  onSubmitAsync: async ({ value }) => {
+    const result = await api.checkEmail(value.email);
+    return result.taken ? { fields: { email: "This email address already belongs to a member" } } : undefined;
+  },
+},
+```
+
+## Submitting
+
+`form.SubmitButton` stays enabled, because a disabled button can't explain why.
+While the submit runs it is marked busy, ignores presses and can show
+`pendingLabel`.
+
+## Accessibility
+
+- `form.Form` sets `noValidate`, so the browser's own error bubbles don't compete.
+- The error summary takes focus after a failed submit, so screen-reader users hear
+  "There is a problem" and the list. Each link moves focus to its field.
+- Each field's error is its description and sets `aria-invalid`.
+
+## Common pitfalls
+
+- **Don't validate on the first keystroke.** The bound fields wait for blur;
+  don't show your own errors earlier.
+- **Don't disable the submit button until the form is valid.** People can't find
+  out what's wrong.
+- **Don't leave out the error summary on long forms.** It is the only place a
+  screen-reader user hears every problem at once.
+
+## UX guidance
+
+- [Labels, help and validation](?path=/docs/patterns-labels-help-and-validation--docs)

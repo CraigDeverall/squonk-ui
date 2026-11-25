@@ -1,0 +1,108 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as ThemeModifierStories from "./theme-modifier.stories.tsx";
+import meta from "./theme-modifier.stories.tsx";
+import { ThemeModifier } from "./theme-modifier.tsx";
+import { Card } from "../../layout/card/card.tsx";
+import { Grid } from "../../layout-primitive/grid/grid.tsx";
+import { VStack } from "../../layout-primitive/vstack/vstack.tsx";
+import { Heading } from "../../functional-primitive/heading/heading.tsx";
+import { Text } from "../../functional-primitive/text/text.tsx";
+import { Button } from "../../functional/button/button.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# ThemeModifier
+
+<ResizableCanvas of={ThemeModifierStories.Default} />
+
+`ThemeModifier` scopes a **partial theme override** to a subtree — pass any subset of the theme shape and every `@squonk/ui` component underneath that reads the overridden keys picks up the new values. Outside the wrapped subtree, the theme is unchanged.
+
+This is the consumer-facing mechanism for dark mode, a per-subtree brand override ("co-branded panel" embedded in a shared shell), or a one-off color swap — without forking a component or reaching for raw CSS. It is a **style component**: no DOM output of its own, only theme re-threading via `ThemeProvider`.
+
+For switching the *size* register (spacing/font/radius) or flipping *only* color mode, see `ThemeStyleBlock` — it derives cleanly from the theme's root primitives instead of arbitrary key overrides, and won't compound when nested. Reach for `ThemeModifier` when you need to override specific color (or other) values that `ThemeStyleBlock`'s two fixed axes don't cover.
+
+<Controls />
+
+## Overriding a single token
+
+The override merges deeply onto the inherited theme — only the keys you pass change; everything else (spacing, typography, other colors) stays inherited.
+
+<InlineCodeExample>
+  <Grid columns={2} gap="md">
+    <VStack gap="xs">
+      <Text tone="muted">Inherited theme</Text>
+      <Card variant="outlined">
+        <VStack gap="sm">
+          <Heading level={4}>Standard</Heading>
+          <Button variant="primary">Continue</Button>
+        </VStack>
+      </Card>
+    </VStack>
+    <VStack gap="xs">
+      <Text tone="muted">colors.primary overridden</Text>
+      <ThemeModifier override={{ colors: { primary: "#e11d48" } }}>
+        <Card variant="outlined">
+          <VStack gap="sm">
+            <Heading level={4}>Co-branded</Heading>
+            <Button variant="primary">Continue</Button>
+          </VStack>
+        </Card>
+      </ThemeModifier>
+    </VStack>
+  </Grid>
+</InlineCodeExample>
+
+## Overriding multiple tokens together
+
+Pass as many keys as needed in one override — useful for a full accent re-theme (primary color, a matching subtle background, a matching border tint) rather than just the brand color in isolation.
+
+<InlineCodeExample>
+  <ThemeModifier
+    override={{
+      colors: {
+        primary: "#0f766e",
+        background: { subtle: "#f0fdfa" },
+        border: { default: "#99f6e4" },
+      },
+    }}
+  >
+    <Card variant="filled">
+      <VStack gap="sm">
+        <Heading level={4}>Teal brand override</Heading>
+        <Text tone="secondary">
+          Primary, subtle background, and default border re-pointed together
+          for a single co-branded subtree.
+        </Text>
+        <Button variant="primary">Get started</Button>
+      </VStack>
+    </Card>
+  </ThemeModifier>
+</InlineCodeExample>
+
+## Nesting
+
+`ThemeModifier`s compose — a nested `ThemeModifier` deep-merges onto whatever theme it inherits (including an ancestor `ThemeModifier`'s overrides), not the library's base theme. That means overrides accumulate as you nest, unlike `ThemeStyleBlock`'s registers (which always re-derive from the root).
+
+## Accessibility
+
+- `ThemeModifier` changes color values only — it does not itself vet the result for contrast. If you override `colors.primary` (or any text/background pairing), re-check contrast against WCAG AA in both light and dark mode; the library can't verify an arbitrary override for you.
+- No DOM output, no interactive behavior, no ARIA implications of its own.
+
+## Common pitfalls
+
+- **Don't hand-pick a color without checking contrast in dark mode too.** `ThemeModifier` overrides the value directly — it bypasses the built-in `getMinContrastTextColor` safeguards some components (like `Card`'s `featured` variant) otherwise apply automatically.
+- **Don't use `ThemeModifier` for spacing/font/radius scaling.** That's `ThemeStyleBlock`'s job (`register`) — it derives cleanly from primitives and won't compound when nested, whereas stacking `ThemeModifier` size overrides would.
+- **Don't wrap the entire app in a `ThemeModifier` for the base theme.** That's what `SquonkThemeProvider` (with `primitives`) is for — `ThemeModifier` is for a *subtree* override layered on top of an already-provided theme.
+
+
+## Override order and mode
+
+Resolved overrides are recorded in scope order and reapplied when a nested ThemeStyleBlock rebuilds primitives. A brand color therefore survives a compact/display register change or a mode flip. Later overrides win for the keys they supply; siblings are unaffected. Explicit resolved size overrides also survive rebuilding, so use primitive/register changes when values should continue scaling.
+
+`mode` is handled as a rebuild input. A mode-only modifier resolves the corresponding palette, and a later ThemeStyleBlock inversion takes precedence over that mode input. Supplying an entire resolved theme pins its explicit token values; use the root provider or `invertMode` when you want automatic palette selection rather than pinned colors.
+

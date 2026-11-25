@@ -1,0 +1,72 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as FieldsetStories from "./fieldset.stories.tsx";
+import meta from "./fieldset.stories.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Fieldset
+
+<ResizableCanvas of={FieldsetStories.Default} defaultHeight={420} />
+
+`Fieldset` groups related fields under a legend: an address, contact details, a
+section of a long form. Screen readers announce the legend when focus enters the
+group, so "Postcode" is heard as "Postal address, Postcode".
+
+```tsx
+import { Fieldset } from "@squonk/ui/fieldset";
+
+<Fieldset legend="Postal address" helperText="Where we send newsletters.">
+  <TextField label="Street address" />
+  <TextField label="Postcode" />
+</Fieldset>
+```
+
+`RadioGroup` and `CheckboxGroup` already render their own fieldset and legend; don't
+wrap a single one of them in another `Fieldset`.
+
+<Controls />
+
+## Disabled
+
+`disabled` disables every control inside: native ones through the `<fieldset>`
+element, and the library's React Aria fields through their contexts, so they look disabled too.
+
+<ResizableCanvas of={FieldsetStories.Disabled} defaultHeight={420} />
+
+## Group errors
+
+Use `error` for a problem with the group as a whole ("give at least one"). Errors
+about one field belong on that field. The group gets a red rule down its side,
+and the error is part of the group's description and announced when it appears.
+
+<ResizableCanvas of={FieldsetStories.WithError} defaultHeight={320} />
+
+## Form sections
+
+Give each section of a long form its own fieldset. Keep legends short, because
+they are repeated before every field inside.
+
+<ResizableCanvas of={FieldsetStories.FormSections} defaultHeight={620} />
+
+## Accessibility
+
+- Renders a native `<fieldset>` named by its `<legend>`. Helper and error text are
+  its description.
+- `hideLegend` hides the legend visually but keeps it for screen readers. Use it
+  only when a visible heading right above already says the same thing.
+- Don't nest fieldsets more than one level deep; the repeated legends become noise.
+
+## Common pitfalls
+
+- **Don't use a Fieldset just for spacing.** It adds a named group to the
+  accessibility tree. Use `VStack` to space unrelated fields.
+- **Don't put the only instructions in the legend.** Keep it to a name and put
+  guidance in `helperText`.
+
+## UX guidance
+
+- [Labels, help and validation](?path=/docs/patterns-labels-help-and-validation--docs)

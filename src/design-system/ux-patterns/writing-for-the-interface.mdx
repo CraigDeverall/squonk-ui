@@ -1,0 +1,93 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../documentation-imports/index.ts";
+import { Do, DoDont, Dont } from "./pattern-blocks.tsx";
+import { SpecificWordsExample, VagueWordsExample } from "./screen-examples.tsx";
+
+<Meta title="Patterns/Writing for the interface" />
+
+<HideSbBar />
+
+# Writing for the interface
+
+The words are part of the design. Components make a screen accessible; only the
+words make it clear. Write plainly, say what will happen, and use the same word
+for the same thing everywhere. This page covers the wording (microcopy) you pass
+to components: labels, buttons, messages, empty states and headings.
+
+<DoDont>
+  <Do caption="The error says how to fix it, and the button says what it does.">
+    <SpecificWordsExample />
+  </Do>
+  <Dont caption="“Invalid input” doesn't help, and “OK” doesn't say what will happen.">
+    <VagueWordsExample />
+  </Dont>
+</DoDont>
+
+## The basics
+
+- **Plain words, short sentences.** Write for someone busy and reading on a
+  phone. Use the words your users use, not internal names.
+- **Sentence case** for everything: headings, labels, buttons, menu items
+  ("Add a bank account", not "Add A Bank Account").
+- **Say "you"** for the reader. Use "we" for the organisation, sparingly.
+- **Front-load.** Put the important words first, so scanning and typeahead work.
+- **Numbers as numerals** ("3 sightings"), dates people can't misread ("28
+  November 2026"), money with its currency where it's ambiguous.
+
+## Labels, buttons and messages, by component
+
+| Text | Write | Example |
+| --- | --- | --- |
+| Button | A verb and its object: what will happen | "Save address", "Log sighting", "Delete draft" |
+| Link | Where it goes, readable on its own | "See all activity", not "Click here" |
+| Field `label` | The thing being asked for, a noun | "Email", "Membership number" |
+| `helperText` | Format, limits or why you're asking | "Starts with SQ, such as SQ-104-772" |
+| Field `error` | What's wrong and how to fix it | "Enter a date in the past" |
+| Fieldset `legend` | The question | "Which interests do you have?" |
+| Heading | What the section or page is about | "Payment options" |
+| Toast | What just happened, in the past tense | "Invite sent to Aroha" |
+| Alert | What's going on, then what to do | "Your annual dues are due in 3 days. Pay by 28 November." |
+| ConfirmModal | The question with its consequence; the action as the button | "Delete this draft? You can't undo this." with "Delete draft" |
+| EmptyState | What would be here, and the next step | "No sightings yet" with "Log a sighting" |
+| Badge | A state in one or two words | "Overdue", "3 new" |
+| Switch label | The setting, not its state | "Email reminders" |
+| Tooltip | A name or a few words, never instructions people need | "Search sightings" |
+
+## Errors
+
+- **Say what happened and what to do**, in that order. Don't blame the user.
+- **Be specific**: "Enter an amount less than $10,000", not "Invalid value".
+- **Don't say "error"** or show codes unless people need to quote them to
+  support; then give the code after the plain words.
+- **A failed load is not empty.** "We couldn't load your sightings. Try again."
+
+## Consistent words
+
+Pick one word for each thing and action and keep it: "Delete" or "Remove", not
+both for the same thing; "Sighting report", not "Entry" on one screen and "Sighting report" on the
+next. A button and the page it opens use the same words ("Add a bank account"
+opens "Add a bank account").
+
+## Accessibility
+
+- Names must make sense out of context: screen readers list links, buttons and
+  headings on their own.
+- An icon-only control still needs words: IconButton's `label`.
+- Say status in words as well as colour: a badge reads "Overdue", not only red.
+- Avoid directions that depend on sight: "Select Save", not "Click the green
+  button on the right".
+
+## Pitfalls
+
+- **Placeholders as labels or help.** They disappear when people type.
+- **"Are you sure?"** Ask the real question with its consequence.
+- **Marketing tone in a work screen.** "Awesome! You're all set!" adds nothing
+  to "Sighting logged."
+- **Words that change with state** on a control. A Switch's label stays the
+  same whether it's on or off.
+
+## Related
+
+- [Labels, help and validation](?path=/docs/patterns-labels-help-and-validation--docs)
+- [Empty and error states](?path=/docs/patterns-empty-and-error-states--docs)
+- [Destructive actions](?path=/docs/patterns-destructive-actions--docs)

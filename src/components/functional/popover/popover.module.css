@@ -1,0 +1,131 @@
+@layer dt.components {
+  .content {
+    --arrow-size: 10px;
+    --arrow-background: var(--squonk-roles-color-surface);
+    --popover-width: 320px;
+    width: min(var(--popover-width), 100vw - 2 * var(--squonk-components-popover-viewport-margin));
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    padding: var(--squonk-roles-space-surface-inset);
+    background-color: var(--squonk-roles-color-surface);
+    border: var(--squonk-roles-border-width) solid var(--squonk-roles-color-floating-border);
+    border-radius: var(--squonk-roles-radius-surface);
+    box-shadow: var(--squonk-roles-elevation-floating);
+    font-family: var(--squonk-roles-type-font);
+    font-size: var(--squonk-components-popover-text-size);
+    color: var(--squonk-roles-color-on-surface);
+    outline: none;
+    /* React Aria sets an inline z-index; the token wins. */
+    z-index: var(--squonk-roles-layer-popover) !important;
+    transform-origin: var(--trigger-anchor-point);
+  }
+
+  /* React Aria caps the panel's height to the room available; the body
+     scrolls, not the panel, so the arrow is never clipped. */
+  .dialog {
+    display: flex;
+    flex-direction: column;
+    gap: var(--squonk-roles-space-surface-gap);
+    min-height: 0;
+    /* Focus lands on the dialog itself on open; the panel needs no ring. */
+    outline: none;
+  }
+
+  /* 240 / 320 / 420px: a hint, a small form, a richer panel. */
+  .content[data-size="sm"] { --popover-width: 240px; }
+  .content[data-size="lg"] { --popover-width: 420px; }
+
+  /* React Aria puts the arrow box against the edge facing the trigger; the
+     tip is a bordered square centred on that edge, rotated so its bordered
+     corner points out. */
+  .arrow { width: 0; height: 0; }
+
+  .arrowTip {
+    position: absolute;
+    top: calc(var(--arrow-size) / -2);
+    left: calc(var(--arrow-size) / -2);
+    box-sizing: border-box;
+    width: var(--arrow-size);
+    height: var(--arrow-size);
+    background: var(--arrow-background);
+    rotate: 45deg;
+    border-top: var(--squonk-roles-border-width) solid var(--squonk-roles-color-floating-border);
+    border-left: var(--squonk-roles-border-width) solid var(--squonk-roles-color-floating-border);
+  }
+
+  .arrow[data-placement="top"] .arrowTip { rotate: 225deg; }
+  .arrow[data-placement="left"] .arrowTip { rotate: 135deg; }
+  .arrow[data-placement="right"] .arrowTip { rotate: -45deg; }
+
+  .header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--squonk-roles-space-title-row-gap);
+  }
+
+  .titles {
+    display: flex;
+    flex-direction: column;
+    gap: var(--squonk-roles-space-text-gap);
+    min-width: 0;
+  }
+
+  .title {
+    margin: 0;
+    font-size: var(--squonk-components-popover-title-size);
+    font-weight: var(--squonk-roles-type-strong);
+    line-height: var(--squonk-roles-type-tight-line-height);
+  }
+
+  .description {
+    margin: 0;
+    color: var(--squonk-roles-color-on-surface-supporting);
+  }
+
+  .close {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: var(--squonk-presentation-control-height-compact);
+    height: var(--squonk-presentation-control-height-compact);
+    margin: calc(var(--squonk-components-popover-close-offset) * -1) calc(var(--squonk-components-popover-close-offset) * -1) 0 0;
+    padding: 0;
+    border: none;
+    border-radius: var(--squonk-roles-radius-item);
+    background: transparent;
+    color: var(--squonk-roles-color-dismiss);
+    font-size: var(--squonk-components-popover-close-icon);
+    cursor: pointer;
+  }
+
+  .close[data-hovered] {
+    background-color: var(--squonk-roles-color-hover);
+    color: var(--squonk-roles-color-on-hover);
+  }
+
+  .close[data-focus-visible] {
+    outline: var(--squonk-roles-border-focus-width) solid var(--squonk-roles-color-focus-ring);
+    outline-offset: 0;
+  }
+
+  .body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--squonk-roles-space-surface-gap);
+    min-height: 0;
+    overflow-y: auto;
+    line-height: var(--squonk-roles-type-body-line-height);
+  }
+
+  .footer {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: var(--squonk-roles-space-action-gap);
+    margin-top: var(--squonk-components-popover-footer-offset);
+  }
+}

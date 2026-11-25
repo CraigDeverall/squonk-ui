@@ -1,0 +1,171 @@
+import { Canvas, Controls, Meta } from "@storybook/addon-docs/blocks";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as Stories from "./illustration.stories";
+
+<Meta of={Stories} />
+
+# Illustration
+
+Small spot illustrations for the moments a screen needs a picture: an empty
+list, a search with no results, a step finished, a feature on a landing page.
+They're drawn in one style (ink outlines, paper and tint fills, one accent
+touch), and every colour comes from the theme, so they follow your brand and
+the colour mode with no extra work.
+
+```tsx
+import { InboxIllustration } from "@squonk/ui/illustration";
+
+<EmptyState
+  icon={<InboxIllustration size="lg" />}
+  title="No sightings yet"
+  body="Sightings you log will appear here."
+/>
+```
+
+<ResizableCanvas of={Stories.Default} defaultRecipe="centered" />
+
+<Controls />
+
+## The set
+
+Each illustration is its own component, named for what it means, so import only
+the ones you use. `ILLUSTRATIONS` maps every name to its component, for
+galleries and pickers; importing it brings in every drawing. The tables group
+them by the moment they suit.
+
+<Canvas of={Stories.Gallery} />
+
+### Empty and searching
+
+| Component | For |
+| --- | --- |
+| `InboxIllustration` | Nothing here yet, an empty list or inbox |
+| `SearchIllustration` | Searching, or no results |
+| `FilterIllustration` | No matches for the filters |
+| `MessagesIllustration` | Messages, an empty chat |
+| `ArchiveIllustration` | Archived, stored away, nothing active |
+
+### Success and milestones
+
+| Component | For |
+| --- | --- |
+| `SuccessIllustration` | Done, submitted, saved |
+| `EmailSentIllustration` | Email sent, check your inbox |
+| `AchievementIllustration` | An achievement, a milestone reached |
+
+### Errors and blockers
+
+| Component | For |
+| --- | --- |
+| `WarningIllustration` | Something needs attention, or went wrong |
+| `OfflineIllustration` | Offline, or a service can't be reached |
+| `ServerErrorIllustration` | A server error, the service failed |
+| `MaintenanceIllustration` | Under maintenance, temporarily unavailable |
+| `NotFoundIllustration` | Page not found, lost |
+| `AccessDeniedIllustration` | Access denied, not allowed |
+| `SessionExpiredIllustration` | A session expired, a link timed out, waiting |
+| `LockIllustration` | Private, signed out, permissions |
+
+### Money
+
+| Component | For |
+| --- | --- |
+| `PaymentIllustration` | Payments, billing, a balance |
+| `CartIllustration` | A cart, checkout, an order |
+| `ReceiptIllustration` | Receipts, invoices, a purchase record |
+| `BankIllustration` | Bank accounts, linking a bank |
+| `TransferIllustration` | A transfer, moving money |
+| `SavingsIllustration` | Savings, a goal, a balance growing |
+| `RefundIllustration` | A refund or credit, money returned |
+| `CalculatorIllustration` | Dues, working out amounts, estimates |
+
+### People
+
+| Component | For |
+| --- | --- |
+| `InviteIllustration` | Invite someone, a team, sharing access |
+| `IdentityIllustration` | Identity, verification, a profile |
+| `ConversationIllustration` | Help, chat, an assistant |
+| `FeedbackIllustration` | Feedback, a rating, a review |
+| `SupportIllustration` | Help and support, contact us |
+| `NotificationIllustration` | Notifications, something new |
+
+### Files and data
+
+| Component | For |
+| --- | --- |
+| `DocumentIllustration` | Records, statements, correspondence |
+| `SignatureIllustration` | Sign here, an agreement |
+| `UploadIllustration` | Uploading, adding files |
+| `DownloadIllustration` | Downloading, an export ready |
+| `CloudSyncIllustration` | Syncing, backed up |
+| `DataImportIllustration` | Importing data |
+| `ChartIllustration` | Reports, figures, trends |
+
+### Time and place
+
+| Component | For |
+| --- | --- |
+| `CalendarIllustration` | Dates, deadlines, scheduling |
+| `ScheduleIllustration` | Time, schedules, opening hours |
+| `LocationIllustration` | A place, an address, nearby |
+
+### Onboarding and settings
+
+| Component | For |
+| --- | --- |
+| `WelcomeIllustration` | Welcome, first sign-in, come in |
+| `ChecklistIllustration` | Getting started, onboarding steps |
+| `MobileIllustration` | Continue on your phone, scan to sign in |
+| `SettingsIllustration` | Settings, preferences, options |
+| `FormIllustration` | Forms, applications, a step completed |
+| `ShieldIllustration` | Security, verified, tested |
+| `ConnectIllustration` | Integrations, connected services |
+| `TerminalIllustration` | Setting up, the command line, building |
+| `ComponentsIllustration` | Browsing, a catalogue, choosing |
+| `PaletteIllustration` | Themes, branding, appearance settings |
+| `LightDarkIllustration` | Light and dark mode, display settings |
+| `FocusIllustration` | Accessibility, keyboard use |
+
+## Sizes
+
+`size` takes `sm` (48px), `md` (64px, the default), `lg` (96px) or `xl`
+(128px), from the theme's `components.illustration.size.*` tokens.
+
+<Canvas of={Stories.Sizes} />
+
+## Theming
+
+Illustrations bind to component tokens that point at the shared roles, so they
+change with the theme and nothing else:
+
+| Token | Default | What it colours |
+| --- | --- | --- |
+| `components.illustration.ink` | `roles.color.text` | Outlines and the darkest marks |
+| `components.illustration.paper` | `roles.color.surface` | Pages, windows and cards |
+| `components.illustration.accent` | `roles.color.accent` | The one brand touch |
+| `components.illustration.onAccent` | `roles.color.onAccent` | Marks drawn on the accent |
+| `components.illustration.tintStrength` | `32%` | How much accent is mixed into the tint fill |
+| `components.illustration.stroke` | `1.75` | Outline width, in units of the 48-unit drawing |
+
+The tint is mixed on each illustration, so one inside a `ThemeModifier` or a
+dark section takes that scope's colours. Switch the theme or the mode in the
+toolbar to see the set follow.
+
+## Accessibility
+
+- Most illustrations repeat what the heading or message beside them says. Leave
+  `label` out and the illustration is hidden from assistive technology.
+- When the picture carries meaning nothing else says, give it a `label`: it
+  becomes an image with that name.
+- Never put the only instruction or status in an illustration; say it in text.
+
+## Common pitfalls
+
+- **Using an illustration as an icon.** Icons sit inside controls and lines of
+  text; illustrations sit beside content. Use `Icon` components in buttons,
+  fields and menus.
+- **Recolouring with CSS.** Re-point the `components.illustration.*` tokens (or
+  the roles they follow) instead, so every illustration changes together.
+- **Importing `ILLUSTRATIONS` for one picture.** It brings in every drawing;
+  import the named component.

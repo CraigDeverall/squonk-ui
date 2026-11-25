@@ -1,0 +1,161 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as AreaChartStories from "./area-chart.stories.tsx";
+import meta from "./area-chart.stories.tsx";
+import { AreaChart } from "./area-chart.tsx";
+import { Heading } from "../../functional-primitive/heading/heading.tsx";
+import { Text } from "../../functional-primitive/text/text.tsx";
+import { Card } from "../../layout/card/card.tsx";
+import { Block } from "../../layout-primitive/block/block.tsx";
+import { VStack } from "../../layout-primitive/vstack/vstack.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# AreaChart
+
+<ResizableCanvas of={AreaChartStories.Default} defaultRecipe="block" defaultHeight={380} />
+
+`AreaChart` shows a volume over an ordered axis, usually time: sightings logged per week, dues collected per month. It is a line with a light wash of the series colour beneath it, so the space under the line reads as "how much". Stacked, the top edge is the total and each band is one part of it. For rates, percentages and prices, where the area under the line means nothing, use a [LineChart](?path=/docs/functional-line-chart--docs). To compare parts across unordered categories, use a stacked [BarChart](?path=/docs/functional-bar-chart--docs); for one moment's split of a whole, a [DonutChart](?path=/docs/functional-donut-chart--docs).
+
+<Controls />
+
+## Data and series
+
+Pass one row per point in time, in order. `xKey` names the field on the axis and each entry in `series` names a numeric field and its `label`, which appears in the legend, tooltip and table. `xLabel` heads the first table column and `formatValue` gives values their unit in the tooltip, table and value axis.
+
+<InlineCodeExample>
+  <Block width="640px">
+    <AreaChart
+      title="Sightings logged online"
+      description="Sightings per week, first quarter"
+      data={[
+        { week: "W1", online: 1820 },
+        { week: "W2", online: 1960 },
+        { week: "W3", online: 2140 },
+        { week: "W4", online: 2480 },
+        { week: "W5", online: 2390 },
+        { week: "W6", online: 2710 },
+      ]}
+      xKey="week"
+      xLabel="Week"
+      series={[{ key: "online", label: "Online" }]}
+    />
+  </Block>
+</InlineCodeExample>
+
+A single series is where an area chart is strongest. With several unstacked series the washes overlap and tint each other; past two, a LineChart is easier to read.
+
+## Stacked
+
+`stacked` piles the series so the top edge is their total. Use it only when the series are parts of one whole that people care about: sightings by channel adding up to all sightings logged. Only the bottom band sits on a flat baseline, so the bands above it are hard to compare precisely; put the series that matters most first. The tooltip lists the series top-down to match the stack.
+
+<InlineCodeExample>
+  <Block width="640px">
+    <AreaChart
+      title="All sightings logged"
+      description="Stacked by channel: the top edge is the total"
+      stacked
+      data={[
+        { week: "W1", online: 1820, agent: 940, paper: 310 },
+        { week: "W2", online: 1960, agent: 1010, paper: 290 },
+        { week: "W3", online: 2140, agent: 980, paper: 270 },
+        { week: "W4", online: 2480, agent: 1120, paper: 260 },
+        { week: "W5", online: 2390, agent: 1190, paper: 240 },
+        { week: "W6", online: 2710, agent: 1240, paper: 220 },
+      ]}
+      xKey="week"
+      xLabel="Week"
+      series={[
+        { key: "online", label: "Online" },
+        { key: "agent", label: "Chapter lead" },
+        { key: "paper", label: "Paper" },
+      ]}
+    />
+  </Block>
+</InlineCodeExample>
+
+Leave `stacked` off when the series overlap rather than add up (Wanderers and Keepers logging late are not a meaningful total): each then fills from zero.
+
+## Smooth
+
+`smooth` curves the line without overshooting a point. Use it on dense series where straight joins look jagged. The default straight segments never suggest readings between points, which is the safer choice for a few points.
+
+## Colours and slots
+
+Series take the eight palette slots in order and keep them: pin a series with `slot` so it keeps its colour when a filter removes others. More than eight series draws only the first eight, with a console warning. The palette never cycles.
+
+## Height, loading and empty
+
+The plot height follows the [Presentation](?path=/docs/style-presentation--docs) register: 160px `compact`, 240px `default`, 320px `large`, 400px `hero`. `loading` holds that height with a skeleton and marks the figure `aria-busy`; with no rows the plot shows "No data to show", or your `empty` message.
+
+## In a card
+
+Let the card carry the heading, and set `hideTitle` on the chart. Keep `title`: it still names the chart for screen readers and captions the table view.
+
+<InlineCodeExample>
+  <Block width="640px">
+    <Card>
+      <VStack gap="md">
+        <VStack gap="xs">
+          <Heading level={3}>Logging channels</Heading>
+          <Text tone="secondary">Online logging is up 36% since week 1; paper keeps falling.</Text>
+        </VStack>
+        <AreaChart
+          title="Sightings logged by channel"
+          hideTitle
+          stacked
+          data={[
+            { week: "W1", online: 1820, agent: 940, paper: 310 },
+            { week: "W2", online: 1960, agent: 1010, paper: 290 },
+            { week: "W3", online: 2140, agent: 980, paper: 270 },
+            { week: "W4", online: 2480, agent: 1120, paper: 260 },
+          ]}
+          xKey="week"
+          xLabel="Week"
+          series={[
+            { key: "online", label: "Online" },
+            { key: "agent", label: "Chapter lead" },
+            { key: "paper", label: "Paper" },
+          ]}
+        />
+      </VStack>
+    </Card>
+  </Block>
+</InlineCodeExample>
+
+## Customising
+
+The chart reads these custom properties from its root `<figure>`. Set them on the chart itself through `style` or `className`; a parent can't override them because the figure defines its own defaults.
+
+| Variable | Controls | Default |
+| --- | --- | --- |
+| `--chart-series-1` … `--chart-series-8` | The colour of each palette slot: lines, washes, legend and tooltip keys | `--squonk-roles-color-data-series1` … `8` |
+| `--chart-mark-gap` | The ring around the hovered point | `--squonk-components-chart-mark-gap` (the default background) |
+| `--chart-area-opacity` | Opacity of the wash under each line | `--squonk-components-chart-area-opacity` (0.12) |
+| `--chart-gridline` | Horizontal gridlines | `--squonk-components-chart-gridline` (default border) |
+| `--chart-axis-line` | Axis lines and the vertical hover cursor | `--squonk-components-chart-axis-line` (strong border) |
+| `--chart-cursor` | The band that follows the pointer (BarChart) | `--squonk-components-chart-cursor` (subtle background) |
+
+On a surface other than the default background, such as a `filled` Card, set `--chart-mark-gap` to that surface (`var(--squonk-roles-color-page)` for `filled`) so the ring doesn't show as a halo. Keep `--chart-area-opacity` low: the wash is a tint, and a solid block hides the gridlines and the bands beneath. Prefer `slot` to overriding `--chart-series-*`; the palette is validated for colour-vision deficiency in light and dark mode.
+
+## Accessibility
+
+- The chart is a `<figure>` named by `title` and described by `description`. `title` is required; `hideTitle` hides it visually only.
+- The "Table view" toggle button (`aria-pressed`) swaps the plot for a table of every value, captioned with `title`. It is the dependable way to read exact values with a keyboard, screen reader or magnifier.
+- The plot is focusable (`role="application"`); arrow keys step through the points and show each point's tooltip.
+- Colour never works alone: two or more series get a legend, the tooltip names each series, and the table labels each column. Light-mode slots 3 to 5 are under 3:1 contrast on white, which is why the legend and table view are always present.
+- Text never takes a series colour. Name series in words rather than colouring a caption to match its band.
+
+## Common pitfalls
+
+- **Stacking things that don't add up.** If the total is meaningless, the top edge lies. Leave `stacked` off, or use a LineChart.
+- **An area chart for a rate.** Interest rates and percentages have no "volume"; the wash suggests one. Use a LineChart.
+- **Many overlapping unstacked series.** Washes muddy each other past two. Stack them if they add up, otherwise use a LineChart or small multiples.
+- **Two value axes.** There is no dual-axis option. Put measures with different units in separate charts.
+- **More than eight series.** Only the first eight are drawn. Fold the small ones into "Other".
+- **A rainbow stack.** Eight thin bands read as noise. Keep the stack to the three or four parts people compare and fold the rest.
+- **Raising `--chart-area-opacity` to make it "pop".** A solid fill hides the lines and gridlines behind it.

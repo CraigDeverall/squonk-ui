@@ -1,0 +1,100 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as AvatarStories from "./avatar.stories.tsx";
+import meta from "./avatar.stories.tsx";
+import { Avatar } from "./avatar.tsx";
+import { Presentation } from "../../style/presentation/presentation.tsx";
+import { HStack } from "../../layout-primitive/hstack/hstack.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Avatar
+
+<ResizableCanvas
+  of={AvatarStories.Initials}
+  defaultRecipe="centered"
+  defaultHeight={120}
+/>
+
+`Avatar` represents a person — preferring a photo when available, falling back to initials when not. The fallback background is hashed from `name` so the same user gets the same color across sessions and surfaces. Sizing is driven by the surrounding `Presentation` register, not a prop, so a stack of avatars stays in scale with its parent.
+
+<Controls />
+
+## With and without an image
+
+Provide `src` for a photo; the wrapper still labels the image with `name` for screen-reader users. If the image 404s or fails to load, the component automatically falls back to initials — you don't need to pre-flight the URL.
+
+<InlineCodeExample>
+  <HStack gap="sm" align="center">
+    <Avatar name="Grace Hopper" src="https://i.pravatar.cc/120?img=47" />
+    <Avatar name="Ada Lovelace" />
+    <Avatar name="Margaret Hamilton" src="https://broken.example/nope.jpg" />
+  </HStack>
+</InlineCodeExample>
+
+## Shapes
+
+`circle` is the default and reads as "person". `rounded` is for non-person entities — bots, services, workspaces — so the shape itself signals "this isn't a human".
+
+<InlineCodeExample>
+  <HStack gap="sm">
+    <Avatar name="Linus Torvalds" shape="circle" />
+    <Avatar name="Build Bot" shape="rounded" />
+  </HStack>
+</InlineCodeExample>
+
+## Sizing via Presentation
+
+Wrap an Avatar (or a stack of them) in a `Presentation` register to scale the whole group. The component reads from context — there is no `size` prop.
+
+<InlineCodeExample>
+  <HStack gap="sm" align="center">
+    <Presentation register="compact"><Avatar name="Ada Lovelace" /></Presentation>
+    <Presentation register="default"><Avatar name="Ada Lovelace" /></Presentation>
+    <Presentation register="large"><Avatar name="Ada Lovelace" /></Presentation>
+    <Presentation register="hero"><Avatar name="Ada Lovelace" /></Presentation>
+  </HStack>
+</InlineCodeExample>
+
+## Overriding initials
+
+`computeInitials` picks the first letter of the first and last name. Override with `initials` for ideographic names, single-word handles, or organisations.
+
+<InlineCodeExample>
+  <HStack gap="sm">
+    <Avatar name="Squonk Society" initials="SQ" />
+    <Avatar name="李雷" initials="李" />
+    <Avatar name="root" initials="#" />
+  </HStack>
+</InlineCodeExample>
+
+## Group
+
+A row of avatars reads as a list of collaborators. Keep the gap small so they read as a unit, not as separate decisions.
+
+<InlineCodeExample>
+  <HStack gap="sm">
+    <Avatar name="Ada Lovelace" />
+    <Avatar name="Grace Hopper" />
+    <Avatar name="Margaret Hamilton" />
+    <Avatar name="Katherine Johnson" />
+  </HStack>
+</InlineCodeExample>
+
+## Accessibility
+
+- The wrapper carries `role="img"` and `aria-label={name}`, so the user is always identified — image or initials.
+- The inner `<img>` uses empty `alt=""` to prevent screen readers from announcing the same name twice.
+- The deterministic background color always meets contrast with the computed text color via `getMinContrastTextColor` — pastel hashes don't break legibility.
+- A native `title` attribute provides a hover tooltip for sighted users.
+
+## Common pitfalls
+
+- **Don't pass a size prop — there isn't one.** To scale, wrap in a `Presentation` register; that way nested controls (buttons, badges) scale together.
+- **Don't use `circle` for non-human entities.** Bots, services, and workspaces should be `rounded` so the shape carries meaning.
+- **Don't rely on the hashed color as a brand color.** It's deterministic but not curated — fine for differentiation, not for marketing surfaces.
+- **Don't omit `name`.** It's the alt text, the tooltip, and the seed for initials and color — without it the avatar is meaningless to assistive tech.

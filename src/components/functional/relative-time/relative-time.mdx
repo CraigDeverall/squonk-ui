@@ -1,0 +1,42 @@
+import { Meta, Canvas, Controls } from "@storybook/addon-docs/blocks";
+import * as RelativeTimeStories from "./relative-time.stories";
+
+<Meta of={RelativeTimeStories} />
+
+# Relative time
+
+`RelativeTime` shows a moment as how long ago it was, such as "2 hours ago" or "yesterday". Press it to see the full date and time in a small popover.
+
+```tsx
+import { RelativeTime } from "@squonk/ui/relative-time";
+
+<RelativeTime value={claim.saidAt} />
+```
+
+<Canvas of={RelativeTimeStories.Default} />
+
+<Controls of={RelativeTimeStories.Default} />
+
+## When to use it
+
+Use it for recent activity, where the question is "how fresh is this?": a byline, a feed, a list of changes. People read "3 days ago" faster than a date.
+
+Show the full date instead when the exact day matters, such as a due date or a date a record is about. A relative time that keeps changing is no use there.
+
+## How it works
+
+- The words come from the browser's `Intl.RelativeTimeFormat`, in the locale given or the browser's. Under 45 seconds it says "now".
+- The text stays current while the page is open. It checks every 20 seconds within the first hour, then every 5 minutes. Pass `now` to freeze it, for tests and stories.
+- It renders a `<time>` element with the exact moment in `dateTime`.
+
+<Canvas of={RelativeTimeStories.InBylines} />
+
+## Accessibility
+
+The trigger is a button named by both the words and the full date and time, so a screen reader hears the exact moment without opening the popover. The popover opens on Enter or Space and closes on Escape, and focus returns to the time.
+
+## Common pitfalls
+
+- **Do not use it for a date something is about.** A due date or a release date needs the date itself.
+- **Do not put it where people compare times.** In a table people sort and scan, show dates, so the column lines up.
+- **Pass ISO strings with a time zone.** A date and time with no offset is read as local time, so it can be hours out.

@@ -1,0 +1,45 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../documentation-imports/index.ts";
+import { ComponentGallery } from "../../documentation-imports/component-gallery.tsx";
+
+<Meta title="Components/Overview" />
+
+<HideSbBar />
+
+# Components
+
+Every component in SquonkUI, grouped by the job it does. Each example below
+is the real component, in the current theme: try them, switch the theme in the
+toolbar, then follow a name to its page for variants, accessibility notes and code.
+
+## How the pieces fit
+
+- **Components own their behaviour, not their placement.** A `Modal` traps focus
+  and closes on `Escape`; a `TextField` carries its label, help and error. None of
+  them takes a margin. Where things go is decided by the layout components around
+  them.
+- **Only stacks and grids take layout props.** `gap`, `justify`, `padding` and
+  `columns` live on `VStack`, `HStack`, `Grid`, `Block` and friends, with one
+  vocabulary everywhere (`gap="md"` means the same in each). Named layouts such as
+  `Card` and `Section` take intent instead (`variant`, `tone`), and follow the
+  surrounding register.
+- **Props say what you mean.** `variant="primary"`, `tone="error"`. The theme
+  decides how that looks, in light and dark mode.
+- **Text follows the register.** Wrap a dense panel in `Presentation register="compact"`
+  and its buttons, fields and text tighten together.
+- **A new layout earns its name.** Extract one when an arrangement has a name in
+  product language, appears in three or more places, and needs a narrower API
+  than the stacks it's built from. Otherwise keep it as stacks in that screen.
+
+## Choosing between similar components
+
+- **Button or Link?** It changes data or state: `Button`. It changes the URL: `Link`.
+- **Checkbox or Switch?** Saved with a form: `Checkbox`. Applies straight away: `Switch`.
+- **Badge or Tag?** Reports a status or count: `Badge`. Names a value someone chose: `Tag`.
+  See [Labels: Badge or Tag](?path=/docs/patterns-labels-badge-or-tag--docs).
+- **Alert, Toast or Modal?** In context: `Alert`. A brief confirmation: `Toast`. Needs an
+  answer before continuing: `Modal`. See [Toasts, alerts and dialogs](?path=/docs/patterns-toasts-alerts-and-dialogs--docs).
+- **Spinner, Progress Bar or Skeleton?** You know the content's shape: `Skeleton`. You can
+  measure progress: `Progress Bar`. A short wait: `Spinner`.
+
+<ComponentGallery />

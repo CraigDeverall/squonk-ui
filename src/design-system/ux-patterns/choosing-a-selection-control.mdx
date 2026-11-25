@@ -1,0 +1,89 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../documentation-imports/index.ts";
+import { Do, DoDont, Dont, Example } from "./pattern-blocks.tsx";
+import { HiddenFewOptionsExample, SelectionControlsExample, VisibleFewOptionsExample } from "./pattern-examples.tsx";
+
+<Meta title="Patterns/Choosing a selection control" />
+
+<HideSbBar />
+
+# Choosing a selection control
+
+| Situation | Use |
+| --- | --- |
+| One choice from a few options that people should compare at a glance | [RadioGroup](?path=/docs/functional-radio-group--docs) |
+| One choice from a longer list, or where space is tight | [Select](?path=/docs/functional-select--docs) |
+| Any number of independent choices | [CheckboxGroup](?path=/docs/functional-checkboxgroup--docs) |
+| One yes/no setting | [Checkbox](?path=/docs/functional-checkbox--docs) in a form, or [Switch](?path=/docs/functional-switch--docs) for a setting that applies at once (see [Switches, checkboxes and saving](?path=/docs/patterns-switches-checkboxes-and-saving--docs)) |
+| Choosing from hundreds of values, or values found by searching | A [Select](?path=/docs/functional-select--docs) with `searchable` |
+
+<Example caption="Radios for a few options worth comparing, checkboxes for any number, a Select for a long list, and a searchable Select when people know what they're looking for.">
+  <SelectionControlsExample />
+</Example>
+
+## Radio buttons show the options
+
+`RadioGroup` keeps every option visible, so people can compare them without
+opening anything. It suits short, meaningful choices (a plan, a delivery speed),
+especially when each option needs `helperText`. Arrow keys move and select;
+Tab enters and leaves the group once.
+
+**Our rule of thumb:** up to about five options, and when the options are worth
+reading side by side, use radios. The sources we checked give no number; this is
+our own judgement.
+
+<DoDont>
+  <Do caption="Two answers, both visible: one click to answer.">
+    <VisibleFewOptionsExample />
+  </Do>
+  <Dont caption="Two answers hidden behind a select: an extra click, and nothing to compare.">
+    <HiddenFewOptionsExample />
+  </Dont>
+</DoDont>
+
+## Select saves space
+
+`Select` hides the options until opened, which saves space but costs a click and
+hides the alternatives. Typing jumps to matching options, which matters more as
+lists grow (the WAI-ARIA guidance recommends typeahead from about eight options).
+Keep option labels short and distinct at the start, so typeahead and scanning work.
+
+`Select` holds one value. For several values, use checkboxes; a select that
+silently becomes multi-select confuses keyboard and screen-reader users.
+
+## Checkbox groups
+
+`CheckboxGroup` puts related checkboxes in a `fieldset` whose `legend` states the
+question; keep each checkbox's own label short. A parent "select all" checkbox can use
+`indeterminate` when only some children are checked.
+
+## Long or open-ended lists
+
+When users know what they are looking for in a long list (countries, people),
+they need to type to filter. Add `searchable` to the `Select`: typing filters by
+label and description, and `onSearchChange` with `filter={false}` searches a
+server instead.
+
+## Settings and disabled options
+
+Whether a choice applies at once or waits for Save is your app's decision; make
+it clear and keep it consistent (see
+[Switches, checkboxes and saving](?path=/docs/patterns-switches-checkboxes-and-saving--docs)).
+A disabled option needs a visible reason when people would otherwise wonder why
+they can't pick it. Check keyboard use, long labels and the compact register.
+
+## Related
+
+- [Labels, help and validation](?path=/docs/patterns-labels-help-and-validation--docs)
+- [Labels: Badge or Tag](?path=/docs/patterns-labels-badge-or-tag--docs)
+
+---
+
+Sources, paraphrased: [WAI-ARIA Authoring Practices: listbox](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/),
+[combobox](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/),
+[radio group](https://www.w3.org/WAI/ARIA/apg/patterns/radio/) and
+[checkbox](https://www.w3.org/WAI/ARIA/apg/patterns/checkbox/), © W3C, under the
+[W3C Software and Document License](https://www.w3.org/copyright/software-license/);
+[React Aria ComboBox](https://react-aria.adobe.com/ComboBox) and
+[Building a ComboBox](https://react-aria.adobe.com/blog/building-a-combobox), © Adobe;
+[Chakra UI v3 Checkbox](https://chakra-ui.com/docs/components/checkbox) (MIT).

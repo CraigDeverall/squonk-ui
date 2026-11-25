@@ -1,0 +1,60 @@
+/* Illustrations. Every colour and stroke is a component token, so a theme can
+   recolour them all at once; the tint is mixed here, on the element, so it
+   follows the theme in effect at this point of the page. */
+@layer dt.components {
+  .root {
+    --illustration-size: var(--squonk-components-illustration-size-md);
+    --illustration-tint: color-mix(
+      in srgb,
+      var(--squonk-components-illustration-accent) var(--squonk-components-illustration-tint-strength),
+      var(--squonk-components-illustration-paper)
+    );
+    display: inline-block;
+    flex: none;
+    inline-size: var(--illustration-size);
+    block-size: var(--illustration-size);
+    vertical-align: middle;
+    line-height: 0;
+  }
+
+  .root[data-size="sm"] { --illustration-size: var(--squonk-components-illustration-size-sm); }
+  .root[data-size="lg"] { --illustration-size: var(--squonk-components-illustration-size-lg); }
+  .root[data-size="xl"] { --illustration-size: var(--squonk-components-illustration-size-xl); }
+
+  .svg {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    overflow: visible;
+  }
+
+  /* Outlines first, so a fill class after it wins on shapes that use both. */
+  .ink {
+    fill: none;
+    stroke: var(--squonk-components-illustration-ink);
+    stroke-width: var(--squonk-components-illustration-stroke);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .paper { fill: var(--squonk-components-illustration-paper); }
+  .tint { fill: var(--illustration-tint); }
+  .accent { fill: var(--squonk-components-illustration-accent); }
+  .inkFill { fill: var(--squonk-components-illustration-ink); }
+
+  .accentLine,
+  .focusRing,
+  .onAccentLine,
+  .checkLine,
+  .inkThick {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .accentLine { stroke: var(--squonk-components-illustration-accent); stroke-width: calc(var(--squonk-components-illustration-stroke) * 1.3); }
+  .focusRing { stroke: var(--squonk-components-illustration-ink); stroke-width: var(--squonk-components-illustration-stroke); stroke-dasharray: 3 3; }
+  .onAccentLine { stroke: var(--squonk-components-illustration-on-accent); stroke-width: calc(var(--squonk-components-illustration-stroke) * 1.15); }
+  .checkLine,
+  .inkThick { stroke: var(--squonk-components-illustration-ink); stroke-width: calc(var(--squonk-components-illustration-stroke) * 1.4); }
+}

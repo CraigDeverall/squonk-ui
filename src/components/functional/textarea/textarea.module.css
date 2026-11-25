@@ -1,0 +1,126 @@
+@layer dt.components {
+  .root {
+    display: inline-flex;
+    flex-direction: column;
+    gap: var(--squonk-roles-space-field-gap);
+    width: 100%;
+    font-family: var(--squonk-roles-type-font);
+    color: var(--squonk-roles-color-text);
+  }
+
+  .fit { width: fit-content; }
+
+  .label {
+    font-size: var(--squonk-roles-type-label);
+    font-weight: var(--squonk-roles-type-strong);
+    color: var(--squonk-roles-color-label);
+  }
+
+  /* Matches TextField's box; the vertical padding centres the first line
+     as a single-line control of the same register would. */
+  .textarea {
+    --field-accent: var(--squonk-roles-color-field-border-focus);
+    /* One line's height in this register. The corners round no further than
+       half of it, so a pill theme's textarea has a single-line field's ends
+       at any height instead of swelling into an oval as it grows. */
+    --textarea-line: var(--squonk-presentation-control-height-default);
+    width: 100%;
+    box-sizing: border-box;
+    min-height: var(--squonk-presentation-control-height-default);
+    padding: var(--squonk-components-textarea-padding-block-default) var(--squonk-roles-control-padding-inline-default);
+    font-size: var(--squonk-roles-control-font-size-default);
+    font-family: var(--squonk-roles-type-font);
+    line-height: var(--squonk-roles-type-body-line-height);
+    color: var(--squonk-roles-color-field-text);
+    background-color: var(--squonk-roles-color-field-background);
+    border: var(--squonk-roles-border-width) solid var(--squonk-roles-color-field-border);
+    border-width: var(--squonk-roles-control-field-border);
+    background-image: var(--squonk-roles-relief-well-fill);
+    background-blend-mode: var(--squonk-roles-relief-blend);
+    box-shadow: var(--squonk-roles-relief-well-edge), var(--squonk-roles-elevation-field);
+    border-radius: min(var(--squonk-roles-radius-control), calc(var(--textarea-line) / 2));
+    outline: none;
+    resize: vertical;
+  }
+
+  .textarea[data-autoresize] { resize: none; }
+
+  .textarea[data-register="compact"] {
+    min-height: var(--squonk-presentation-control-height-compact);
+    --textarea-line: var(--squonk-presentation-control-height-compact);
+    padding: var(--squonk-components-textarea-padding-block-compact) var(--squonk-roles-control-padding-inline-compact);
+    font-size: var(--squonk-roles-control-font-size-compact);
+  }
+  .textarea[data-register="large"] {
+    min-height: var(--squonk-presentation-control-height-large);
+    --textarea-line: var(--squonk-presentation-control-height-large);
+    padding: var(--squonk-components-textarea-padding-block-large) var(--squonk-roles-control-padding-inline-large);
+    font-size: var(--squonk-roles-control-font-size-large);
+  }
+  .textarea[data-register="hero"] {
+    min-height: var(--squonk-presentation-control-height-hero);
+    --textarea-line: var(--squonk-presentation-control-height-hero);
+    padding: var(--squonk-components-textarea-padding-block-hero) var(--squonk-roles-control-padding-inline-hero);
+    font-size: var(--squonk-roles-control-font-size-hero);
+  }
+
+  .textarea::placeholder { color: var(--squonk-roles-color-placeholder); }
+
+  .textarea:hover:not(:disabled) { border-color: var(--squonk-roles-color-field-border-hover); }
+
+  /* Focus: accent border plus the theme's field halo (by default, 2px of the accent at 20%). */
+  .textarea:focus-visible {
+    border-color: var(--field-accent);
+    box-shadow:
+      0 0 0 var(--squonk-roles-interaction-field-focus-halo) color-mix(in srgb, var(--field-accent) var(--squonk-roles-interaction-field-focus-strength), transparent),
+      inset 0 var(--squonk-roles-interaction-field-focus-underline) 0 var(--field-accent),
+      var(--squonk-roles-relief-well-edge),
+      var(--squonk-roles-elevation-field);
+  }
+
+  .textarea[data-invalid],
+  .textarea[data-invalid]:hover:not(:disabled) {
+    --field-accent: var(--squonk-roles-color-invalid);
+    border-color: var(--squonk-roles-color-invalid);
+  }
+
+  .textarea:disabled {
+    opacity: var(--squonk-roles-state-disabled-opacity);
+    cursor: not-allowed;
+    background-color: var(--squonk-roles-color-field-background-disabled);
+    background-image: none;
+    resize: none;
+  }
+
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--squonk-roles-space-action-gap);
+  }
+
+  .message {
+    font-size: var(--squonk-roles-type-hint);
+    color: var(--squonk-roles-color-hint);
+  }
+
+  .message[slot="errorMessage"] { color: var(--squonk-roles-color-invalid); }
+
+  .count {
+    flex-shrink: 0;
+    font-size: var(--squonk-roles-type-hint);
+    font-variant-numeric: tabular-nums;
+    color: var(--squonk-roles-color-hint);
+  }
+
+  .count[data-full] { color: var(--squonk-roles-color-invalid-text); }
+
+  .visuallyHidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}

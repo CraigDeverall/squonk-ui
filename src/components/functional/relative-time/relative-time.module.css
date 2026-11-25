@@ -1,0 +1,32 @@
+@layer dt.components {
+  /* Reads as the text around it, with a dotted underline that says it opens more. */
+  .trigger {
+    display: inline;
+    margin: 0;
+    padding: 0;
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: 0;
+    border-radius: var(--squonk-roles-radius-control);
+    text-decoration: underline dotted;
+    text-decoration-color: var(--squonk-roles-color-text-supporting);
+    text-underline-offset: 0.2em;
+    cursor: pointer;
+  }
+
+  .trigger:hover {
+    color: var(--squonk-roles-color-text);
+    text-decoration-color: currentColor;
+  }
+
+  .trigger:focus-visible {
+    outline: var(--squonk-roles-border-focus-width) solid var(--squonk-roles-color-focus-ring);
+    outline-offset: var(--squonk-roles-border-focus-offset);
+  }
+
+  /* Wraps in the small popover, so a long weekday and month never scroll. */
+  .full {
+    font-variant-numeric: tabular-nums;
+  }
+}

@@ -1,0 +1,157 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../documentation-imports/index.ts";
+import { Example } from "./pattern-blocks.tsx";
+import { AppShellExample, ReadingColumnExample } from "./screen-examples.tsx";
+
+<Meta title="Patterns/Page layouts and app shells" />
+
+<HideSbBar />
+
+# Page layouts and app shells
+
+Most screens are one of a few shapes: a signed-in app with navigation, a page of
+content to read, a landing page made of bands, or a workspace of panels. Pick the
+shape first, then fill it. The parent owns placement and space; components size
+themselves.
+
+## Choosing a shape
+
+| The screen is… | Compose | Example |
+| --- | --- | --- |
+| A signed-in app: several sections people move between | `StickyHeader`, then a row of [Sidebar](?path=/docs/layout-sidebar--docs) with [NavList](?path=/docs/components-navigation-navlist--docs) and a `<main>` | [Member dashboard](?path=/story/examples-member-dashboard--overview) |
+| A task: a form, a sighting report, a payment | The app shell, with the task in a narrow column ([Container](?path=/docs/layout-primitives-container--docs) `size="tablet"`) | [Log a sighting](?path=/story/examples-log-a-sighting--gst-return) |
+| A page to read: help, a policy, a statement | One column capped at a readable width, titled with [Heading](?path=/docs/functional-primitives-heading--docs)s | Below |
+| A landing or marketing page | [Page](?path=/docs/layout-page--docs) with a [Header](?path=/docs/layout-header--docs), [Section](?path=/docs/layout-section--docs)s and a [Footer](?path=/docs/layout-footer--docs) | [Cards and landing sections](?path=/docs/patterns-cards-and-landing-sections--docs) |
+| A workspace: a list and its detail, an editor and a preview | [ResizablePanels](?path=/docs/components-layout-page-structure-resizable-panels--docs) inside the app shell | [Resizable workspaces](#resizable-panels-and-workspaces) |
+| A sign-in or a single focused step outside the app | A narrow [Card](?path=/docs/layout-card--docs) in the middle of the page ([Centered](?path=/docs/layout-primitives-centered--docs)) | [Member sign-in](?path=/story/examples-member-sign-in--sign-in) |
+
+## The app shell
+
+A header across the top, side navigation, and the page's own header over its
+content. The page header holds a [Breadcrumb](?path=/docs/functional-breadcrumb--docs),
+the page's `h1`, and its main actions in a [Split](?path=/docs/layout-split--docs),
+so the title and the actions part on wide screens and stack on narrow ones.
+
+<Example caption="Sidebar with a NavList marking the current page, then the page header: breadcrumb, a heading that matches the navigation item, and one primary action.">
+  <AppShellExample />
+</Example>
+
+- **One `<main>` per screen.** `Page` renders it; if you build the shell yourself,
+  render your own `<main>` beside the Sidebar and don't nest a Page inside.
+- **Name each navigation** with NavList's `label`, and mark the current page
+  with `current`.
+- **The heading matches the item.** The page's `h1` says the same as the
+  navigation item that led there.
+- **On phones**, hide the Sidebar and open the same NavList in a
+  [Drawer](?path=/docs/functional-drawer--docs) `placement="start"` from a menu
+  IconButton in the header. Close it with NavList's `onNavigate`.
+- **One scroll area.** The main column scrolls; the header and sidebar stay put.
+  Avoid a second scroll inside the page unless a region really needs one
+  ([ScrollBox](?path=/docs/layout-primitives-scrollbox--docs)).
+
+## A page to read
+
+Long text is hard to read across a wide screen. Cap the column at about 65
+characters (`Container size="tablet"` or a `maxWidth`), use headings for each
+topic, and keep related actions at the end of the section they belong to.
+
+<Example caption="One readable column, a heading for each topic.">
+  <ReadingColumnExample />
+</Example>
+
+## Landing pages
+
+Build a landing page from Sections. Each Section is a band with its own
+`register` and `tone`: `hero` for the opening, `default` or `large` for the
+bands after it, alternating `tone="surface"` to separate them. A
+[SectionHeading](?path=/docs/layout-section-heading--docs) introduces each band,
+and a [Grid](?path=/docs/layout-primitives-grid--docs) of Cards holds features or
+plans. Use `BleedSection` only for content that must run edge to edge.
+
+## Resizable panels and workspaces
+
+Use [ResizablePanels](?path=/docs/components-layout-page-structure-resizable-panels--docs) when people need
+to see two or three things at once and choose how much room each gets: a list
+and the selected item, a document and its notes, an editor and a preview.
+
+| Situation | Use |
+| --- | --- |
+| Navigation that's always the same width | [Sidebar](?path=/docs/layout-sidebar--docs), not a resizable panel |
+| A list and its detail, side by side, on a wide screen | `ResizablePanels` with two panels |
+| A side panel people sometimes want out of the way | A `collapsible` panel with a `minSize` |
+| A detail view that only some tasks need | A [Drawer](?path=/docs/functional-drawer--docs) instead, so the list keeps the room |
+| Two pieces of content that sit side by side and never change | A [Grid](?path=/docs/layout-primitives-grid--docs) or `Split` |
+
+```tsx
+<ResizablePanels defaultLayout={saved} onLayout={save}>
+  <ResizablePanel defaultSize={30} minSize="16rem" collapsible>
+    <CaseList />
+  </ResizablePanel>
+  <ResizableHandle label="Resize case list" />
+  <ResizablePanel>
+    <CaseDetail />
+  </ResizablePanel>
+</ResizablePanels>
+```
+
+- **Give the group a size.** It fills its container, so put it in a region with
+  a height (the main column of the app shell, a fixed-height card).
+- **Name every handle** with `label` ("Resize case list"). Handles are reachable
+  by Tab and move with the arrow keys, so keyboard users can resize too.
+- **Set limits.** A `minSize` stops a panel being squeezed until its content
+  breaks; use a length such as `"16rem"` when the content has a natural width.
+- **Remember the layout.** Save what `onLayout` gives you and pass it back as
+  `defaultLayout`, so people find the workspace as they left it.
+- **Stack on phones.** Below the tablet breakpoint, show one panel at a time (the
+  list, then the detail as its own view) rather than squeezing panels side by
+  side.
+
+## Responsive behaviour
+
+Layouts are mobile first: one column by default, more as space allows. Use the
+theme's breakpoints (see [Space and layout](?path=/docs/foundations-space-and-layout--docs))
+and let components respond to the space they're given.
+
+| Part | On a phone | From tablet (768px) | From desktop (1024px) |
+| --- | --- | --- | --- |
+| Side navigation | In a Drawer, opened from the header | Sidebar | Sidebar |
+| Page header | Title, then actions below it (Split wraps) | Title and actions on one row | Same |
+| Card and figure grids | One column | Two or three (`Grid columns={{ mobile: 1, tablet: 3 }}`) | Same, or more on `wide` |
+| Forms | One column, full-width fields | One column; pair short related fields | Same: forms don't need more columns |
+| Tables | Scroll sideways inside their own area, or show fewer columns | Full table | Full table |
+| Resizable panels | One panel at a time | Side by side | Side by side |
+
+- **Prefer fluid layouts** (`Grid minColumnWidth`, `Cluster`, `Split wrap`) over
+  switching at breakpoints. They respond to the container, so a card in a narrow
+  sidebar also works.
+- **Keep the reading order.** What stacks first on a phone should be what comes
+  first in the source; never reorder visually with CSS alone.
+- **Touch targets** stay at least as big as the library makes them. Don't shrink
+  controls on phones; use the `compact` register only where a pointer is likely.
+- **Test at real widths** (320px, 768px, 1280px) and with long content, not only
+  at the window sizes you design for.
+
+## Accessibility
+
+- Use landmarks: one `<header>`, named `<nav>`s, one `<main>`, and a `<footer>`.
+  Header, Sidebar (`<aside>`), Page (`<main>`) and Footer render them for you.
+- Give each page one `h1`, and headings that follow in order inside it.
+- Add a skip link to the main content when the navigation before it is long.
+- A Drawer used as the phone menu traps focus while open and returns it to the
+  menu button when it closes; don't build your own.
+
+## Pitfalls
+
+- **Nesting Pages.** `Page` is the viewport's root; render one per screen.
+- **Layout CSS before primitives.** Reach for Grid, Split, Cluster, VStack and
+  Container before writing your own flex rules.
+- **Fixed heights for content.** Let content set the height; only workspaces
+  and scroll areas need a fixed size.
+- **Resizable panels for everything.** If people never need to change the
+  split, a fixed layout is simpler and more predictable.
+
+## Related
+
+- [App navigation](?path=/docs/patterns-app-navigation--docs)
+- [Density and registers](?path=/docs/patterns-density-and-registers--docs)
+- [Choosing components](?path=/docs/patterns-choosing-components--docs)

@@ -1,0 +1,72 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as AspectRatioStories from "./aspect-ratio.stories.tsx";
+import meta from "./aspect-ratio.stories.tsx";
+import { AspectRatio } from "./aspect-ratio.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# AspectRatio
+
+<ResizableCanvas of={AspectRatioStories.Square} defaultWidth={320} />
+
+`AspectRatio` locks its content to a fixed width-to-height ratio. Most useful for media (video thumbnails, hero images, embeds) that would otherwise jank as they load, but useful any time a box needs a stable shape across viewport widths. The wrapper fills 100% of its parent's width and computes height from `ratio`; the child stretches to fill and crops with `object-fit: cover`.
+
+<Controls />
+
+## Square (default)
+
+`ratio={1}` — for avatars, product tiles, social-post thumbnails.
+
+<InlineCodeExample>
+  {`<AspectRatio>
+  <img src="/avatar.jpg" alt="Profile photo of Ada Lovelace" />
+</AspectRatio>`}
+</InlineCodeExample>
+
+## 16:9 video / cover image
+
+The standard widescreen ratio for hero images and embedded video.
+
+<InlineCodeExample>
+  {`<AspectRatio ratio="16 / 9">
+  <video src="/intro.mp4" controls />
+</AspectRatio>`}
+</InlineCodeExample>
+
+## Portrait card art
+
+For poster art, mobile-screen mockups, vertical content.
+
+<InlineCodeExample>
+  {`<AspectRatio ratio="3 / 4">
+  <img src="/poster.jpg" alt="Poster artwork for The Two Towers" />
+</AspectRatio>`}
+</InlineCodeExample>
+
+## Cinemascope
+
+Ultra-wide ratio for marketing hero strips.
+
+<InlineCodeExample>
+  {`<AspectRatio ratio="21 / 9">
+  <img src="/hero.jpg" alt="" />
+</AspectRatio>`}
+</InlineCodeExample>
+
+## Accessibility
+
+- Renders a plain `<div>` wrapper — semantics live in the child (`<img alt>`, `<video>`, `<iframe>`).
+- `overflow: hidden` is on the wrapper, so partial frames don't bleed past the box during load.
+- For images and videos that crop with `cover`, ensure the focal point is reasonable — the crop is set by `object-position` (default `center`).
+
+## Common pitfalls
+
+- **Don't pass multiple children.** The wrapper styles target `& > *`. Wrap multiples in a single element first.
+- **`<img>` and `<video>` get `object-fit: cover` automatically.** For letterboxing instead of cropping, override with `style={{ objectFit: "contain" }}` on the child.
+- **Don't combine `AspectRatio` with a `width` set on the child.** The child should fill the box; setting a width on the child fights the wrapper's sizing.
+- **Don't use AspectRatio for arbitrary text content.** It crops with `cover` on overflow, which silently hides text. For text containers that need to be a fixed shape, set min/max sizes on a `Block`.

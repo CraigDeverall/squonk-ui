@@ -1,0 +1,43 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as Stories from "./<%= componentNameKebab %>.stories";
+
+<Meta of={Stories} />
+
+# <%= componentName %>
+
+<%= purpose %>
+
+<ResizableCanvas of={Stories.Default} defaultRecipe="centered" />
+
+<Controls />
+
+## Default use
+
+The component renders a native `<%= baseElement %>` and forwards its native attributes and React 19 ref.
+It inherits text color and uses the theme font. Place spacing and alignment on the surrounding layout.
+
+<InlineCodeExample>
+  {`<<%= componentName %><% if (baseElement === "img") { %> alt="<%= exampleLabel %>"<% } else if (!acceptsChildren && ["input", "button"].includes(baseElement)) { %> aria-label="<%= exampleLabel %>"<% } %><% if (acceptsChildren) { %>><%= exampleLabel %></<%= componentName %>><% } else { %> /><% } %>`}
+</InlineCodeExample>
+
+## Dark mode
+
+Use the existing `SquonkThemeProvider` mode to switch the surrounding surface. The component's inherited foreground follows its parent.
+
+<ResizableCanvas of={Stories.Dark} defaultRecipe="centered" />
+
+## Accessibility
+
+<% if (["button", "input"].includes(baseElement)) { %>Provide a visible label or an accessible name. Preserve the native keyboard interaction and visible focus indicator.
+<% } else if (baseElement === "img") { %>Use meaningful alternative text for informative images and an empty `alt` for decorative images.
+<% } else { %>Choose content and surrounding semantics appropriate to the native element. Do not add a click handler to a non-interactive element as a substitute for a button or link.
+<% } %><% if (baseElement === "button") { %>The default button type is `button`; use `type="submit"` only for an intentional form submission.
+<% } %><% if (isPolymorphic) { %>The `as` prop changes semantics as well as markup. Supply the attributes and keyboard behavior required by the chosen element.
+<% } %>
+## Common pitfalls
+
+<% if (!acceptsChildren) { %>- This component does not accept children. Supply content through the supported native attributes instead.
+<% } %>- Use theme overrides for typography and a surrounding layout component for placement.
+- Before publishing this scaffold, document and test the component-specific states, interactions and real composition examples introduced by its implementation.

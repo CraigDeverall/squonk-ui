@@ -1,0 +1,142 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as QrCodeStories from "./qr-code.stories.tsx";
+import meta from "./qr-code.stories.tsx";
+import { QrCode } from "./qr-code.tsx";
+import { Block } from "../../layout-primitive/block/block.tsx";
+import { HStack } from "../../layout-primitive/hstack/hstack.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# QrCode
+
+<ResizableCanvas
+  of={QrCodeStories.Default}
+  defaultRecipe="centered"
+  defaultHeight={240}
+/>
+
+`QrCode` encodes any string — URL, plain text, payload — as a scannable QR
+image. The SVG fills the square footprint of its parent so layout decisions
+stay with the consumer; pair it with an optional clickable label that doubles
+as a fallback for people who can't or won't scan.
+
+<Controls />
+
+## With a label
+
+A label is rendered as an anchor whose `href` is the encoded value, so a
+reader can click through instead of scanning. Position it above or below the
+code via `labelPosition`.
+
+<InlineCodeExample>
+  <Block width="200px">
+    <QrCode
+      value="https://squonkstack.io"
+      label="squonkstack.io"
+      labelPosition="below"
+    />
+  </Block>
+</InlineCodeExample>
+
+<InlineCodeExample>
+  <Block width="200px">
+    <QrCode
+      value="https://squonkstack.io"
+      label="squonkstack.io"
+      labelPosition="above"
+    />
+  </Block>
+</InlineCodeExample>
+
+## Custom colors
+
+`fgColor` / `bgColor` override the theme defaults — useful for brand
+treatments or matching a host surface. Maintain at least 4:1 contrast between
+foreground and background so cameras can still resolve the modules.
+
+<InlineCodeExample>
+  <Block width="220px">
+    <QrCode
+      value="https://squonkstack.io"
+      fgColor="#692BCC"
+      bgColor="#F0EAFF"
+      label="squonkstack.io"
+    />
+  </Block>
+</InlineCodeExample>
+
+## Padding
+
+`padding` is the quiet zone in pixels around the modules. The QR spec calls
+for at least 4 modules of quiet space — the default `theme.spacing.md`
+covers this for typical sizes. Drop to `0` only when you fully control the
+surrounding surface.
+
+<InlineCodeExample>
+  <HStack gap="md">
+    <Block width="140px">
+      <QrCode value="https://squonkstack.io" padding={0} />
+    </Block>
+    <Block width="140px">
+      <QrCode value="https://squonkstack.io" padding={32} />
+    </Block>
+  </HStack>
+</InlineCodeExample>
+
+## Sizing
+
+`QrCode` always renders as a 1:1 square that fills 100% of its parent's
+width. Control the rendered size by sizing the parent — the component itself
+takes no width prop.
+
+<InlineCodeExample>
+  <HStack gap="md" align="end">
+    <Block width="100px">
+      <QrCode value="https://squonkstack.io" />
+    </Block>
+    <Block width="160px">
+      <QrCode value="https://squonkstack.io" />
+    </Block>
+    <Block width="220px">
+      <QrCode value="https://squonkstack.io" />
+    </Block>
+  </HStack>
+</InlineCodeExample>
+
+## Long values
+
+Long URLs or payloads wrap the label string with `word-break: break-all` so
+the QR's square footprint isn't disturbed by an oversized label.
+
+<InlineCodeExample>
+  <Block width="220px">
+    <QrCode
+      value="https://squonkstack.io/some/very/long/path?foo=bar&baz=qux"
+      label="https://squonkstack.io/some/very/long/path?foo=bar&baz=qux"
+    />
+  </Block>
+</InlineCodeExample>
+
+## Accessibility
+
+- The underlying `<svg>` carries `aria-label="QR code for: <value>"` so
+  screen-reader users hear what's encoded.
+- When a `label` is provided, it renders as a real `<a>` with the same
+  `href` as the encoded value — keyboard- and screen-reader-navigable
+  without needing camera scanning.
+- Anchor focus ring uses `theme.colors.border.focus` for visible focus.
+
+## Common pitfalls
+
+- **No fixed width on the component itself.** Size the parent — the QR
+  square always fills 100% of it.
+- **Don't drop the quiet zone for printed QRs.** Cameras need ~4 modules
+  of background; printing right up to the edge will hurt scan rates.
+- **Watch contrast under custom colors.** Aim for ≥4:1 between `fgColor`
+  and `bgColor`; pastel-on-pastel combos may look on-brand but fail to
+  scan reliably.

@@ -1,0 +1,97 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as AccordionStories from "./accordion.stories.tsx";
+import meta from "./accordion.stories.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Accordion
+
+<ResizableCanvas of={AccordionStories.Default} defaultHeight={300} />
+
+`Accordion` stacks sections that open and close under their titles. It suits
+content people scan for the one part they need (frequently asked questions,
+detail most people skip, sections of a review page), so the page stays short.
+
+```tsx
+import { Accordion } from "@squonk/ui/accordion";
+
+<Accordion
+  items={[
+    { value: "due", title: "When are my annual dues due?", content: <DueDates /> },
+    { value: "late", title: "What happens if I pay late?", content: <LateDues /> },
+  ]}
+/>
+```
+
+Don't hide content most people need: if everyone opens a section, show it.
+Use `Tabs` to switch between parallel views, and a `Modal` or `Drawer` for a task.
+
+<Controls />
+
+## Contained
+
+`variant="contained"` draws a bordered box around the sections, for an accordion
+that sits in a page among other content.
+
+<ResizableCanvas of={AccordionStories.Contained} defaultHeight={300} />
+
+## Rows that shade on hover
+
+`hover="fill"` shades the whole header row while it is pointed at, and leaves
+the title without an underline. Use it when the sections read as rows of a list,
+such as messages or records that open for their details. `hover="underline"`
+underlines the title only, even in a contained accordion.
+
+In a divided accordion the shading reaches a little past the text at both sides,
+so the text stays in line with the content around it. Leave room for it: put the
+accordion inside padding, such as a card's. With `hover="fill"` you may also set
+`indicator={false}` to drop the chevron, when the rows plainly open.
+
+<ResizableCanvas of={AccordionStories.FillHover} defaultHeight={300} />
+
+## Several open at once
+
+By default opening one section closes the other. Set `multiple` when people
+compare sections or work through several.
+
+<ResizableCanvas of={AccordionStories.Multiple} defaultHeight={360} />
+
+## Summaries
+
+`description` adds a line under the title: a summary, a status or what's inside,
+so people can tell whether to open it.
+
+<ResizableCanvas of={AccordionStories.WithDescriptions} defaultHeight={420} />
+
+## A single disclosure
+
+One section on its own is a disclosure: "How we calculated this".
+
+<ResizableCanvas of={AccordionStories.SingleDisclosure} defaultHeight={200} />
+
+## Accessibility
+
+- The WAI-ARIA accordion pattern: each title is a `button` inside a heading, with
+  `aria-expanded` and `aria-controls`; each open section is a `region` labelled by
+  its title.
+- Set `headingLevel` so the titles fit the page's heading outline (3 by default).
+- Tab moves through the titles and into open content. Arrow keys also move
+  between titles, Home and End to the ends; Enter or Space toggles.
+- Opening and closing animate the height, and don't animate when people ask for
+  reduced motion.
+
+## Common pitfalls
+
+- **Don't put required form fields in a closed section.** People miss them,
+  and errors inside closed sections are invisible.
+- **Don't nest accordions.**
+- **Don't make titles vague.** "More information" five times tells people nothing;
+  each title should say what is inside.
+
+## UX guidance
+
+- [Overlays and disclosures](?path=/docs/patterns-overlays-and-disclosures--docs)

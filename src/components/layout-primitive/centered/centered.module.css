@@ -1,0 +1,11 @@
+@layer dt.components {
+  .root {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+  }
+
+  .minHeight { min-height: var(--centered-min-height); }
+  .fullWidth { width: 100%; }
+}

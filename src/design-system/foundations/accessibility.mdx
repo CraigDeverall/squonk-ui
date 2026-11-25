@@ -1,0 +1,67 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../documentation-imports/index.ts";
+import { Alert, Button, HStack, IconButton, PrintIcon, Select, TextField, VStack } from "../../components";
+import { Specimen } from "./foundation-blocks.tsx";
+
+<Meta title="Foundations/Accessibility" />
+
+<HideSbBar />
+
+# Accessibility
+
+Every interactive component is built on [React Aria](https://react-spectrum.adobe.com/react-aria/),
+which implements the WAI-ARIA patterns and is tested across browsers and screen
+readers. That covers the mechanics. Whether a screen is accessible still depends
+on what you put in it.
+
+## What every component gives you
+
+- **Names and descriptions wired up.** A field's label, help and error are linked
+  to its input, so they are read together.
+- **Keyboard support** for each pattern: arrow keys in menus, lists, tabs and
+  grids; Escape to close overlays; Space and Enter where expected.
+- **Visible focus** only for keyboard users, with a focus ring that meets contrast.
+- **Focus management** in overlays: focus moves into a dialog, stays there, and
+  returns to the trigger when it closes.
+- **Announcements** for changes people can't see, such as sort order, selection
+  and notifications.
+- **Reduced motion** respected, and controls at least 24px tall even in the compact register.
+
+<Specimen label="Tab into these: focus shows, the error is read with its field, and the select opens with the keyboard.">
+  <VStack gap="lg">
+    <TextField label="Membership number" defaultValue="SQ-104" error="Enter all 6 digits, like SQ-104-772" />
+    <Select label="Night-watch frequency" placeholder="Choose one" options={[{ value: "monthly", label: "Monthly" }, { value: "two-monthly", label: "Every two months" }]} />
+    <HStack gap="sm" align="center">
+      <Button variant="primary">Save</Button>
+      <IconButton icon={<PrintIcon />} label="Print this report" />
+    </HStack>
+  </VStack>
+</Specimen>
+
+## What your app still has to do
+
+- **Write real labels.** Every field has a visible label; every icon-only button
+  has a `label`. A placeholder is not a label.
+- **Structure the page.** One `h1`, headings in order, landmarks from `Page`,
+  `Header` and `Sidebar`.
+- **Write errors people can act on.** "Enter your email address", not "Invalid".
+- **Keep a sensible focus order** when you compose components, and move focus on
+  purpose after big changes, such as to the error summary after a failed submit.
+- **Check custom colours.** The library tests its own text and surfaces; brand
+  overrides, text on images and translucent panels are yours to check (4.5:1 for
+  text, 3:1 for large text and control edges).
+- **Don't use colour alone** to show status, selection or errors.
+
+<Specimen>
+  <Alert tone="warning" title="Colour is never the only signal">
+    Badges, alerts and field errors always say the status in words; the colour only supports it.
+  </Alert>
+</Specimen>
+
+## Testing
+
+Use the keyboard alone through each task, zoom to 200%, try a phone width, and run
+a screen reader (VoiceOver or NVDA) over new screens. Automated checks such as axe
+catch missing names and contrast, but not whether the experience makes sense. See
+[Focus management](?path=/docs/patterns-focus-management--docs) and
+[Labels, help and validation](?path=/docs/patterns-labels-help-and-validation--docs).

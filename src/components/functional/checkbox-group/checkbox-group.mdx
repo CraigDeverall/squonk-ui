@@ -1,0 +1,86 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as CheckboxGroupStories from "./checkbox-group.stories.tsx";
+import meta from "./checkbox-group.stories.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# CheckboxGroup
+
+<ResizableCanvas of={CheckboxGroupStories.Default} defaultHeight={340} />
+
+`CheckboxGroup` asks one question with several independent answers: "Which
+accounts do you want to set up?". It keeps the selection as an array of values,
+names the group with a legend, and puts group-level errors in one place.
+
+```tsx
+import { CheckboxGroup } from "@squonk/ui/checkbox-group";
+
+<CheckboxGroup
+  legend="Which accounts do you want to set up?"
+  name="accounts"
+  options={[
+    { value: "dues", label: "Annual dues" },
+    { value: "levy", label: "Swamp Fund levy" },
+  ]}
+  value={accounts}
+  onChange={setAccounts}
+/>
+```
+
+Use `RadioGroup` when only one answer is allowed, and a single `Checkbox` for one
+yes/no question ("I agree to the terms").
+
+<Controls />
+
+## Preselected
+
+<ResizableCanvas of={CheckboxGroupStories.Preselected} defaultHeight={340} />
+
+## In a row
+
+Short options can sit in a row. Keep to two to four, and keep them short; long
+labels wrap awkwardly.
+
+<ResizableCanvas of={CheckboxGroupStories.Row} defaultHeight={140} />
+
+## Limiting the selection
+
+`max` disables the remaining options once that many are chosen. Say so in the
+helper text so people know why options stopped working.
+
+<ResizableCanvas of={CheckboxGroupStories.Maximum} defaultHeight={260} />
+
+## Errors
+
+An error belongs to the whole group, and every option is marked invalid.
+
+<ResizableCanvas of={CheckboxGroupStories.WithError} defaultHeight={340} />
+
+<ResizableCanvas of={CheckboxGroupStories.InAForm} defaultHeight={420} />
+
+## Disabled
+
+<ResizableCanvas of={CheckboxGroupStories.Disabled} defaultHeight={340} />
+
+## Accessibility
+
+- A `<fieldset>` named by its legend; helper and error text are its description.
+  Each option's own `helperText` describes that checkbox.
+- Each option is a native checkbox: Tab moves between them and Space toggles.
+- Every checked option submits its `value` under the shared `name`.
+
+## Common pitfalls
+
+- **Don't use a CheckboxGroup for "pick one".** Checkboxes signal that several
+  answers are allowed. Use `RadioGroup`.
+- **Don't use a CheckboxGroup for settings that apply immediately.** Use `Switch`es.
+- **Don't hide why an option is disabled.** Give it `helperText`.
+
+## UX guidance
+
+- [Choosing a selection control](?path=/docs/patterns-choosing-a-selection-control--docs)
+- [Switches, checkboxes and saving](?path=/docs/patterns-switches-checkboxes-and-saving--docs)

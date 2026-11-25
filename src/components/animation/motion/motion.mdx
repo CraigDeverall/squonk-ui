@@ -1,0 +1,202 @@
+import { Canvas, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import * as MotionStories from "./motion.stories.tsx";
+
+<Meta of={MotionStories} />
+
+<HideSbBar />
+
+# Motion
+
+Every animation and transition in the library comes from these components.
+Components don't declare motion in their own styles: they wrap the element that
+moves. So menus, dialogs and drawers all move alike, every timing comes from
+the [motion purposes](?path=/docs/foundations-motion--docs), and reduced motion
+is handled in one place.
+
+Each one wraps exactly **one element** and adds a class to it, keeping the
+element's own `className` (including a React Aria render function). It adds no
+markup, so it never changes layout or what assistive technology hears.
+
+<InlineCodeExample>
+{`import { Motion } from "@squonk/ui/motion";
+
+<Motion.Pop>
+  <Popover className={styles.menu}>…</Popover>
+</Motion.Pop>`}
+</InlineCodeExample>
+
+Using the library's components, you never need these: they already move. Reach
+for them when you build something the library doesn't have, so it moves like
+the rest.
+
+## Which one
+
+| Motion | For | Follows |
+| --- | --- | --- |
+| `Feedback` | A control answering hover, press, focus and selection: instant in, a short fade back to rest. | React Aria's `data-hovered`, `data-pressed`, `data-focus-visible`, `data-selected` on the element, its parent, or (selection) the field around that |
+| `Pop` | Menus, popovers, listboxes, tooltips, dialog boxes and toasts. | `data-entering` / `data-exiting` on the overlay or its backdrop |
+| `Dim` | The backdrop behind a dialog or drawer. | `data-entering` / `data-exiting` |
+| `Slide` | A panel arriving from an edge: drawers. | `data-entering` / `data-exiting` on its backdrop |
+| `Collapse` | A disclosure panel opening and closing: accordions. | `--disclosure-panel-height` and `data-expanded` |
+| `Shift` | A small change within the page: a colour, a chevron turning, an indicator sliding. | Any change to the properties it names |
+| `Spin`, `Sweep`, `Shimmer`, `Pulse` | Work in progress, loading placeholders and live status. | Always running |
+| `Flow`, `Travel` | Something moving along a line, such as traffic along a graph's link. | Always running |
+| `Reveal` | Page sections and cards arriving as they scroll into view. | The element entering the viewport, or focus inside it |
+| `Stagger` | Several arrivals playing in sequence rather than at once. | Its children's order |
+| `Presence` | An element joining or leaving the page that isn't a React Aria overlay: a notice dismissed, a row of filters added. | Its `show` prop |
+| `Swap` | Content replaced in place: a tab's panel, loaded content replacing its placeholder. | Changes to its `watch` value, or the element being shown again |
+| `Highlight` | Something that just changed drawing the eye: a recalculated total, a row saved elsewhere. | Changes to its `watch` value |
+| `Layout` | A list's items gliding to new places as it's sorted, filtered or changes. | Its items in the DOM |
+| `Count` | A figure counting to its new value. | Its `value` prop |
+
+## Feedback
+
+<Canvas of={MotionStories.Feedback} />
+
+Use `field` on a text input, so focus from a click counts too. Use `even` for a
+part that travels rather than changes colour, like a switch's thumb.
+
+## Pop, Dim and Slide
+
+<Canvas of={MotionStories.Pop} />
+<Canvas of={MotionStories.DimAndPop} />
+<Canvas of={MotionStories.Slide} />
+
+Overlays open at the `overlay` pace. Use `pace="arrive"` for things that need
+the eye to follow them in (dialogs, drawers, notifications); they always leave
+at the quicker `overlay` pace. A toast has no entering state, so its `Pop` uses
+`playOnMount`.
+
+## Collapse and Shift
+
+<Canvas of={MotionStories.CollapseAndShift} />
+
+`Shift` eases every property by default. Name the ones that move with
+`--motion-property` in the element's stylesheet, and give it a component's own
+duration with `--motion-duration`:
+
+<InlineCodeExample>
+{`.indicator {
+  --motion-property: translate, width;
+  --motion-duration: var(--squonk-components-tabs-indicator-duration);
+}`}
+</InlineCodeExample>
+
+`--motion-delay` waits before the change starts, scaled with the motion level
+like the duration. Set it only on the state that should wait, so the way back
+is immediate: a resize handle lights up once the pointer rests on it
+(`components.resizable.hoverDelay`) but fades back at once.
+
+## Loops
+
+<Canvas of={MotionStories.Loops} />
+
+`Shimmer` moves a background image: the child paints the highlight as a 200px
+wide gradient, as the Skeleton does.
+
+`Flow` marches a line's dashes from its start to its end. The line sets its own
+`stroke-dasharray`, and `--motion-flow-period` to one dash and its gap. `Travel`
+moves its child along the `offset-path` the child sets. Both take their pace from
+`--motion-loop-duration` (which `Pulse` also reads), and `Travel` takes a negative `--motion-loop-delay` to start part
+way along. NetworkGraph uses both for its link animations.
+
+## Reveal
+
+<Canvas of={MotionStories.Reveal} />
+
+`Motion.Reveal` watches its element and plays once it scrolls into view.
+Stagger a group with `Motion.Stagger`; `delayMs` adds a delay of its own,
+`yOffsetPx` overrides how far it rises (the theme's `revealOffset`), and
+`once={false}` replays it on each entry. Content already on screen, or focused,
+shows at once. Animate arrivals only, never content someone is working with.
+
+## Stagger
+
+<Canvas of={MotionStories.Stagger} />
+
+`Motion.Stagger` adds no markup: each child, and any `Reveal`, `Presence` or
+`Swap` inside it, waits one stagger step (`--squonk-roles-motion-stagger`) more
+than the one before, up to twelve steps.
+
+<InlineCodeExample>
+{`<Grid columns={3}>
+  <Motion.Stagger>
+    {figures.map((f) => (
+      <Motion.Reveal key={f.label}><Card><Stat {...f} /></Card></Motion.Reveal>
+    ))}
+  </Motion.Stagger>
+</Grid>`}
+</InlineCodeExample>
+
+## Presence
+
+<Canvas of={MotionStories.Presence} />
+
+Keep the element under `Motion.Presence` and turn `show` off to remove it: it
+plays its exit, then unmounts (and calls `onExited`). `from` picks the side it
+nudges in from (`below`, `above`, `start`, `end`, or `fade` for none). Content
+shown on first render just shows; pass `playOnMount` to play its entrance too.
+Overlays built on React Aria use `Pop`, `Slide` and `Dim` instead.
+
+## Swap
+
+<Canvas of={MotionStories.Swap} />
+
+Give `watch` whatever the content shows (a key, a loading flag); each change
+fades and rises the new content into place. Tabs swap their panels this way.
+
+## Count and Highlight
+
+<Canvas of={MotionStories.CountAndHighlight} />
+
+`Motion.Count` renders the figure itself, formatted with `formatOptions` in the
+current locale (or your own `format`), in tabular digits so it doesn't jitter.
+Assistive technology hears the final value once. `Motion.Highlight` flashes the
+element's background with `--squonk-roles-motion-highlight-color` and fades back,
+each time its `watch` value changes. Use both for changes people didn't make
+themselves, never for every keystroke.
+
+## Layout
+
+<Canvas of={MotionStories.Layout} />
+
+`Motion.Layout` wraps the container and follows its children: when they're
+reordered, added or removed, the ones that stay glide from their old places,
+and new ones fade in (`fadeIn={false}` when they bring their own motion). Pass
+`items` with a selector when the items aren't direct children. Tables and the
+toast stack already do this. Lists over 150 items just change.
+
+## Motion level and reduced motion
+
+Every recipe follows the motion level: the device's reduced-motion setting, or
+the app's choice with `<SquonkThemeProvider motion="reduced">` (or `"none"` for
+screenshots and tests). With motion reduced, nothing travels or grows:
+overlays, drawers, presence and revealed content fade in place, panels open at
+once, list items move at once and figures change at once. The decorative loops
+(`Shimmer`, `Pulse`, `Flow`) stop, `Travel` hides, and the loops that show work is happening (`Spin`,
+`Sweep`) slow down instead. `Feedback` and `Highlight` colour fades stay: they
+don't move anything. With `none`, every change is immediate.
+
+## Accessibility
+
+- Motion never carries meaning on its own: the end state is always readable,
+  and content stays usable if an animation never runs.
+- Every timing comes from a motion purpose, so a theme can slow everything down,
+  and the motion level can reduce it or switch it off.
+- `Count` speaks only its final value; `Presence` ignores pointer events while
+  it leaves.
+
+## Common pitfalls
+
+- **Writing a transition in a component's stylesheet.** `npm run lint` fails on
+  `transition`, `animation` and `@keyframes` in component CSS; wrap the element
+  in a Motion component instead.
+- **Wrapping a fragment or text.** Each Motion component needs exactly one
+  element child that accepts a `className` (`Presence`, `Swap`, `Reveal` and
+  `Layout` also need it to accept `style` or `ref`).
+- **Unmounting what Presence should remove.** `{open && <Motion.Presence …>}`
+  can't play an exit; keep it mounted and turn `show` off.
+- **Animating content people are working with.** Fields, table rows and text
+  someone is reading shouldn't move; animate arrivals, not work.

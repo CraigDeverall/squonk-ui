@@ -1,0 +1,13 @@
+import React from "react";
+import { Markdown, Meta } from "@storybook/addon-docs/blocks";
+import changelog from "../CHANGELOG.md?raw";
+import { HideSbBar } from "./documentation-imports";
+
+<Meta title="Contributing/Change log" />
+<HideSbBar />
+
+# Change Log
+
+<div style={{ height: 50 }} />
+
+<Markdown>{changelog}</Markdown>

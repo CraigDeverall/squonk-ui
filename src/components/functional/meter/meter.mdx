@@ -1,0 +1,122 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as MeterStories from "./meter.stories.tsx";
+import meta from "./meter.stories.tsx";
+import { Meter } from "./meter.tsx";
+import { Text } from "../../functional-primitive/text/text.tsx";
+import { Card } from "../../layout/card/card.tsx";
+import { Block } from "../../layout-primitive/block/block.tsx";
+import { VStack } from "../../layout-primitive/vstack/vstack.tsx";
+import { Presentation } from "../../style/presentation/presentation.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Meter
+
+<ResizableCanvas of={MeterStories.Default} defaultRecipe="stack-down" />
+
+`Meter` shows an amount within a known range: storage used, a credit limit drawn, instalments paid, a quota spent. It is built on React Aria's Meter. It is not for work in progress: when something is moving toward completion (an upload, an import), use [ProgressBar](?path=/docs/functional-progress-bar--docs). A meter can sit still at 70% forever; a progress bar that stops moving looks broken. For several amounts to compare against each other, use a [BarChart](?path=/docs/functional-bar-chart--docs).
+
+<Controls />
+
+## Value in words
+
+`valueLabel` is the value as people say it ("42 of 60 GB", "$2,400 of $10,000"). It is shown beside the label when `showValue` is on and is what screen readers announce. Without it, the meter shows and announces the percentage of the range.
+
+<InlineCodeExample>
+  <Block width="320px">
+    <Meter label="Document storage" value={42} maxValue={60} valueLabel="42 of 60 GB" showValue />
+  </Block>
+</InlineCodeExample>
+
+## Percentage
+
+Leave out `valueLabel` when the percentage is the clearest reading. `minValue` and `maxValue` set the range; the fill and the announced percentage follow from them.
+
+<InlineCodeExample>
+  <Block width="320px">
+    <Meter label="Instalments paid" value={7} maxValue={12} showValue />
+  </Block>
+</InlineCodeExample>
+
+## Warning and critical levels
+
+`warningAt` and `criticalAt` are values on the same scale as `value`. From `warningAt` up the fill turns to the warning tone (the amount is getting high); from `criticalAt` up it turns to the error tone (at or over the limit). Set them where your business rule changes, not at round percentages. Colour shows the level at a glance; say it in words too, in `valueLabel` or the text beside the meter.
+
+<InlineCodeExample>
+  <Block width="320px">
+    <VStack gap="md">
+      <Meter label="Credit limit used" value={2400} maxValue={10000} valueLabel="$2,400 of $10,000" showValue warningAt={7500} criticalAt={9500} />
+      <Meter label="Credit limit used" value={8100} maxValue={10000} valueLabel="$8,100 of $10,000, nearing limit" showValue warningAt={7500} criticalAt={9500} />
+      <Meter label="Credit limit used" value={9800} maxValue={10000} valueLabel="$9,800 of $10,000, at limit" showValue warningAt={7500} criticalAt={9500} />
+    </VStack>
+  </Block>
+</InlineCodeExample>
+
+## In a card
+
+A meter usually lives in a summary card with a sentence that says what to do about it.
+
+<InlineCodeExample>
+  <Block width="360px">
+    <Card>
+      <VStack gap="sm">
+        <Meter label="Document storage" value={58} maxValue={60} valueLabel="58 of 60 GB" showValue warningAt={48} criticalAt={57} />
+        <Text tone="secondary">Storage is almost full. Archive returns older than seven years to keep uploading.</Text>
+      </VStack>
+    </Card>
+  </Block>
+</InlineCodeExample>
+
+## No visible label
+
+Pass `ariaLabel` instead of `label` when a heading or table column next to the meter already names it, but screen readers still need a name.
+
+<InlineCodeExample>
+  <Block width="320px">
+    <Meter ariaLabel="Document storage" value={42} maxValue={60} valueLabel="42 of 60 GB" />
+  </Block>
+</InlineCodeExample>
+
+## Sizing
+
+The track height follows the [Presentation](?path=/docs/style-presentation--docs) register (4px, 8px, 12px, 16px), matching ProgressBar so the two line up on the same page. The meter fills its container's width.
+
+<InlineCodeExample>
+  <Block width="320px">
+    <VStack gap="md">
+      <Presentation register="compact"><Meter label="Compact" value={42} maxValue={60} /></Presentation>
+      <Presentation register="default"><Meter label="Default" value={42} maxValue={60} /></Presentation>
+      <Presentation register="large"><Meter label="Large" value={42} maxValue={60} /></Presentation>
+      <Presentation register="hero"><Meter label="Hero" value={42} maxValue={60} /></Presentation>
+    </VStack>
+  </Block>
+</InlineCodeExample>
+
+## CSS variables
+
+| Variable | Controls | Default |
+| --- | --- | --- |
+| `--meter-color` | The fill colour below `warningAt` | `--squonk-roles-color-data-series1` (the warning and critical fills stay `--squonk-colors-tone-warning-solid` and `--squonk-colors-tone-error-solid`) |
+| `--squonk-components-meter-label-gap` | Space between the label and the value | 8px |
+
+Set `--meter-color` on the meter's `style` or on any ancestor (it inherits), for example to match a series charted beside it: `style={{ "--meter-color": "var(--squonk-roles-color-data-series2)" }}`. It changes only the normal fill, so the warning and critical colours still mean what they say.
+
+## Accessibility
+
+- Renders `role="meter"` with `aria-valuemin`, `aria-valuemax`, `aria-valuenow` and `aria-valuetext` (your `valueLabel`, or the percentage).
+- Give it a name: a visible `label` (wired up as its label) or `ariaLabel`. A nameless meter is announced as just a number.
+- The warning and critical colours are not announced. Put the level in `valueLabel` ("nearing limit") or in nearby text, so it reaches screen reader users and people who can't tell the colours apart.
+- It isn't interactive or focusable; screen readers reach it while reading the page.
+
+## Common pitfalls
+
+- **Using Meter for progress.** If the amount is heading toward "done", use ProgressBar; `role="meter"` tells assistive technology the value is a measurement, not a task status.
+- **Colour as the only warning.** A red fill without words leaves some people guessing. Say "at limit" or what to do next.
+- **Thresholds as percentages when the range isn't 0–100.** With `maxValue={10000}`, `criticalAt={95}` triggers at $95. Give thresholds in the same units as `value`.
+- **A bare percentage for a quantity people know in units.** "70%" of a storage quota is less useful than "42 of 60 GB". Set `valueLabel`.
+- **Values outside the range.** An amount over the limit pins the fill at 100%; say how far over in `valueLabel` ("$10,400 of $10,000, $400 over").

@@ -1,0 +1,59 @@
+@layer dt.components {
+  .root {
+    --progress-color: var(--squonk-roles-color-accent);
+    display: flex;
+    flex-direction: column;
+    gap: var(--squonk-roles-space-field-gap);
+    width: 100%;
+    font-family: var(--squonk-roles-type-font);
+    color: var(--squonk-roles-color-text);
+  }
+
+  .root[data-tone="success"] { --progress-color: var(--squonk-colors-tone-success-solid); }
+  .root[data-tone="warning"] { --progress-color: var(--squonk-colors-tone-warning-solid); }
+  .root[data-tone="error"] { --progress-color: var(--squonk-colors-tone-error-solid); }
+  /* A colour the theme added: --tone-solid is set inline (src/theme/tone.ts). */
+  .root[data-tone="custom"] { --progress-color: var(--tone-solid); }
+
+  .labelRow {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--squonk-components-progress-bar-label-gap);
+    font-size: var(--squonk-roles-type-label);
+  }
+
+  .valueText {
+    color: var(--squonk-roles-color-text-supporting);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Track height per register (4/8/12/16px) is component geometry. */
+  .track {
+    position: relative;
+    width: 100%;
+    height: 8px;
+    background-color: var(--squonk-roles-color-well);
+    border-radius: var(--squonk-roles-radius-pill);
+    overflow: hidden;
+  }
+
+  .track[data-register="compact"] { height: 4px; }
+  .track[data-register="large"] { height: 12px; }
+  .track[data-register="hero"] { height: 16px; }
+
+  .range {
+    height: 100%;
+    background-color: var(--progress-color);
+    border-radius: var(--squonk-roles-radius-pill);
+    --motion-duration: var(--squonk-components-progress-bar-fill-transition);
+  }
+
+  .range[data-indeterminate] {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 30%;
+  }
+}

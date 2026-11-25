@@ -1,0 +1,83 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../documentation-imports/index.ts";
+import { Example } from "./pattern-blocks.tsx";
+import { RegistersExample } from "./screen-examples.tsx";
+
+<Meta title="Patterns/Density and registers" />
+
+<HideSbBar />
+
+# Density and registers
+
+A staff work queue and a public landing page need different sizes of the same
+controls. Set the size once, for a region, by its job: never component by
+component. The library gives you four registers through
+[Presentation](?path=/docs/style-presentation--docs), and
+[ThemeStyleBlock](?path=/docs/style-theme-style-block--docs) for a region that
+needs a denser or larger theme as a whole.
+
+<Example caption="The same Select, Button and Badge in the compact and default registers. Heights, padding and text step together, so a row of mixed controls still lines up.">
+  <RegistersExample />
+</Example>
+
+## Choosing a register
+
+| The region is… | Register | Examples |
+| --- | --- | --- |
+| A dense work screen used all day, mostly with a mouse | `compact` | Staff queues, admin tables, toolbars, filter panels |
+| Most of an app | `default` | Forms, dashboards, settings, account pages |
+| A display band that needs more weight than an app page | `large` | Landing page features, a summary band |
+| The headline of a landing page | `hero` | The first Section of a marketing page |
+
+Start with `default`. Move to `compact` only when people need to see more at
+once and will use a pointer; touch users need the default sizes.
+
+## How to set it
+
+| You want | Use |
+| --- | --- |
+| A register for a region of the page | `<Presentation register="compact">` around it |
+| A band of a landing page with its own register | [Section](?path=/docs/layout-section--docs) `register="hero"`; it sets the register for everything inside |
+| A header with a different register from the page | [Header](?path=/docs/layout-header--docs) `register` |
+| A region whose whole theme (spacing, type and radius) scales down or up | [ThemeStyleBlock](?path=/docs/style-theme-style-block--docs) `register="compact"` or `"display"` |
+| A specific value changed for part of a page | [ThemeModifier](?path=/docs/style-theme-modifier--docs) |
+
+`Presentation` picks control sizes from the theme without changing it.
+`ThemeStyleBlock` rebuilds the theme for its subtree from scaled primitives, so
+space and type between components change too. Use Presentation first; reach for
+ThemeStyleBlock when a whole region needs to feel denser, not only its controls.
+See [Theme](?path=/docs/foundations-theme--docs).
+
+## Rules
+
+- **Choose by region, not by component.** No component has its own size prop;
+  wrap the region instead. A button that needs to be bigger than its neighbours
+  usually needs to be `primary`, not larger.
+- **Nest to change it.** A default-sized card inside a hero section nests its
+  own `Presentation register="default"`.
+- **Keep one register per task.** A form that mixes compact and default fields
+  looks broken.
+- **Don't shrink the whole app** to fit one dense table. Make the table's region
+  compact and leave the rest.
+
+## Accessibility
+
+- Compact controls are smaller targets. Keep them for pointer-heavy screens, and
+  check that they still meet the minimum target size you support.
+- Registers change size, not contrast or focus: focus rings and text contrast
+  stay the same in every register.
+- Check the page zoomed to 200% in each register you use.
+
+## Pitfalls
+
+- **Per-component overrides** with `style` or CSS to change a size. They break
+  alignment with neighbouring controls and drift from the theme.
+- **`hero` in an app.** It's for marketing headlines, not page titles.
+- **Compact on phones.** Small targets and small text on a small screen are hard
+  to use.
+
+## Related
+
+- [Space and layout](?path=/docs/foundations-space-and-layout--docs)
+- [Theme](?path=/docs/foundations-theme--docs)
+- [Page layouts and app shells](?path=/docs/patterns-page-layouts-and-app-shells--docs)

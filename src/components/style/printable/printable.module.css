@@ -1,0 +1,151 @@
+/* Printing. Printable, NotPrintable and PrintOnly mark what goes on paper;
+   the rules under "The theme on paper" restyle every component for print,
+   from the theme's roles.print purposes. They ship in styles.css with the
+   rest of the library, so they apply whether or not these components are
+   used. */
+
+/* The page box. Browsers print their own header and footer in this margin
+   unless the reader turns them off. */
+@page {
+  margin: 16mm 14mm;
+}
+
+@layer dt.components {
+  /* On screen none of the three adds a box. */
+  .printable,
+  .notPrintable {
+    display: contents;
+  }
+
+  .printOnly {
+    display: none;
+  }
+
+  @media print {
+    /* ── The theme on paper ──────────────────────────────────────────
+       The colour purposes take their roles.print values: ink on white by
+       default, the theme's own colours with printBackgrounds. Nested
+       themes carry their own --squonk-* values inline, so the same rule runs
+       on each of them. !important beats those inline values. */
+    :global(:root),
+    :global([style*="--squonk-"]) {
+      --squonk-roles-color-page: var(--squonk-roles-print-paper) !important;
+      --squonk-roles-color-surface: var(--squonk-roles-print-surface) !important;
+      --squonk-roles-color-well: var(--squonk-roles-print-well) !important;
+      --squonk-roles-color-hover: var(--squonk-roles-print-surface) !important;
+      --squonk-roles-color-stripe: var(--squonk-roles-print-well) !important;
+      --squonk-roles-color-field-background: var(--squonk-roles-print-surface) !important;
+      --squonk-roles-color-text: var(--squonk-roles-print-ink) !important;
+      --squonk-roles-color-heading: var(--squonk-roles-print-ink) !important;
+      --squonk-roles-color-label: var(--squonk-roles-print-ink) !important;
+      --squonk-roles-color-field-text: var(--squonk-roles-print-ink) !important;
+      --squonk-roles-color-on-page: var(--squonk-roles-print-ink) !important;
+      --squonk-roles-color-on-surface: var(--squonk-roles-print-ink) !important;
+      --squonk-roles-color-on-well: var(--squonk-roles-print-ink) !important;
+      --squonk-roles-color-text-supporting: var(--squonk-roles-print-ink-supporting) !important;
+      --squonk-roles-color-text-quiet: var(--squonk-roles-print-ink-supporting) !important;
+      --squonk-roles-color-hint: var(--squonk-roles-print-ink-supporting) !important;
+      --squonk-roles-color-on-page-supporting: var(--squonk-roles-print-ink-supporting) !important;
+      --squonk-roles-color-on-surface-supporting: var(--squonk-roles-print-ink-supporting) !important;
+      --squonk-roles-color-on-well-supporting: var(--squonk-roles-print-ink-supporting) !important;
+      --squonk-roles-color-divider: var(--squonk-roles-print-line) !important;
+      --squonk-roles-color-outline: var(--squonk-roles-print-line) !important;
+      --squonk-roles-color-floating-border: var(--squonk-roles-print-line) !important;
+      --squonk-roles-color-field-border: var(--squonk-roles-print-line) !important;
+
+      /* Paper has no depth: no shadows or relief. Transparent shadows,
+         not `none`, so lists of shadows stay valid. */
+      --squonk-roles-elevation-raised: 0 0 #0000 !important;
+      --squonk-roles-elevation-floating: 0 0 #0000 !important;
+      --squonk-roles-elevation-overlay: 0 0 #0000 !important;
+      --squonk-roles-elevation-soft: 0 0 #0000 !important;
+      --squonk-roles-elevation-lift: 0 0 #0000 !important;
+      --squonk-roles-elevation-field: 0 0 #0000 !important;
+      --squonk-roles-relief-surface-fill: none !important;
+      --squonk-roles-relief-control-fill: none !important;
+      --squonk-roles-relief-chrome-fill: none !important;
+      --squonk-roles-relief-well-fill: none !important;
+      --squonk-roles-relief-pressed-fill: none !important;
+      --squonk-roles-relief-surface-edge: 0 0 #0000 !important;
+      --squonk-roles-relief-control-edge: 0 0 #0000 !important;
+      --squonk-roles-relief-chrome-edge: 0 0 #0000 !important;
+      --squonk-roles-relief-well-edge: 0 0 #0000 !important;
+      --squonk-roles-relief-pressed-edge: 0 0 #0000 !important;
+
+      /* Nothing moves on paper: the motion level's "none". */
+      --squonk-motion-level-reduced: 1 !important;
+      --squonk-motion-level-time: 0 !important;
+      --squonk-motion-level-decor: paused !important;
+      --squonk-motion-level-work: paused !important;
+    }
+
+    :global(:root) {
+      print-color-adjust: var(--squonk-roles-print-color-adjust);
+      -webkit-print-color-adjust: var(--squonk-roles-print-color-adjust);
+    }
+
+    /* Text that reads well on paper. :where() keeps these weaker than any
+       app's own styles. */
+    :global(:where(body)) {
+      background: var(--squonk-roles-print-paper);
+      color: var(--squonk-roles-print-ink);
+    }
+    :global(:where(p, li, blockquote)) {
+      orphans: 3;
+      widows: 3;
+    }
+    :global(:where(h1, h2, h3, h4, h5, h6)) {
+      break-after: avoid;
+    }
+    :global(:where(img, svg, figure, pre, blockquote, tr)) {
+      break-inside: avoid;
+    }
+
+    /* ── What goes on paper ─────────────────────────────────────────── */
+
+    .printable {
+      display: block;
+    }
+    .printable[data-inline] {
+      display: inline;
+    }
+    .printable[data-break-before] {
+      break-before: page;
+    }
+    .printable[data-keep-together] {
+      break-inside: avoid;
+    }
+
+    /* While anything is marked Printable, only Printable areas print. */
+    :global(body):has(.printable) :not(:has(.printable)):not(.printable, .printable *) {
+      display: none !important;
+    }
+
+    /* The layout around a Printable area is flattened, so the area starts at
+       the page's edge rather than wherever the screen layout put it. */
+    :global(body):has(.printable) :has(.printable):not(.printable *) {
+      display: block !important;
+      position: static !important;
+      inset: auto !important;
+      width: auto !important;
+      max-width: none !important;
+      height: auto !important;
+      min-height: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: 0 !important;
+      overflow: visible !important;
+      transform: none !important;
+      box-shadow: none !important;
+      background: none !important;
+    }
+
+    .notPrintable {
+      display: none !important;
+    }
+
+    .printOnly {
+      display: contents;
+    }
+  }
+}

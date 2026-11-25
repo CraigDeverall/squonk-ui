@@ -1,0 +1,23 @@
+.storyWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.storyWrapper > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* Full-screen stories (the examples) fill the canvas edge to edge. */
+.storyWrapper[data-fullscreen] {
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.storyWrapper[data-fullscreen] > * {
+  width: 100%;
+}

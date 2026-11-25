@@ -1,0 +1,140 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as StatStories from "./stat.stories.tsx";
+import meta from "./stat.stories.tsx";
+import { Stat } from "./stat.tsx";
+import { Currency } from "../../functional-primitive/currency/currency.tsx";
+import { Card } from "../../layout/card/card.tsx";
+import { Block } from "../../layout-primitive/block/block.tsx";
+import { Grid } from "../../layout-primitive/grid/grid.tsx";
+import { Presentation } from "../../style/presentation/presentation.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Stat
+
+<ResizableCanvas of={StatStories.Default} defaultRecipe="block" />
+
+`Stat` shows one headline figure with its label, and optionally how it changed against an earlier period and a sparkline of recent values. Sometimes the right chart is a number: when people need to know "how many" or "how much" right now, a Stat says it faster than any plot. It has no surface of its own, so place it in a [Card](?path=/docs/layout-card--docs), or a [Grid](?path=/docs/layout-primitives-grid--docs) of Cards for a row of figures. It doesn't format the figure for you or fetch anything.
+
+<Controls />
+
+## Figure only
+
+`label` says what is measured, in sentence case and without a colon. `value` is already formatted and compact enough to read at a glance: "1,284", "$86.6K", "91.2%", or a `<Currency>` element.
+
+<InlineCodeExample>
+  <Block width="260px">
+    <Card>
+      <Stat label="Credits issued" value={<Currency value={34812} />} />
+    </Card>
+  </Block>
+</InlineCodeExample>
+
+## Change against an earlier period
+
+`change` is a fraction: `0.124` reads "+12.4%", `-0.03` reads "−3%", formatted in the user's locale. Always give `changeLabel` with it ("vs last month"); a percentage without its comparison is meaningless. An arrow and the sign show the direction.
+
+<InlineCodeExample>
+  <Block width="260px">
+    <Card>
+      <Stat label="Sightings logged" value="1,284" change={0.124} changeLabel="vs last month" />
+    </Card>
+  </Block>
+</InlineCodeExample>
+
+## Good news, bad news or neither
+
+`increaseIs` decides the change's colour. Leave it at `good` when a rise is good news (dues collected, sightings verified); set `bad` when a rise is bad news (overdue dues, failed payments); set `neutral` when a rise is neither (chapter volunteers, active members), and the change stays in supporting text colour. A change of zero is always neutral and reads "No change".
+
+<InlineCodeExample>
+  <Block width="820px">
+    <Grid columns={{ mobile: 1, tablet: 3 }} gap="md">
+      <Card>
+        <Stat label="Overdue dues" value="$4.2K" change={0.08} changeLabel="vs last quarter" increaseIs="bad" />
+      </Card>
+      <Card>
+        <Stat label="Overdue dues" value="$3.6K" change={-0.061} changeLabel="vs last quarter" increaseIs="bad" />
+      </Card>
+      <Card>
+        <Stat label="Registered members" value="1,204" change={0.02} changeLabel="vs last month" increaseIs="neutral" />
+      </Card>
+    </Grid>
+  </Block>
+</InlineCodeExample>
+
+## With a trend
+
+`trend` takes recent values, oldest first, and draws a [Sparkline](?path=/docs/functional-sparkline--docs) under the figure, stretched to the Stat's width. Give `trendLabel` the measure and period ("Sightings logged, last 10 months") so screen readers hear what the line covers. Use `trendSlot` to match the colour of the same measure charted elsewhere on the page.
+
+<InlineCodeExample>
+  <Block width="260px">
+    <Card>
+      <Stat
+        label="Sightings logged"
+        value="1,284"
+        change={0.124}
+        changeLabel="vs last month"
+        trend={[980, 1012, 1045, 1021, 1098, 1130, 1142, 1201, 1188, 1284]}
+        trendLabel="Sightings logged, last 10 months"
+      />
+    </Card>
+  </Block>
+</InlineCodeExample>
+
+## A row of figures
+
+The standard dashboard opening: three or four Stats in a Grid of Cards, above the charts that explain them. Keep the Stats in a row comparable: same kind of change, same period where you can.
+
+<InlineCodeExample>
+  <Block width="880px">
+    <Grid columns={{ mobile: 1, tablet: 3 }} gap="md">
+      <Card>
+        <Stat label="Dues collected" value="$86.6K" change={0.052} changeLabel="vs October 2025" trend={[71, 74, 73, 78, 80, 79, 83, 86.6]} trendLabel="Dues collected, last 8 months" />
+      </Card>
+      <Card>
+        <Stat label="Overdue dues" value="$4.2K" change={0.08} changeLabel="vs last quarter" increaseIs="bad" trend={[3.4, 3.6, 3.5, 3.9, 4.0, 4.2]} trendLabel="Overdue dues, last 6 quarters" trendSlot={2} />
+      </Card>
+      <Card>
+        <Stat label="Sightings verified" value="91.2%" change={-0.004} changeLabel="vs last year" trend={[89, 90, 90.5, 91.6, 91.2]} trendLabel="Sightings verified, last 5 years" trendSlot={3} />
+      </Card>
+    </Grid>
+  </Block>
+</InlineCodeExample>
+
+## Sizing
+
+The figure's size follows the [Presentation](?path=/docs/style-presentation--docs) register (`--squonk-components-stat-value-size-compact`, `-default`, `-large`, `-hero`: 24, 32, 40 and 48px); the label and change stay at meta size. Use `large` or `hero` for a single figure that is the point of the page, `compact` for dense panels.
+
+<InlineCodeExample>
+  <Block width="520px">
+    <Grid columns={2} gap="md">
+      <Presentation register="compact">
+        <Card><Stat label="Sightings logged" value="1,284" change={0.124} changeLabel="vs last month" /></Card>
+      </Presentation>
+      <Presentation register="hero">
+        <Card><Stat label="Sightings logged" value="1,284" change={0.124} changeLabel="vs last month" /></Card>
+      </Presentation>
+    </Grid>
+  </Block>
+</InlineCodeExample>
+
+## Accessibility
+
+- Renders a description list: the label is the `<dt>`, the figure, change and trend are its `<dd>`s, so screen readers announce them as one term with its details.
+- Direction is never colour alone. The change shows an arrow and a sign, and screen readers hear "Up" or "Down" before the percentage ("Up +12.4% vs last month"). The green and red come from the status text tokens, which meet text contrast in light and dark modes.
+- The trend sparkline is an image named by `trendLabel` with its first and last values. Leave `trendLabel` at its default ("Trend") and that name says nothing.
+- Stat isn't interactive. If the figure links to a detail page, put a link in the Card, or use an InteractiveCard; don't wrap the Stat in a button.
+
+## Common pitfalls
+
+- **A change without `changeLabel`.** "+8%" against what? Always say the comparison period.
+- **Leaving `increaseIs` at `good` for a bad measure.** A rise in overdue dues shown in green tells people the opposite of the truth. Decide for every Stat.
+- **Passing a percentage to `change`.** `change={12.4}` reads "+1,240%". Pass the fraction, `0.124`.
+- **Unformatted or over-precise figures.** `value={86634.37}` is hard to read at a glance. Format and round it ("$86.6K"), and give the exact figure in a table or detail view.
+- **A Stat floating on the page.** It has no surface or padding of its own; put it in a Card.
+- **Too many figures in a row.** Past four, nothing stands out. Lead with the figures people act on and move the rest into a table.

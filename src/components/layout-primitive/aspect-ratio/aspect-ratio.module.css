@@ -1,0 +1,14 @@
+@layer dt.components {
+  .root {
+    width: 100%;
+    aspect-ratio: var(--aspect-ratio);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .root > * {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}

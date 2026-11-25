@@ -1,0 +1,95 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as EmptyStateStories from "./empty-state.stories.tsx";
+import meta from "./empty-state.stories.tsx";
+import { EmptyState } from "./empty-state.tsx";
+import { Button } from "../../functional/button/button.tsx";
+import { HStack } from "../../layout-primitive/hstack/hstack.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# EmptyState
+
+<ResizableCanvas of={EmptyStateStories.NoProjects} />
+
+`EmptyState` is the centered "no data yet" composition: an optional illustration, a title, optional sub-copy, and an optional call-to-action. Use it anywhere a list, table, dashboard panel, or search result has no content to show — the user sees *why* the surface is empty and *what to do about it*, not a blank rectangle.
+
+## Default
+
+The typical first-run state — icon, heading, body, primary action.
+
+<InlineCodeExample>
+  <EmptyState
+    icon={
+      <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M22 12h-6l-2 3h-4l-2-3H2" />
+        <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11Z" />
+      </svg>
+    }
+    title="No projects yet"
+    body="Create your first project to get started."
+    action={<Button variant="primary">New project</Button>}
+  />
+</InlineCodeExample>
+
+## No-results state
+
+After a filter or search returns nothing — different copy than first-run, different action (clear filters, not create).
+
+<InlineCodeExample>
+  <EmptyState
+    title="No results"
+    body="Try a different search term, or clear your filters."
+    action={<Button variant="secondary">Clear filters</Button>}
+  />
+</InlineCodeExample>
+
+## Minimal
+
+Sometimes the best empty state is a quiet one — heading + body, no icon, no action.
+
+<InlineCodeExample>
+  <EmptyState
+    title="All caught up"
+    body="No new notifications since yesterday."
+  />
+</InlineCodeExample>
+
+## With an inline action group
+
+Pair multiple actions by passing a stack of buttons to `action`.
+
+<InlineCodeExample>
+  <EmptyState
+    title="No team members"
+    body="Invite someone to start collaborating."
+    action={
+      <HStack gap="sm">
+        <Button variant="primary">Invite teammates</Button>
+        <Button variant="ghost">Import from CSV</Button>
+      </HStack>
+    }
+  />
+</InlineCodeExample>
+
+## Accessibility
+
+- The `icon` slot is wrapped in `aria-hidden="true"` — the meaning lives in the title and body, not the picture.
+- Internally renders a `Heading level={3}` for the title; if the empty state is the page's primary content, wrap it in a `Presentation` register and use `as="h1"` on a parent heading if needed.
+- Body copy uses `tone="secondary"` for the typical "supporting" weight, which still meets WCAG AA.
+- The action slot is whatever you pass — make sure it's a real button or link, not a clickable `<div>`.
+
+## Common pitfalls
+
+- **Don't ship an empty state without a next step.** "No projects" is a complaint; "No projects — start one →" is a UI. Pair every empty state with either an action or a clear "this is fine" message.
+- **Don't pile up multiple primary buttons.** One primary action; everything else is `secondary` or `ghost`. The whole point is to point the user at *the* next step.
+- **Don't use a giant illustration in a small panel.** EmptyState centers; in a tight container the illustration crowds the copy. Shrink the icon or drop it.
+- **Don't reuse first-run copy for filter-results.** "No projects yet — create one" makes no sense after the user filtered to "archived = true". Distinguish the two states.
+
+## UX guidance
+
+- [Tables and grids](?path=/docs/patterns-tables-and-grids--docs)

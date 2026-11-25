@@ -1,0 +1,34 @@
+@layer dt.components {
+  .root {
+    box-sizing: border-box;
+    border-radius: var(--block-radius);
+    background-color: transparent;
+  }
+
+  /* Scale and free-form values arrive as `--block-*` custom properties. */
+  .padding { padding: var(--block-padding); }
+  .paddingInline { padding-inline: var(--block-padding-inline); }
+  .paddingBlock { padding-block: var(--block-padding-block); }
+  .width { width: var(--block-width); }
+  .maxWidth { max-width: var(--block-max-width); }
+  .minWidth { min-width: var(--block-min-width); }
+
+  /* The background prop names a purpose: a panel, the page colour, or a
+     recessed well. */
+  .root[data-background="default"] {
+    background-color: var(--squonk-roles-color-surface);
+    color: var(--squonk-roles-color-on-surface);
+  }
+  .root[data-background="surface"] {
+    background-color: var(--squonk-roles-color-page);
+    color: var(--squonk-roles-color-on-page);
+  }
+  .root[data-background="subtle"] {
+    background-color: var(--squonk-roles-color-well);
+    color: var(--squonk-roles-color-on-well);
+  }
+
+  .bordered {
+    border: var(--squonk-roles-border-width) solid var(--squonk-roles-color-outline);
+  }
+}

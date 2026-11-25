@@ -1,0 +1,17 @@
+@layer dt.components {
+  .root {
+    width: 100%;
+    box-sizing: border-box;
+    padding-block: var(--squonk-components-footer-padding-block);
+    padding-inline: var(--squonk-roles-space-page-gutter);
+    background-color: var(--squonk-roles-color-page);
+    border-top: var(--squonk-roles-border-width) solid var(--squonk-roles-color-divider);
+    color: var(--squonk-roles-color-on-page-supporting);
+    font-size: var(--squonk-roles-type-meta);
+  }
+
+  .root[data-tone="page"] {
+    background-color: var(--squonk-roles-color-surface);
+    color: var(--squonk-roles-color-on-surface-supporting);
+  }
+}

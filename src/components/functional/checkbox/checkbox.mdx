@@ -1,0 +1,114 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as CheckboxStories from "./checkbox.stories.tsx";
+import meta from "./checkbox.stories.tsx";
+import { Checkbox } from "./checkbox.tsx";
+import { VStack } from "../../layout-primitive/vstack/vstack.tsx";
+import { Block } from "../../layout-primitive/block/block.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Checkbox
+
+<ResizableCanvas
+  of={CheckboxStories.Default}
+  defaultRecipe="centered"
+  defaultHeight={120}
+/>
+
+`Checkbox` is a controlled boolean input that styles a hidden native `<input type="checkbox">` — you keep full keyboard and screen-reader behavior, plus a tick / dash visual that matches the rest of the library. For an *immediate-effect* toggle (a setting, a preference) use `Switch` instead; for a one-of-many choice use `RadioGroup`.
+
+<Controls />
+
+## Default
+
+The wrapper is itself a `<label>`, so clicking anywhere in the label area toggles the box.
+
+<InlineCodeExample>
+  <Checkbox label="Send me product updates" />
+</InlineCodeExample>
+
+## Checked
+
+`checked` is a controlled prop — pair it with `onChange` to manage state in the parent.
+
+<InlineCodeExample>
+  <Checkbox label="I agree to the terms" checked />
+</InlineCodeExample>
+
+## Indeterminate
+
+For a parent that aggregates several children with mixed states. Pair with `checked={false}` — the visual is a dash, not a tick.
+
+<InlineCodeExample>
+  <VStack gap="sm">
+    <Checkbox label="Select all rows" indeterminate />
+    <Block paddingInline="lg">
+      <VStack gap="xs">
+        <Checkbox label="invoice-2026-04.pdf" checked />
+        <Checkbox label="invoice-2026-05.pdf" />
+        <Checkbox label="invoice-2026-06.pdf" checked />
+      </VStack>
+    </Block>
+  </VStack>
+</InlineCodeExample>
+
+## With helper text
+
+`helperText` sits below the label and explains the consequence of toggling.
+
+<InlineCodeExample>
+  <Checkbox
+    label="Enable two-factor authentication"
+    helperText="We'll text you a 6-digit code at login."
+  />
+</InlineCodeExample>
+
+## Error
+
+`error` replaces `helperText` and switches the box outline + helper to the error color. Use it for validation messages tied to this specific input.
+
+<InlineCodeExample>
+  <Checkbox
+    label="I accept the terms"
+    error="You must accept the terms to continue."
+  />
+</InlineCodeExample>
+
+## Disabled
+
+A disabled checkbox stays focusable to screen readers but can't be toggled.
+
+<InlineCodeExample>
+  <VStack gap="sm">
+    <Checkbox label="Public workspace" checked disabled />
+    <Checkbox label="Delete on expiry" disabled />
+  </VStack>
+</InlineCodeExample>
+
+## Accessibility
+
+Helper and error text are exposed as descriptions, separate from the visible label. A supplied `aria-describedby` is preserved and combined with the component’s message.
+
+- The visible box is decorative — the real interactive element is the hidden `<input>`, which is fully keyboard-operable (Space toggles, Tab navigates).
+- The entire wrapper is a `<label>`, so a label click toggles the input — no `htmlFor` plumbing needed.
+- `error` sets `aria-invalid` on the input so assistive tech flags it during form validation.
+- The focus ring uses `--squonk-colors-border-focus` and surrounds the visible box, not the hidden input. It shows for keyboard focus only.
+- An uncontrolled checkbox returns to `defaultChecked` when its form resets, and a disabled ancestor `<fieldset>` disables it.
+
+## Common pitfalls
+
+- **Don't use a checkbox for an immediate-effect toggle.** Settings that apply instantly should be a `Switch`. Reserve checkbox for "submit later" or multi-select.
+- **Don't render a lone checkbox without a label.** Screen readers can't infer meaning from the box — pass a `label` (or, in tight grids, an `aria-label` via `...inputProps`).
+- **Don't forget to forward `onChange`.** The first argument is the new boolean, not the event — read the signature carefully if you're migrating from a raw input.
+- **Don't combine `indeterminate` with `checked={true}`.** The component will render the dash, but the semantics are contradictory. Pair `indeterminate` with `checked={false}`.
+
+## UX guidance
+
+- [Choosing a selection control](?path=/docs/patterns-choosing-a-selection-control--docs)
+- [Switches, checkboxes and saving](?path=/docs/patterns-switches-checkboxes-and-saving--docs)
+- [Labels, help and validation](?path=/docs/patterns-labels-help-and-validation--docs)

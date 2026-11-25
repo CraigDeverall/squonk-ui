@@ -1,0 +1,147 @@
+import { Controls, Meta } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as TextStories from "./text.stories.tsx";
+import meta from "./text.stories.tsx";
+import { Text } from "./text.tsx";
+import { Block } from "../../layout-primitive/block/block.tsx";
+import { VStack } from "../../layout-primitive/vstack/vstack.tsx";
+import { Heading } from "../heading/heading.tsx";
+import { Presentation } from "../../style/presentation/presentation.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Text
+
+`Text` is the body-copy primitive — every paragraph, label, caption, or inline string that isn't a heading or input. Renders a `<p>` by default; use `as="span"` for inline use. Size tracks the surrounding `Presentation` register, so a `Text` in a `compact` panel and one in a `hero` section both feel right without a `size` prop.
+
+<ResizableCanvas of={TextStories.Default} />
+
+<Controls />
+
+## Tones
+
+Eight tones cover the common needs. `primary` is body copy; `secondary` and `muted` step down for captions and footnotes; `inverse` is for dark surfaces; the four semantic tones (`success`, `warning`, `error`, `info`) carry meaning, not just color.
+
+<InlineCodeExample>
+  <VStack gap="xs">
+    <Text>Primary — default body copy.</Text>
+    <Text tone="secondary">Secondary — captions and hints.</Text>
+    <Text tone="muted">Muted — footnotes and metadata.</Text>
+    <Text tone="success">Success — sync complete.</Text>
+    <Text tone="warning">Warning — your trial ends in 3 days.</Text>
+    <Text tone="error">Error — could not connect to the registry.</Text>
+    <Text tone="info">Info — the next deploy will pick up this change.</Text>
+  </VStack>
+</InlineCodeExample>
+
+A tone can also be the key of a colour the theme added with `addedColorPrimitives`, such as `tone="violet"`. The text takes that colour's text-on-the-page shade (the tone palette's `outline-text`), which the theme keeps readable in light and dark mode. A built-in name always means the built-in tone; note that on `Text`, `primary` is the body text colour, not the brand colour.
+
+<ResizableCanvas of={TextStories.AddedTone} defaultRecipe="centered" defaultHeight={180} />
+
+## Eyebrow
+
+`variant="eyebrow"` is a small, bold, uppercase, letter-spaced label that sits above a heading and says what kind of thing follows. Its colour follows `tone` as usual, and it is bold unless you pass a `weight`. It is still a `<p>`: it labels the heading for sighted readers, so keep the real title in the `Heading`.
+
+<InlineCodeExample>
+  <VStack gap="xs">
+    <Text variant="eyebrow" tone="secondary">Case 2041</Text>
+    <Heading level={2}>Sightings awaiting verification</Heading>
+  </VStack>
+</InlineCodeExample>
+
+Use it for a plain label. For an eyebrow in a pill use `Badge caps`; a section's intro block (eyebrow, headline and lead) is `SectionHeading`.
+
+## Weight
+
+`regular` is the default. `bold` for emphasis; `light` for display copy that should feel airy.
+
+<InlineCodeExample>
+  <VStack gap="xs">
+    <Text weight="light">Light weight body</Text>
+    <Text weight="regular">Regular weight body</Text>
+    <Text weight="bold">Bold weight body</Text>
+  </VStack>
+</InlineCodeExample>
+
+## Inline vs block
+
+`Text` defaults to `<p>` (block). Pass `as="span"` for inline emphasis inside surrounding prose without an awkward paragraph break.
+
+<InlineCodeExample>
+  <Text>
+    SquonkUI ships with{" "}
+    <Text as="span" weight="bold">42 components</Text>
+    {" "}out of the box, and{" "}
+    <Text as="span" tone="primary" weight="bold">every one</Text>
+    {" "}supports dark mode.
+  </Text>
+</InlineCodeExample>
+
+## Truncation
+
+`truncate` enables single-line ellipsis. Useful inside table cells, list rows, breadcrumbs, and dropdown labels where the parent constrains the width.
+
+<InlineCodeExample>
+  <Block maxWidth="280px">
+    <Text truncate>
+      A very long product description that won't fit in a narrow column will be truncated with an ellipsis.
+    </Text>
+  </Block>
+</InlineCodeExample>
+
+## Alignment
+
+Use `align` for runs of text where the layout calls for it (centered hero copy, end-aligned numeric columns). Default is `start` which respects RTL.
+
+<InlineCodeExample>
+  <Block width="320px" padding="sm" bordered>
+    <VStack gap="sm">
+      <Text align="start">Start aligned</Text>
+      <Text align="center">Center aligned</Text>
+      <Text align="end">End aligned</Text>
+    </VStack>
+  </Block>
+</InlineCodeExample>
+
+## Italic
+
+`italic` for titles, citations, and traditional emphasis where bold would be too loud.
+
+<InlineCodeExample>
+  <Text>
+    As they say in <Text as="span" italic>The Pragmatic Programmer</Text>, don't repeat yourself.
+  </Text>
+</InlineCodeExample>
+
+## Sizing via Presentation
+
+The font size scales with the surrounding register — there is no `size` prop. Wrap a `Text` in `Presentation` to step up or down.
+
+<InlineCodeExample>
+  <VStack gap="sm">
+    <Presentation register="compact"><Text>Compact body copy.</Text></Presentation>
+    <Presentation register="default"><Text>Default body copy.</Text></Presentation>
+    <Presentation register="large"><Text>Large body copy.</Text></Presentation>
+    <Presentation register="hero"><Text>Hero body copy.</Text></Presentation>
+  </VStack>
+</InlineCodeExample>
+
+## Accessibility
+
+- The default `<p>` is the semantically correct container for a paragraph; `as="span"` for inline runs preserves the surrounding flow.
+- Tone is paired with the text content — never use color alone to convey error or success.
+- An eyebrow is uppercased with CSS, so screen readers get the text as you wrote it. Write it in sentence case, not capitals.
+- Truncation hides text visually but it remains accessible to screen readers (the full string is still in the DOM); consider adding a `title` for sighted hover discoverability.
+- Contrast for every tone is verified against the theme backgrounds in `theme.colors.text.*` — both light and dark themes meet WCAG AA.
+
+## Common pitfalls
+
+- **Don't use an eyebrow as a heading.** It has no heading role, and capitals are slow to read: keep it to a few words above a real `Heading`.
+- **Don't reach for a `size` prop — there isn't one.** Wrap in a `Presentation` register; that way other nested primitives scale together.
+- **Don't pile up `tone="error"` for non-error content.** Save the red for things the user must address. For ordinary "couldn't load" hints, use `secondary` or `muted`.
+- **Don't use `Text as="span"` and forget surrounding line-height.** Inline text inherits the parent's line-height; an inline `Text` inside a tightly-spaced container can read awkwardly. Wrap the parent in a regular paragraph if needed.
+- **Don't truncate without constraining the parent.** `truncate` needs a bounded width to clip against. Inside a flex child, add `min-width: 0` so the child can shrink past its content.

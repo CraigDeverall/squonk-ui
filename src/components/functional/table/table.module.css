@@ -1,0 +1,137 @@
+@layer dt.components {
+  .root { width: 100%; }
+
+  /* Positioned, so visually hidden content in cells (absolutely positioned)
+     stays inside the scroll area instead of widening the page. */
+  .scroll {
+    position: relative;
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--squonk-roles-type-font);
+    color: var(--squonk-roles-color-on-surface);
+    background-color: var(--squonk-roles-color-surface);
+  }
+
+  .table[data-focus-visible] {
+    outline: var(--squonk-roles-border-focus-width) solid var(--squonk-roles-color-focus-ring);
+    outline-offset: var(--squonk-roles-border-focus-offset);
+  }
+
+  .visuallyHidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .header,
+  .cell,
+  .empty {
+    padding: var(--squonk-components-table-cell-padding-block-default) var(--squonk-components-table-cell-padding-inline-default);
+    font-size: var(--squonk-roles-type-meta);
+  }
+
+  :is(.header, .cell, .empty)[data-register="compact"] { padding: var(--squonk-components-table-cell-padding-block-compact) var(--squonk-components-table-cell-padding-inline-compact); }
+  :is(.header, .cell, .empty)[data-register="large"] { padding: var(--squonk-components-table-cell-padding-block-large) var(--squonk-components-table-cell-padding-inline-large); }
+  :is(.header, .cell, .empty)[data-register="hero"] { padding: var(--squonk-components-table-cell-padding-block-hero) var(--squonk-components-table-cell-padding-inline-hero); }
+
+  .header {
+    text-align: left;
+    font-weight: var(--squonk-roles-type-strong);
+    color: var(--squonk-roles-color-on-surface-supporting);
+    border-bottom: var(--squonk-roles-border-width) solid var(--squonk-roles-color-divider);
+    white-space: nowrap;
+  }
+
+  .cell {
+    text-align: left;
+    color: var(--squonk-roles-color-text);
+    line-height: var(--squonk-roles-type-body-line-height);
+    border-bottom: var(--squonk-roles-border-width) solid var(--squonk-roles-color-divider);
+    vertical-align: middle;
+  }
+
+  :is(.header, .cell)[data-align="center"] { text-align: center; }
+  :is(.header, .cell)[data-align="right"] { text-align: right; }
+
+  .select { width: 1%; }
+
+  .striped:nth-child(even) { background-color: var(--squonk-roles-color-stripe); }
+
+  .row[data-selected] { background-color: var(--squonk-roles-color-selected); color: var(--squonk-roles-color-on-selected); }
+
+  .body[data-empty] td { padding: 0; }
+
+  .empty {
+    text-align: center;
+    color: var(--squonk-roles-color-on-surface-supporting);
+  }
+
+  /* Grid focus (selectable or interactive): the focused row, cell or header
+     shows the ring inside it. */
+  :is(.row, .cell, .header)[data-focus-visible] {
+    outline: var(--squonk-roles-border-focus-width) solid var(--squonk-roles-color-focus-ring);
+    outline-offset: calc(var(--squonk-roles-border-focus-offset) * -1);
+  }
+
+  .header[data-allows-sorting] { cursor: pointer; }
+  .header[data-allows-sorting][data-hovered] { color: var(--squonk-roles-color-text); }
+
+  .sortButton {
+    appearance: none;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    color: inherit;
+    text-align: inherit;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--squonk-roles-space-icon-gap);
+    border-radius: var(--squonk-roles-radius-item);
+  }
+
+  .sortButton[data-hovered] { color: var(--squonk-roles-color-text); }
+
+  .sortButton[data-focus-visible] {
+    outline: var(--squonk-roles-border-focus-width) solid var(--squonk-roles-color-focus-ring);
+    outline-offset: var(--squonk-roles-border-focus-offset);
+  }
+
+  .sortLabel {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--squonk-roles-space-icon-gap);
+  }
+
+  .sortIndicator {
+    display: inline-flex;
+    color: var(--squonk-roles-color-text-supporting);
+  }
+
+  .sortIndicator[data-direction="none"] { opacity: 0.5; }
+
+  .pager { padding-top: var(--squonk-components-table-pager-gap); }
+
+  /* On paper the whole table prints: no scrolling box, the header row
+     repeats on each page, rows aren't split across pages, and the pager
+     (a screen control) is left off. */
+  @media print {
+    .scroll { overflow: visible; }
+    .table thead { display: table-header-group; }
+    .table tr { break-inside: avoid; }
+    .pager { display: none; }
+  }
+}

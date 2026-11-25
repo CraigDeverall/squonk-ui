@@ -1,0 +1,181 @@
+import { Controls, Meta, Source } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../../../documentation-imports/index.ts";
+import { InlineCodeExample } from "../../../utils/blocks.tsx";
+import { ResizableCanvas } from "../../../utils/resizable-canvas.tsx";
+import * as CurrencyStories from "./currency.stories.tsx";
+import meta from "./currency.stories.tsx";
+import { Currency } from "./currency.tsx";
+import { Text } from "../text/text.tsx";
+import { Heading } from "../heading/heading.tsx";
+import { VStack } from "../../layout-primitive/vstack/vstack.tsx";
+import { Card } from "../../layout/card/card.tsx";
+
+<Meta of={meta} />
+
+<HideSbBar />
+
+# Currency
+
+<ResizableCanvas of={CurrencyStories.Default} defaultRecipe="inline" />
+
+`Currency` shows an amount of money, formatted for its currency and locale
+with the currency's own decimal places: `$1,234.50`, `£1,234.50`,
+`1.234,50 €`, `￥1,235`. It renders a `<data>` element whose `value` is the
+plain decimal (`"1234.50"`), so the machine-readable amount travels with the
+text. It is inline: it takes the surrounding font size, weight and colour, and
+uses tabular figures so amounts in a column line up. It formats exactly like
+[CurrencyField](?path=/docs/components-inputs-currency-field--docs), because
+both use the same helper.
+
+Use it wherever an amount appears: table cells, totals, stats, sentences. For
+an amount in a string (a toast, an option's description, an `aria-label`), use
+`formatCurrency`, which gives the same text.
+
+<Controls />
+
+## In text
+
+Put it inside `Text`, `Heading` or a table cell; it inherits their type.
+
+<InlineCodeExample>
+  <VStack gap="xs">
+    <Text>Your Swamp Fund levy of <Currency value={148.2} locale="en-NZ" /> was due on 28 September.</Text>
+    <Heading level={2}><Currency value={5054.74} locale="en-NZ" /></Heading>
+  </VStack>
+</InlineCodeExample>
+
+## Currencies and locales
+
+`currency` (ISO 4217, default `"NZD"`) sets the symbol and decimal places;
+`locale` (default: React Aria's locale) sets separators and symbol placement.
+The default `currencyDisplay="symbol"` is relative to the locale, so NZD shows
+as `$` in en-NZ and `NZ$` in en-US. Use `"code"` in a list of mixed currencies,
+`"narrowSymbol"` only where the currency is obvious from context.
+
+<InlineCodeExample>
+  <VStack gap="xxs">
+    <Text><Currency value={1234.5} currency="NZD" locale="en-NZ" /></Text>
+    <Text><Currency value={1234.5} currency="NZD" locale="en-US" /></Text>
+    <Text><Currency value={1234.5} currency="GBP" locale="en-GB" /></Text>
+    <Text><Currency value={1234.5} currency="EUR" locale="de-DE" /></Text>
+    <Text><Currency value={1234.5} currency="JPY" locale="ja-JP" /></Text>
+    <Text><Currency value={1234.5} currency="KWD" locale="en-NZ" /></Text>
+    <Text><Currency value={1234.5} currency="USD" locale="en-NZ" currencyDisplay="code" /></Text>
+  </VStack>
+</InlineCodeExample>
+
+## Minor units, bigints and decimal strings
+
+Money is best stored and sent as an integer count of minor units (cents). Pass
+it with `minorUnits` and it is shown exactly: `1999` is `$19.99`, and JPY's
+minor unit is the yen itself. `value` also takes a `bigint` or a plain decimal
+string such as `"1234.50"` from an API; both format exactly, even beyond the
+precision of a JavaScript number.
+
+<InlineCodeExample>
+  <VStack gap="xxs">
+    <Text><Currency value={1999} minorUnits locale="en-NZ" /></Text>
+    <Text><Currency value={1500} minorUnits currency="JPY" locale="ja-JP" /></Text>
+    <Text><Currency value="9007199254740993.12" locale="en-NZ" /></Text>
+  </VStack>
+</InlineCodeExample>
+
+## Negatives, signs and tone
+
+`accounting` puts negatives in brackets, as statements do. `signDisplay="exceptZero"`
+shows `+` on increases, for changes. `tone` colours the amount with `Text`'s tones;
+`negativeTone` colours only negative amounts, such as `"error"` for an amount owed.
+Colour is never the only signal: keep the minus sign or brackets.
+
+<InlineCodeExample>
+  <VStack gap="xxs">
+    <Text><Currency value={-192.82} accounting negativeTone="error" locale="en-NZ" /></Text>
+    <Text><Currency value={20} signDisplay="exceptZero" tone="success" locale="en-NZ" /></Text>
+    <Text><Currency value={-20} signDisplay="exceptZero" negativeTone="error" locale="en-NZ" /></Text>
+  </VStack>
+</InlineCodeExample>
+
+## Compact and whole amounts
+
+`compact` abbreviates large amounts for dashboards (`$1.2M`); screen readers get
+the full amount. `fractionDigits` overrides the currency's places, such as `0`
+for whole dollars in a summary.
+
+<InlineCodeExample>
+  <VStack gap="xxs">
+    <Text><Currency value={1234567} compact locale="en-NZ" /></Text>
+    <Text><Currency value={60000} fractionDigits={0} locale="en-NZ" /></Text>
+  </VStack>
+</InlineCodeExample>
+
+## No amount
+
+`null`, `undefined` and `NaN` show `fallback`, an em dash by default. Give a
+word where a dash could be misread, such as `fallback="Not set"`.
+
+<InlineCodeExample>
+  <Text>Credit: <Currency value={null} fallback="None yet" /></Text>
+</InlineCodeExample>
+
+## A column of amounts
+
+Tabular figures keep the digits aligned when a column is right-aligned.
+
+<InlineCodeExample>
+  <Card variant="outlined">
+    <VStack gap="xxs" align="end">
+      <Text><Currency value={148.2} locale="en-NZ" /></Text>
+      <Text><Currency value={192.82} locale="en-NZ" /></Text>
+      <Text><Currency value={41.37} locale="en-NZ" /></Text>
+      <Text weight="bold"><Currency value={505474} minorUnits locale="en-NZ" /></Text>
+    </VStack>
+  </Card>
+</InlineCodeExample>
+
+## Formatting helpers
+
+The same rules are exported for code:
+
+| Helper | Does |
+| --- | --- |
+| `formatCurrency(value, options)` | The text `Currency` shows, for strings. Takes the same options. |
+| `formatCurrencyToParts(value, options)` | The same, split into `Intl` parts. |
+| `roundCurrency(value, digits)` | Rounds half away from zero on the decimal people see: `roundCurrency(1.005, 2)` is `1.01`. |
+| `toMinorUnits(value, digits)` | Dollars to integer cents, exactly: `toMinorUnits(0.1 + 0.2, 2)` is `30`. |
+| `fromMinorUnits(minor, digits)` | Cents to an exact decimal string: `fromMinorUnits(123456, 2)` is `"1234.56"`. |
+| `toDecimalString(value, digits)` | A plain decimal with fixed places, as a form submits: `"1234.50"`. |
+| `currencyFractionDigits(currency)` | The currency's decimal places: 2 for NZD, 0 for JPY, 3 for KWD. |
+
+<Source
+  language="tsx"
+  code={`const total = lines.reduce((sum, line) => sum + toMinorUnits(line.amount, 2), 0);
+
+<Currency value={total} minorUnits locale="en-NZ" />
+toast.success(\`\${formatCurrency(total, { locale: "en-NZ", minorUnits: true })} paid.\`);`}
+/>
+
+## Accessibility
+
+- The text is the formatted amount, so screen readers read it with its currency
+  (`$12.50`, "twelve dollars fifty"). The `<data>` element adds no role.
+- Accounting brackets and compact abbreviations are shown visually, while
+  screen readers get the full signed amount (`-$192.82`, `$1,234,567.00`).
+- Tones are `Text`'s, which meet contrast on the page and surface in both modes.
+  Colour supports the sign; it never replaces it.
+- An amount whose meaning depends on its row ("owed", "credit") needs that
+  context in the row or column header, not only in colour.
+
+## Common pitfalls
+
+- **Don't add money up as floats.** `0.1 + 0.2` is `0.30000000000000004`, and
+  the error grows over a column. Add integer cents (`toMinorUnits`) and pass the
+  total with `minorUnits`, or total on the server.
+- **Don't format with `toFixed` or string templates.** `` `$${n.toFixed(2)}` ``
+  rounds `1.005` to `1.00`, ignores grouping, and is wrong for JPY and KWD.
+- **Don't pass cents without `minorUnits`.** `1999` without it is $1,999.00.
+- **Don't drop the sign and rely on colour.** Keep the minus or brackets for
+  people who can't tell red from green.
+- **Don't leave `locale` to chance in a single-country app.** Without it, an
+  en-US browser shows NZD as `NZ$`.
+- **Don't use `compact` where the exact amount matters,** such as a payment or a
+  return. It rounds to about two significant digits.

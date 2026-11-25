@@ -1,0 +1,40 @@
+import { Meta, Source } from "@storybook/addon-docs/blocks";
+import { HideSbBar } from "../documentation-imports/index.ts";
+import { ResizableCanvas } from "../utils/resizable-canvas.tsx";
+import * as Examples from "./forms.stories.tsx";
+import conditional from "./examples/watch-leader-details.tsx?raw";
+import repeating from "./examples/household-members.tsx?raw";
+
+<Meta title="Patterns/Forms/Conditional and repeating fields" />
+
+<HideSbBar />
+
+# Conditional and repeating fields
+
+## Questions that depend on an answer
+
+Show follow-up questions with `form.Subscribe`, which re-renders only when the
+value it selects changes. Validate them with `superRefine`, only when they
+apply, so a hidden field can never block the submit.
+
+Put follow-ups straight after the question that reveals them, so they are next
+in the reading and tab order.
+
+<ResizableCanvas of={Examples.ConditionalQuestions} defaultHeight={560} />
+
+<Source code={conditional} language="tsx" />
+
+## Lists people add to
+
+Give the array field `mode="array"` and use `pushValue` and `removeValue`. Each
+row's fields are named by index (`members[0].name`), so their errors and the
+summary links work like any other field.
+
+- Group each row in a `fieldset` with a numbered legend, so "Full name" is heard
+  as "Household member 2, Full name".
+- Name remove buttons for their row ("Remove household member 2"), never just "Remove".
+- Validate the list itself as well as its rows, for "Add at least one household member".
+
+<ResizableCanvas of={Examples.RepeatingGroup} defaultHeight={620} />
+
+<Source code={repeating} language="tsx" />
